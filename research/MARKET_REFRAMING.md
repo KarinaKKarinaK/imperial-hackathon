@@ -133,3 +133,60 @@ What changes in the deliverables:
 - https://www.bls.gov/iag/Tgs/iag492.htm
 - https://www.supplychain247.com/article/new-data-reveals-the-most-injury-prone-jobs-in-the-supply-chain/optimization
 - https://chinadailyhk.com/article/607159
+
+## Follow-up: all digital platform workers, HK vs HK+Macau vs mainland, and domestic helpers (17 Oct 2026)
+
+### Domestic helpers: not our market, and here is why
+- Hong Kong has roughly 370,000 foreign domestic helpers (verify the current figure with the Immigration Department). They are employees on the Standard Employment Contract. Employers must hold employees' compensation insurance for them, and for part-time local helpers too, under section 40 of the Employees' Compensation Ordinance. Failing to insure is a criminal offence (fines up to HK$100,000, up to two years in prison).
+- So helpers already sit inside the compensation system we say riders are locked out of. Adding them weakens the policy gap argument instead of strengthening it.
+- Platform-engaged part-time cleaners (app-based home services) are a real grey zone, but there is no headcount and no policy anchor. The HK proposal covers food and goods delivery only.
+- Macau: 28,611 non-resident domestic workers at end 2025, inside a total of 183,679 non-resident workers. Same story: employed, insured.
+- Verdict: leave helpers out. If a judge asks, the answer is "they have an employer and a policy, riders have neither. The uninsured gap is the self-employed platform worker."
+
+### Platform workers: the three-tier comparison
+
+| Tier | Platform workers | Injury cover today | What is changing | Source quality |
+|---|---|---|---|---|
+| Hong Kong | ~12,900 food and goods delivery platform workers holding ~18,100 platform jobs (C&SD Thematic Household Survey No. 81, Dec 2023 to Mar 2024). No official count for ride-hailing or home-service platforms. | None statutory. Self-employed, outside the Employees' Compensation Ordinance. | Government proposal (Jul 2026): standalone no-fault statutory regime for delivery platform workers, platforms liable, ECO minimums kept, HK$5,710 floor waived, liability apportioned between platforms when a worker is on several apps at once. Target: introduce by end 2026. | Official |
+| HK + Macau | HK figure plus low thousands in Macau (mFood, Aomi). No official Macau count. | Macau: none. Government says no dedicated rules planned. | Macau lawmaker inquiry pending, nothing scheduled. | Thin |
+| Mainland China | 84 million in "new forms of employment" (ACFTU survey, 2022 data). 200 million plus "flexible workers" (MOHRSS). Meituan alone reports 10 to 13 million riders. | Occupational injury protection scheme: pilot Jul 2022, 12.3 million covered by Jul 2025, nationwide across 31 provincial regions and 14 platforms from Jul 2026. Meituan has paid over 3 billion yuan in contributions. | Scheme is live and scaling. Premiums are flat per order or per rider, not risk-based, and claims verification is manual. | Official and company reports |
+
+Ratios: Hong Kong is about 0.015% of the mainland platform workforce. Hong Kong plus Macau changes nothing. The mainland scheme is roughly 1,000 times the Hong Kong pool and it is already paying premiums.
+
+### Can the idea still work, and is it big enough on the business side
+
+Yes, with one honest adjustment: we are not selling insurance to 13,000 Hong Kong riders. We are selling verification to the people who are about to carry the liability.
+
+Why the business case got stronger this week, not weaker:
+1. The Hong Kong proposal makes platforms liable on a no-fault basis. Platforms will insure that liability. Insurers will need to price a risk with no history. That is the first customer, and the government has said it is weighing operators' affordability, which is exactly where risk-based pricing helps.
+2. The proposal apportions liability between platforms when a rider is on several apps at the moment of injury. One third of Hong Kong riders work for more than one platform. Nobody can settle that split today without a record of which app job was active at impact. Our event record answers it. This is a concrete, legislated need, not a hypothetical.
+3. The mainland scheme now covers tens of millions of riders with flat premiums and manual claims. Risk-based pricing and automated verification are the obvious next step and the market is already paying.
+4. Singapore has required platform operators to buy work injury compensation insurance since 1 Jan 2025. Three jurisdictions in the region moved in 18 months. The verification layer does not exist in any of them.
+
+What the revenue model looks like:
+- Who pays: platforms (liability holders) and insurers (pricing and claims). Riders never pay.
+- Unit: a monthly fee per active insured rider, plus a per-event verification fee on claims.
+- Hong Kong pilot at 15,000 riders is worth low single-digit millions of HK dollars a year. That funds a pilot and a sandbox licence, nothing more. Say so on the poster.
+- Mainland or Southeast Asia at one platform with 10 million riders is the real number. One slide, with the assumptions shown.
+- Hardware: the helmet clip is a cost line, not a revenue line. Phone-only tier first, helmet tier for platforms that want crash-grade data.
+
+What the judges will push on, and the answers:
+- "Hong Kong is tiny." Agreed. Hong Kong is the first common-law jurisdiction legislating a no-fault platform worker regime with multi-platform apportionment. It is the right place to set the standard, not the place to make money.
+- "Why would platforms adopt something that proves their riders got hurt?" Because they are liable either way under the new law, and verified data lowers premiums, settles apportionment, and defends against fraudulent or misattributed claims. The Foodpanda typhoon case cost HK$1.35 million and five years.
+- "Why would riders wear it?" Faster payout with no claims fight, and a record that works for them. Consent design and data ownership rules are the answer, and they are already in the plan.
+- "Why would a mainland platform buy from a Hong Kong team?" They may not. The standard can travel through insurers and reinsurers who operate across the border. Name that as a risk in the register.
+
+Bottom line for the business pillar: build the financial model with two columns, Hong Kong pilot and one large-platform deployment. Lead the pitch with the apportionment problem because it is specific, legislated, and unsolved. The social return column (faster payouts, fewer contested claims, fatal cases with an objective record) is what the hackathon scores. The scale column is what makes it credible.
+
+### Additional sources
+- https://www.info.gov.hk/gia/general/202503/17/P2025031400443p.htm
+- https://www.legco.gov.hk/yr2025/english/panels/mp/papers/mp20250324cb1-410-4-e.pdf
+- https://www.simmons-simmons.com/en/publications/cmrsvfcev004wtr54meqgtw0t/hk-proposes-work-injury-compensation-regime-for-platform-workers
+- https://www.thestandard.com.hk/news/article/336920/HK-proposes-work-injury-protection-framework-for-digital-platform-delivery-workers
+- https://www.scmp.com/news/hong-kong/hong-kong-economy/article/3360106/hong-kong-extend-injury-protection-gig-delivery-workers
+- https://news.rthk.hk/rthk/en/component/k2/1861866-20260711.htm
+- https://www.bowtie.com.hk/blog/en/insurance101/domestic-helper-hourly-rate-insurance/
+- https://familyclic.hk/en/?p=733
+- https://www.plataformamedia.com/2026/02/03/mais-de-1100-trabalhadores-estrangeiros-foram-contratados-em-2025/
+- https://news.cgtn.com/news/2023-04-08/84m-workers-in-new-job-types-drive-focus-on-labor-social-security-1iPO16fb5II/share_amp.html
+- https://chinaservicesinfo.com/s/202603/06/WS69aa96ab498e23165e06de81/new-forms-of-employment-set-to-receive-solid-govt-support.html
