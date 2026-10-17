@@ -62,9 +62,11 @@ Five parts. Each has one owner and one definition of done.
 ### Insurance mechanism (Alysa, Karina)
 - Parametric trigger: verified crash event (detector confidence above X, rider on shift, no cancel within 30 seconds) pays a fixed amount within 24 hours. Secondary tier: hospital admission confirms a larger payout.
 - Who pays: the platform, per delivery window. Show a worked example for one rider, one month.
-- Regulatory path: Hong Kong Insurance Authority, Insurtech Sandbox, who can underwrite (licensed insurer, we are the data and trigger provider, not the insurer).
-- Financial model: build cost, cost per helmet unit, premium per delivery, break-even. One spreadsheet.
-- Risk register: top three barriers and the response to each.
+- Multi-platform apportionment: the Jul 2026 HK proposal splits liability between platforms when a rider is on several apps at the time of injury. The event record must store which platform job was active at impact. Make this a field in the schema and a line on the underwriter page.
+- Regulatory path: Hong Kong Insurance Authority, Insurtech Sandbox, who can underwrite (licensed insurer, we are the data and trigger provider, not the insurer). Read the Jul 2026 government proposal (LegCo reply 21 Jan 2026, RTHK 10 and 11 Jul 2026, Simmons and Simmons note).
+- Financial model, two columns: Hong Kong pilot (about 15,000 riders, low single-digit HK$ millions a year) and one large-platform deployment (10 million riders, mainland or Southeast Asia). Build cost, cost per helmet unit, fee per insured rider per month, per-claim verification fee, break-even. One spreadsheet.
+- Social return column: faster payouts, fewer contested claims, an objective record for fatal cases. This is what the hackathon scores.
+- Risk register: top three barriers and the response to each. Include "mainland platforms will not buy from a HK team" with the insurer and reinsurer route as the mitigation.
 
 ### Data governance and consent (Maalon, Hannes)
 Answer Imperial's fourth point head-on. One page, decided before the app is finished because it shapes the app.

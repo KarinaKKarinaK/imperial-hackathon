@@ -160,6 +160,30 @@ Four things they told us to work on. Treat these as judging questions.
 - Insurance mechanism and ML (Simone, Karina): parameters the trigger is based on, ML models.
 - Business case and public interest (Alysa).
 
+## Business framing (updated 17 Oct 2026, full numbers in research/MARKET_REFRAMING.md)
+
+### The honest market picture
+- Hong Kong has about 12,900 delivery platform workers (official survey, Dec 2023 to Mar 2024). Two platforms left after Deliveroo exited in 2025. A rider-only Hong Kong product is a pilot, not a market.
+- Macau: low thousands of riders, no official count, government says no rules planned. A mirror case, not a market.
+- Mainland China: 84 million "new forms of employment" workers. National occupational injury scheme for platform workers went nationwide in Jul 2026 across 14 platforms. Meituan alone has 10 to 13 million riders and has paid over 3bn yuan in contributions. Premiums are flat, claims are manual.
+- Singapore made platform worker injury insurance mandatory on 1 Jan 2025.
+- Domestic helpers are out of scope. They are employees with compulsory compensation insurance already.
+
+### What we are
+A verified work-injury event record for self-employed two-wheeler and outdoor platform workers. Built in Hong Kong for the riders para 385 covers, priced through parametric insurance, designed as a standard that travels. We are the sensor, the trigger and the data standard. We are not the insurer.
+
+### Why the business case holds
+1. The Jul 2026 Hong Kong proposal makes platforms liable on a no-fault basis. They will insure it. Insurers must price a risk with no history.
+2. The same proposal apportions liability between platforms when a rider is on several apps at the moment of injury. One third of HK riders are. Nobody can settle that split without a record of which job was active at impact. Lead the pitch with this.
+3. Who pays: platforms and insurers, never riders. Monthly fee per insured rider plus a per-claim verification fee.
+4. Hong Kong pilot is worth low single-digit millions of HK dollars a year. Say so. The scale column is one large platform on the mainland or in Southeast Asia.
+
+### Judge questions and answers
+- "Hong Kong is tiny." Yes. It is the first common-law jurisdiction legislating a no-fault platform worker regime with multi-platform apportionment. Right place to set the standard, not to make money.
+- "Why would a platform adopt something that proves riders got hurt?" They are liable either way. Verified data lowers premiums, settles apportionment and defends against misattributed claims. The Foodpanda typhoon case cost HK$1.35m and five years.
+- "Why would riders wear it?" Faster payout, no claims fight, a record that works for them. Consent and data ownership rules make it safe.
+- "Why would a mainland platform buy from you?" They may not. The standard travels through insurers and reinsurers working across the border. It is in the risk register.
+
 ## Background research collected so far
 
 ### Gig economy regulation elsewhere (for the "why now" and comparison slide)
