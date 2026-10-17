@@ -98,3 +98,38 @@ What changes in the deliverables:
 - https://www.gminsights.com/industry-analysis/parametric-insurance-market
 - https://www.mordorintelligence.ar/industry-reports/parametric-insurance-market
 - https://subsites.chinadaily.com.cn/npc/2024-12/16/c_1053360.htm
+
+## Follow-up: Macau and delivery drivers in general (17 Oct 2026)
+
+### Macau
+- No official rider headcount found. Platforms are mFood and Aomi. Macau's population is about 690,000, so the rider base is at most low thousands.
+- Fatal rider crashes are on record (an mFood rider in 2022, a delivery driver killed by a tour bus at Rotunda do Istmo, Cotai, 28 April, year unstated). Riders went on strike against Aomi in August 2026 over base pay.
+- The Macau government has said it has no plans for dedicated labour rules for takeaway couriers. A lawmaker (Leong Hong Sai) filed a written inquiry asking for rules and protections. A Transport Advisory Committee member called on platforms to run safe-driving courses.
+- University of Saint Joseph ran a "Food in a Flash" survey on Macau rider working conditions. Worth citing in the evidence base.
+- Verdict: Macau is a mirror case, not a market. Use it in one line: "Hong Kong is legislating, Macau has said it will not, and riders are dying in both." It strengthens the policy gap argument and gives the GBA framing a second jurisdiction. Do not switch the anchor to the Macau Policy Address; it has no delivery worker commitment we could quote.
+
+### Delivery drivers in general (goods, parcels, vans)
+- The Hong Kong survey figure of ~12,900 already covers food and goods delivery platforms, so adding Lalamove and GOGOX type platform drivers does not change the number much. The wider freight transport and storage sector in Hong Kong employs about 152,800 people (2022), and the government has no injury data split for drivers.
+- SF Express Hong Kong lists about 10,000 staff, Lalamove's HK entity about 7,700. Both are database estimates covering all staff, not driver counts.
+- Internationally, parcel delivery is among the top ten most injury-prone industries in US data for two decades, and courier injury rates rose from 2015 to 2022 while overall US industry rates fell. US trade press puts couriers and messengers at about 51 injuries per 10,000 workers (unverified against the BLS table). Amazon alone had 75,000 US last-mile drivers through delivery partners in 2019.
+- No reliable global count of last-mile drivers exists. The ILO platform worker range (150 to 400 million) is the only defensible global figure and it mixes delivery, ride-hailing and online work.
+- Verdict: "delivery drivers in general" widens the story but not the Hong Kong number. The right move is to widen by risk type (two-wheeler, outdoor, time-pressured) rather than by job title. Van drivers have a vehicle with its own black box and are usually employees already covered by compensation law. The uncovered group is the self-employed two-wheeler worker, and that is the group the mainland scheme and Singapore's rule target.
+
+### Comparator worth adding to the legal track
+- Singapore has required platform operators to buy work injury compensation insurance for platform workers since 1 January 2025. Hong Kong's proposed regime (LCQ22, 21 Jan 2026; RTHK, 10 Jul 2026; Simmons and Simmons note) follows the same direction. Our event record is the verification layer both regimes lack.
+
+### Additional sources
+- https://macaubusiness.com/food-delivery-riders-plan-strike-over-low-pay/
+- https://www.macaubusiness.com/food-delivery-platforms-should-improve-safety-conditions-of-employed-drivers-transport-advisory-committee-member/
+- https://macaonews.org/features/unsung-heroes-meet-the-riders-who-kept-macao-fed-during-the-pandemic/
+- https://usj.edu.mo/?p=49896
+- https://macaudailytimes.com.mo/tag/labor
+- https://www.info.gov.hk/gia/general/202601/21/P2026012100230p.htm
+- https://news.rthk.hk/rthk/en/component/k2/1861808-20260710.htm
+- https://www.simmons-simmons.com/en/publications/cmrsvfcev004wtr54meqgtw0t/hk-proposes-work-injury-compensation-regime-for-platform-workers
+- https://www.marsh.com/sg/services/affinity-partners-sponsored-programs/products/protecting-platform-workers.html
+- https://pmc.ncbi.nlm.nih.gov/articles/PMC11850030/
+- https://stacks.cdc.gov/view/cdc/261663/cdc_261663_DS1.pdf
+- https://www.bls.gov/iag/Tgs/iag492.htm
+- https://www.supplychain247.com/article/new-data-reveals-the-most-injury-prone-jobs-in-the-supply-chain/optimization
+- https://chinadailyhk.com/article/607159
