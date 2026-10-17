@@ -15,16 +15,6 @@ We are building a verified work-injury event record: a low-cost helmet sensor an
 | [submission/VIDEO_PLAN.md](submission/VIDEO_PLAN.md) | Beat sheet and production plan for the pitch video |
 | [research/MARKET_REFRAMING.md](research/MARKET_REFRAMING.md) | Market sizing (HK, Macau, mainland), reframing options, business verdict, sources |
 
-## Team
-
-| Name | Pillar | Role |
-|---|---|---|
-| Karina Kalicka-Molin | Engineering | Lead, ML, software |
-| Simone Copetti | Engineering | ML, software |
-| Hannes Ganske | Natural sciences | Hardware, drop tests, legal research |
-| Maalon Jochmann | Medicine and health | Trauma triage, evidence base, data governance |
-| Alysa de Haas | Business | Insurance mechanism, financial model, poster |
-
 ## Key dates
 
 - 24 Oct 2026: internal deadline
