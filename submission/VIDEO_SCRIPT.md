@@ -12,19 +12,21 @@ Rules: every number on screen has a source line in the corner. Numbers marked [t
 
 ## Part 1. Cold open (0:00 to 0:20)
 
-Black screen. Sound: traffic, rain, a phone notification. One line of white text at a time, each held for about 3 seconds. No voice.
+Black screen. Sound: traffic, rain, a phone notification, a skid. One line of white text at a time, each held for 2 to 3 seconds. Words get bigger as the numbers get worse. No voice.
 
 | Time | On screen | Source corner |
 |---|---|---|
-| 0:00 | Who pays when a delivery rider crashes? | |
-| 0:03 | 84 million platform workers in mainland China. | ACFTU survey |
-| 0:06 | 12,900 in Hong Kong. | C&SD Thematic Household Survey No. 81 |
-| 0:09 | Only 13% of injured riders were compensated. | 2024 union survey |
-| 0:12 | One rider's typhoon injury took five years and a High Court judge. | HK High Court, Sep 2025 |
-| 0:15 | Hong Kong is about to make platforms liable. | 2026 Policy Address, para 385 |
-| 0:18 | Nobody has the data. | |
+| 0:00 | HONG KONG RUNS ON TWO WHEELS. | |
+| 0:02 | 12,900 riders. 18,100 jobs. Zero employers. | C&SD Thematic Household Survey No. 81 |
+| 0:05 | When one of them crashes, the law calls it nobody's problem. | |
+| 0:08 | 13% compensated. 87% on their own. | 2024 union survey |
+| 0:11 | One typhoon. One rider. Five years. One High Court judge. | HK High Court, Sep 2025 |
+| 0:14 | 41,254 work injury claims a year in Hong Kong. Riders are not in that number. | Labour Department OSH Statistics 2024 |
+| 0:16 | Now the law is changing. Platforms will pay. | 2026 Policy Address, para 385 |
+| 0:18 | Pay for what? There is no record. | |
+| 0:20 | NO RECORD. NO PROOF. NO PRICE. | |
 
-Cut to Part 2 on the word "data".
+Cut to Part 2 on "NO PRICE".
 
 ## Part 2. Relay (0:20 to 1:50)
 
@@ -34,34 +36,34 @@ Each line is one shot, one location, handheld or on a tripod, speaker looking in
 
 | # | Speaker | Line | Location |
 |---|---|---|---|
-| 1 | Karina | Every meal, every parcel, every ride in this city starts with a worker on two wheels. | Walking out of HKUST main entrance, riders passing |
-| 2 | Maalon | When one of them goes down, there is no record of what happened. | Standing at a road crossing, traffic behind |
-| 3 | Hannes | No employer. No insurance. No proof. | Next to a parked delivery motorcycle |
-| 4 | Alysa | Hong Kong's new law will make platforms pay for injuries at work. | Walking through a mall food court past delivery pick-up counters |
-| 5 | Karina | But a platform cannot pay for a crash it cannot verify. | Seated at a desk, phone in hand |
-| 6 | Maalon | And an insurer cannot price a risk it has never measured. | Walking down a hospital or clinic corridor |
-| 7 | Hannes | One in three riders works for several apps at once. Which one pays? | Holding two phones, both showing delivery apps |
-| 8 | Alysa | Today the answer is: nobody, for years. | Standing still, empty street |
+| 1 | Karina | Every meal, every parcel, every late-night order in Hong Kong starts with a human body on two wheels. | Walking out of HKUST main entrance, riders passing |
+| 2 | Maalon | Every plane has a black box. Every car has one. The worker has nothing. | Standing at a road crossing, traffic behind |
+| 3 | Hannes | No employer. No insurance. No proof. Just an algorithm with a countdown. | Next to a parked delivery motorcycle |
+| 4 | Alysa | Hong Kong just decided that has to end. Platforms will pay for injuries at work. | Walking through a mall food court past delivery pick-up counters |
+| 5 | Karina | But you cannot pay for a crash nobody can verify. | Seated at a desk, phone in hand |
+| 6 | Maalon | And you cannot insure a risk nobody has ever measured. | Walking down a hospital or clinic corridor |
+| 7 | Hannes | One in three riders runs two apps at once. Two companies, one body on the road. Who pays? | Holding two phones, both showing delivery apps |
+| 8 | Alysa | A law without evidence is a promise without a price. | Standing still, empty street |
 
 ### The solution
 
 | # | Speaker | Line | Location |
 |---|---|---|---|
-| 9 | Karina | So we built the flight recorder for work injury. | Lab, holding the helmet sensor up to the camera |
-| 10 | Hannes | A sensor the size of a coin, clipped to the helmet the rider already wears. | Next to the 3D printer, the clip coming off the bed |
-| 11 | Karina | And the phone already in their pocket. | Phone mounted on handlebars, app on screen |
-| 12 | Hannes | Together they see the impact, the fall, and the stillness after it. | Dropping the helmet onto the test bench, slow motion |
-| 13 | Maalon | Thirty seconds to say "I'm fine". If not, the dispatcher gets the location and a probable injury profile. | Looking at the dispatcher page on a laptop |
-| 14 | Alysa | The same event triggers a fixed insurance payout. No claim form. No fight. Paid within a day. | Underwriter page on screen, payout line turning green |
-| 15 | Karina | It also records which app the rider was working for at that second. | App screen showing "On shift: Platform A" |
-| 16 | Alysa | So when two platforms share the liability, the record settles it. | Whiteboard with two platform logos and a split arrow |
-| 17 | Maalon | Heat and fatigue alerts go to the rider, and only to the rider. | Outdoors in sun, phone showing an amber heat band |
-| 18 | Hannes | The rider owns the raw data. Platforms and insurers see events, never a route or a score. | Consent screen on the phone, held to camera |
-| 19 | Karina | We are not an insurer. We are the record every insurer, platform and court can trust. | Walking through a corridor, steady |
-| 20 | Alysa | Built in Hong Kong for the law that is coming. Designed for the 84 million workers already covered next door. | Rooftop or waterfront, skyline behind |
-| 21 | Karina | Here is what changes. | Turns to the camera, cut to black |
+| 9 | Karina | So we built the black box for the human body at work. | Lab, holding the helmet sensor up to the camera |
+| 10 | Hannes | A sensor the size of a coin, on the helmet the rider already wears. | Next to the 3D printer, the clip coming off the bed |
+| 11 | Karina | And the phone already in their pocket. No new hardware to buy, no new habit to learn. | Phone mounted on handlebars, app on screen |
+| 12 | Hannes | Impact. Fall. Stillness. Three signals in sequence, and nothing else on earth looks like that. | Dropping the helmet onto the test bench, slow motion |
+| 13 | Maalon | Thirty seconds to say "I'm fine". Silence, and triage already knows where and how hard. | Looking at the dispatcher page on a laptop |
+| 14 | Alysa | The same second triggers the insurance. No claim form. No adjuster. No fight. Paid in a day. | Underwriter page on screen, payout line turning green |
+| 15 | Karina | It knows which app the rider was working for at the moment of impact. | App screen showing "On shift: Platform A" |
+| 16 | Alysa | So the question "which company pays" becomes a lookup, not a lawsuit. | Whiteboard with two platform logos and a split arrow |
+| 17 | Maalon | Heat and fatigue warnings go to the rider. Only the rider. Never the boss. | Outdoors in sun, phone showing an amber heat band |
+| 18 | Hannes | The rider owns the raw data. Everyone else sees events. Never a route, never a score. | Consent screen on the phone, held to camera |
+| 19 | Karina | We are not an insurer. We are the evidence. The one record a rider, a platform, an insurer and a judge can all trust. | Walking through a corridor, steady |
+| 20 | Alysa | Hong Kong writes the law. We write the standard. And next door, 84 million workers are waiting for one. | Rooftop or waterfront, skyline behind |
+| 21 | Karina | Same rider. Same crash. Two different worlds. | Turns to the camera, cut to black |
 
-Pace check: 21 lines in 90 seconds is just over 4 seconds a line. If the cut feels rushed, drop lines 6 and 17 first.
+Pace check: 21 lines in 90 seconds is just over 4 seconds a line. Lines 7, 12, 14 and 19 are the long ones, keep them under 6 seconds each. If the cut feels rushed, drop lines 6 and 11 first.
 
 ## Part 3. Split screen (1:50 to 3:35)
 
@@ -91,17 +93,17 @@ Full screen. All four (or five) standing together, one location, one shot.
 
 | Speaker | Line |
 |---|---|
-| Karina | Engineering, science, medicine, business. |
+| Karina | Engineering, science, medicine, business. One problem, four ways in. |
 | Hannes | We built the sensor and broke it on purpose until it told the truth. |
 | Maalon | We made it answer to the rider first. |
 | Alysa | And we made it pay. |
-| All | MetricsFile. The record that works for the worker. |
+| All | MetricsFile. Proof for the people who keep this city moving. |
 
 Final card, 3 seconds: team name, para 385 quote, STEMB map thumbnail.
 
 ## Word count and timing
-- Part 1: 0 spoken words, 20 seconds.
-- Part 2: about 330 words, 90 seconds. Tight but fine at 4 seconds a line because the cuts carry the pace.
+- Part 1: 0 spoken words, 22 seconds.
+- Part 2: about 370 words, 90 seconds. Tight. The cuts carry the pace, but speakers must not pause between sentences inside a line.
 - Part 3: about 200 words of narration over 105 seconds. Leave air for the visuals.
 - Part 4: 35 words, 15 seconds.
 - Total about 565 words, 3:50.
