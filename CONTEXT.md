@@ -1,6 +1,6 @@
 # Imperial Global Hackathon Hong Kong and Macau 2026
 
-Team MetricsFile (registered as "Metrics"). University and Early Career Professionals track, Challenge 6 (Wild Card / open challenge).
+Team Metrics. University and Early Career Professionals track, Challenge 6 (Wild Card / open challenge).
 
 ## Key dates
 

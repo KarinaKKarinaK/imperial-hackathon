@@ -5,9 +5,9 @@ import { useState } from "react";
 import { Arrow } from "./Arrow";
 
 const links = [
-  { href: "/#problem", label: "Problem" },
-  { href: "/#system", label: "System" },
-  { href: "/#brief", label: "The brief" },
+  { href: "/#problem", label: "Why" },
+  { href: "/#system", label: "How" },
+  { href: "/#applications", label: "Where" },
   { href: "/#market", label: "Market" },
   { href: "/demo", label: "Live demo" },
 ];
@@ -17,12 +17,12 @@ export function Nav() {
   return (
     <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6">
       <nav className="mx-auto flex max-w-[1400px] items-center justify-between rounded-2xl border border-white/20 bg-ink/80 px-4 py-2.5 backdrop-blur-md sm:rounded-full sm:px-5">
-        <Link href="/" className="flex items-center gap-2" aria-label="MetricsFile home">
+        <Link href="/" className="flex items-center gap-2" aria-label="Metrics home">
           <span className="relative block h-5 w-9">
             <span className="absolute left-0 top-0 h-5 w-5 rounded-full bg-paper" />
             <span className="absolute left-4 top-0 h-5 w-5 rounded-full bg-paper" />
           </span>
-          <span className="text-sm font-medium tracking-tight">MetricsFile</span>
+          <span className="text-sm font-medium tracking-tight">Metrics</span>
         </Link>
         <ul className="hidden items-center gap-8 text-[15px] md:flex">
           {links.map((l) => (

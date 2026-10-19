@@ -1,6 +1,6 @@
-# MetricsFile web
+# Metrics web
 
-Landing page, live demo and backend for the MetricsFile work-injury event record.
+Landing page, live demo and backend for the Metrics work-injury event record.
 
 ```
 pnpm install

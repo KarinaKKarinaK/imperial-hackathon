@@ -6,12 +6,12 @@ const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree", weight
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", weight: ["400", "500"] });
 
 export const metadata: Metadata = {
-  title: "MetricsFile",
+  title: "Metrics",
   description:
     "The verified work-injury event record for Hong Kong's platform workers. Coin-sized helmet sensor, phone telemetry, triage alert, parametric payout.",
   metadataBase: new URL("https://metricsfile.vercel.app"),
   openGraph: {
-    title: "MetricsFile",
+    title: "Metrics",
     description: "Proof for the people who keep this city moving.",
     type: "website",
   },

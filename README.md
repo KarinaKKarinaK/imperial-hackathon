@@ -1,4 +1,4 @@
-# MetricsFile
+# Metrics
 
 Imperial Global Hackathon Hong Kong and Macau 2026, University track, Challenge 6 (open challenge).
 

@@ -65,10 +65,61 @@ body {
   background: linear-gradient(135deg, var(--peach-2) 0%, var(--peach) 100%);
   color: var(--ink);
 }
+.tile-dusk {
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(240, 160, 112, 0.9) 0%, rgba(240, 160, 112, 0) 55%),
+    radial-gradient(90% 80% at 0% 100%, rgba(143, 123, 255, 0.95) 0%, rgba(107, 76, 255, 0) 60%),
+    linear-gradient(160deg, #7a5cff 0%, #3b2a9e 100%);
+  color: #fff;
+}
+.tile-haze {
+  background:
+    radial-gradient(90% 70% at 90% 10%, rgba(107, 76, 255, 0.35) 0%, rgba(107, 76, 255, 0) 60%),
+    radial-gradient(70% 60% at 10% 90%, rgba(240, 160, 112, 0.45) 0%, rgba(240, 160, 112, 0) 60%),
+    var(--paper);
+  color: var(--ink);
+}
+.tile-night {
+  background:
+    radial-gradient(80% 60% at 80% 100%, rgba(107, 76, 255, 0.55) 0%, rgba(107, 76, 255, 0) 60%),
+    linear-gradient(180deg, #121212 0%, #0a0a0a 100%);
+  color: var(--paper);
+  border: 1px solid var(--line);
+}
+.tile-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.15) brightness(0.55);
+  transform: scale(1.02);
+  transition: transform 0.8s ease, filter 0.8s ease;
+}
+.tile-photo:hover img {
+  transform: scale(1.06);
+  filter: grayscale(0.6) contrast(1.1) brightness(0.6);
+}
+.tile-photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.1) 0%, rgba(10, 10, 10, 0.75) 100%);
+}
+.tile-photo-violet::before {
+  background: linear-gradient(160deg, rgba(107, 76, 255, 0.75) 0%, rgba(10, 10, 10, 0.85) 100%);
+  mix-blend-mode: multiply;
+}
+.tile-photo > :not(img) {
+  position: relative;
+  z-index: 2;
+}
 .tile-grain::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 3;
   pointer-events: none;
   opacity: 0.35;
   mix-blend-mode: multiply;

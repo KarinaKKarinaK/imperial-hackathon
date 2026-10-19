@@ -95,7 +95,7 @@ Full screen. Whole team, one shot, rooftop.
 | Hannes | We built it, then broke it until it told the truth. |
 | Maalon | It answers to the rider first. |
 | Alysa | And it pays. |
-| All | MetricsFile. Proof for the people who keep this city moving. |
+| All | Metrics. Proof for the people who keep this city moving. |
 
 Final card, 3 seconds: team name, para 385 quote, STEMB map.
 

@@ -9,7 +9,7 @@ const STEPS = [
     label: "Impact",
     time: "t + 0.0 s",
     title: "The helmet hits the road.",
-    body: "A coin-sized sensor on the helmet and the phone in the rider's pocket both see it: a resultant acceleration above 6 g.",
+    body: "The helmet sensor and the phone both see it: acceleration above 6 g.",
     stat: "14.2 g",
     statLabel: "peak, drop test rig",
     tone: "paper",
@@ -19,7 +19,7 @@ const STEPS = [
     label: "Detect",
     time: "t + 0.8 s",
     title: "Impact. Fall. Stillness.",
-    body: "Orientation swings 82 degrees and motion stops. Three signals in sequence. A hard set-down or a dropped bag never shows all three.",
+    body: "Orientation swings, motion stops. Three signals in sequence. A dropped bag never shows all three.",
     stat: "0.97",
     statLabel: "detector confidence",
     tone: "violet",
@@ -29,7 +29,7 @@ const STEPS = [
     label: "30 s",
     time: "t + 30 s",
     title: "Thirty seconds to say I'm fine.",
-    body: "The phone counts down. One tap cancels everything and nothing leaves the device. Silence means the rider needs help.",
+    body: "One tap cancels everything and nothing leaves the phone. Silence means help is needed.",
     stat: "1 tap",
     statLabel: "cancels the event",
     tone: "ink",
@@ -39,7 +39,7 @@ const STEPS = [
     label: "Triage",
     time: "t + 31 s",
     title: "Where, and how hard.",
-    body: "The dispatcher sees location, mechanism and a probable trauma profile. Probable, never a diagnosis. Thresholds cited to the biomechanics literature.",
+    body: "Dispatch sees location, mechanism and a probable trauma profile. Probable, never a diagnosis.",
     stat: "Probable blunt trauma",
     statLabel: "high-speed deceleration",
     tone: "paper",
@@ -49,7 +49,7 @@ const STEPS = [
     label: "Record",
     time: "t + 31 s",
     title: "Which app. Which order. Which second.",
-    body: "The event record names the platform the rider was working for at the moment of impact. When two platforms share liability, apportionment becomes a lookup.",
+    body: "The record names the app the rider was working for at impact. Shared liability becomes a lookup.",
     stat: "Platform A, ORD-4471",
     statLabel: "14:32:07 HKT",
     tone: "peach",
@@ -59,17 +59,18 @@ const STEPS = [
     label: "Payout",
     time: "t + 1 day",
     title: "No form. No adjuster. Paid.",
-    body: "A verified event is the parametric trigger. A fixed amount reaches the rider inside a day. A hospital admission unlocks the second tier.",
+    body: "A verified event is the trigger. A fixed amount reaches the rider inside a day.",
     stat: "HK$8,000",
     statLabel: "fixed first-tier payout, target",
-    tone: "violet",
+    tone: "dusk",
   },
 ] as const;
 
 const toneClass: Record<string, string> = {
   paper: "tile-paper",
-  violet: "tile-violet tile-grain",
-  ink: "tile-ink",
+  violet: "tile-dusk tile-grain",
+  dusk: "tile-dusk tile-grain",
+  ink: "tile-night",
   peach: "tile-peach tile-grain",
 };
 
@@ -86,7 +87,7 @@ export function Pipeline() {
   const step = STEPS[i];
 
   return (
-    <section id="system" className="px-4 pt-20 sm:px-6">
+    <section id="system" className="px-4 pt-28 sm:px-6 md:pt-36">
       <div className="mx-auto max-w-[1400px]">
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <h2 className="display text-4xl sm:text-5xl lg:text-6xl">
@@ -94,19 +95,16 @@ export function Pipeline() {
             <br />
             in one record.
           </h2>
-          <p className="max-w-md text-[15px] opacity-70">
-            Hover or tap a stage. Everything upstream of the record stays with the rider. Everything downstream is what a platform, an
-            insurer and a court need.
-          </p>
+          <p className="max-w-sm text-[15px] opacity-70">Tap a stage. Everything before the record stays with the rider.</p>
         </div>
 
         <div
-          className="grid gap-3 md:grid-cols-[1fr_1.6fr]"
+          className="grid gap-4 md:grid-cols-[1fr_1.6fr]"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
           {/* Steps rail */}
-          <ol className="tile tile-ink flex flex-col p-3">
+          <ol className="tile tile-night flex flex-col p-3">
             {STEPS.map((s, idx) => {
               const active = idx === i;
               return (

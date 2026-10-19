@@ -14,9 +14,9 @@ export default function Home() {
       <Problem />
       <Pipeline />
       <LiveStrip />
-      <Brief />
       <Applications />
       <Market />
+      <Brief />
       <Governance />
       <Limits />
       <CTA />

@@ -129,7 +129,7 @@ export default function RiderPage() {
     <main className="mx-auto min-h-dvh max-w-md px-4 pb-10 pt-4">
       <div className="flex items-center justify-between">
         <Link href="/" className="text-sm opacity-70">
-          MetricsFile
+          Metrics
         </Link>
         <span className="mono text-xs opacity-50">{riderId}</span>
       </div>
@@ -165,7 +165,7 @@ export default function RiderPage() {
         <>
           <section className="mt-4">
             {permission !== "granted" ? (
-              <div className="tile tile-violet tile-grain p-6">
+              <div className="tile tile-dusk tile-grain p-6">
                 <p className="eyebrow !opacity-80">Step 1</p>
                 <h1 className="display mt-2 text-3xl">Turn this phone into the sensor.</h1>
                 <p className="mt-3 text-[15px] opacity-90">Allow motion access. iPhone asks once. Then start a shift and drop the phone onto a cushion from about half a metre.</p>

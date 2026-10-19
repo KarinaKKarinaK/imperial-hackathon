@@ -21,7 +21,7 @@ export default function DispatchPage() {
   return (
     <main className="mx-auto min-h-dvh max-w-5xl px-4 pb-10 pt-4">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm opacity-70">MetricsFile</Link>
+        <Link href="/" className="text-sm opacity-70">Metrics</Link>
         <span className="eyebrow">Dispatcher console</span>
       </div>
       <div className="mt-4"><PipelineStatus events={events} rider={snap?.rider ?? null} /></div>

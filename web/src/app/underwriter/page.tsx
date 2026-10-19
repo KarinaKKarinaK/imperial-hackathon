@@ -21,11 +21,11 @@ export default function UnderwriterPage() {
   return (
     <main className="mx-auto min-h-dvh max-w-5xl px-4 pb-10 pt-4">
       <div className="flex items-center justify-between">
-        <Link href="/" className="text-sm opacity-70">MetricsFile</Link>
+        <Link href="/" className="text-sm opacity-70">Metrics</Link>
         <span className="eyebrow">Underwriter console</span>
       </div>
       <div className="mt-4"><PipelineStatus events={events} rider={snap?.rider ?? null} /></div>
-      <section className="tile tile-violet tile-grain mt-4 min-h-[70vh] p-6">
+      <section className="tile tile-dusk tile-grain mt-4 min-h-[70vh] p-6">
         <UnderwriterPanel rider={snap?.rider ?? null} events={events} premium={snap?.premiumWindowHkd ?? 0} />
       </section>
       <p className="mt-4 text-xs opacity-50">Premium and payout figures are illustrative until the financial model supplies sourced ones.</p>

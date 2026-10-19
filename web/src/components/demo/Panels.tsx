@@ -59,7 +59,7 @@ export function PhonePanel({
           <div className="absolute left-1/2 top-2 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
           <div className="flex h-full flex-col p-5 pt-10">
             <div className="flex items-center justify-between text-xs opacity-60">
-              <span>MetricsFile</span>
+              <span>Metrics</span>
               <span className="mono">{timeHK(now)}</span>
             </div>
             <AnimatePresence mode="wait">
@@ -144,9 +144,9 @@ export function DispatcherPanel({ events }: { events: EventRecord[] }) {
   const pending = events.find((e) => e.status === "detected" && e.cancelDeadline > now);
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between">
-        <p className="eyebrow">Dispatcher</p>
-        <span className="mono text-xs opacity-50">{timeHK(now)} HKT</span>
+      <div className="flex items-center justify-between gap-3">
+        <p className="eyebrow whitespace-nowrap">Dispatcher</p>
+        <span className="mono whitespace-nowrap text-xs opacity-50">{timeHK(now)}</span>
       </div>
       {pending && (
         <p className="mt-3 text-xs opacity-60">
@@ -195,24 +195,24 @@ export function UnderwriterPanel({
   const paidTotal = events.filter((e) => e.status === "paid").reduce((s, e) => s + e.insurance.payoutHkd, 0);
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between">
-        <p className="eyebrow">Underwriter</p>
-        <span className="mono text-xs opacity-50">{timeHK(now)} HKT</span>
+      <div className="flex items-center justify-between gap-3">
+        <p className="eyebrow whitespace-nowrap">Underwriter</p>
+        <span className="mono whitespace-nowrap text-xs opacity-50">{timeHK(now)}</span>
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        <div className="rounded-2xl bg-black/20 p-3">
-          <p className="text-[11px] opacity-60">Premium, 20 min window</p>
+      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="rounded-2xl bg-black/25 p-3">
+          <p className="text-[11px] opacity-70">Premium per window</p>
           <p className="num mt-1 text-2xl">HK${premium.toFixed(2)}</p>
         </div>
-        <div className="rounded-2xl bg-black/20 p-3">
-          <p className="text-[11px] opacity-60">Exposure</p>
-          <p className="mt-1 text-sm font-medium">
+        <div className="rounded-2xl bg-black/25 p-3">
+          <p className="text-[11px] opacity-70">Paid out</p>
+          <p className="num mt-1 text-2xl">HK${paidTotal.toLocaleString()}</p>
+        </div>
+        <div className="col-span-2 rounded-2xl bg-black/25 p-3 sm:col-span-1">
+          <p className="text-[11px] opacity-70">Exposure</p>
+          <p className="mt-1 text-sm font-medium capitalize">
             {rider?.rain ? "Rain" : "Dry"}, {rider?.heat ?? "green"}, fatigue {Math.round((rider?.fatigue ?? 0) * 100)}%
           </p>
-        </div>
-        <div className="rounded-2xl bg-black/20 p-3">
-          <p className="text-[11px] opacity-60">Paid out</p>
-          <p className="num mt-1 text-2xl">HK${paidTotal.toLocaleString()}</p>
         </div>
       </div>
       <div className="scroll-thin mt-4 flex-1 overflow-auto">
