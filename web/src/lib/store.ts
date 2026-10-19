@@ -8,7 +8,7 @@ import {
   triageProfile,
 } from "./detector";
 import { ROUTE, pointAt } from "./route";
-import { loadStore, saveStore } from "./persist";
+import { flushStore, loadStore, persistenceEnabled, saveStore } from "./persist";
 import demoWindows from "./ml/demo_windows.json";
 
 type DemoWindow = { samples: [number, number, number, number][]; label: number };
@@ -31,28 +31,36 @@ type SimState = {
   okTapped: boolean;
 };
 
-const g = globalThis as unknown as { __mf_store?: Store; __mf_hydrated?: Promise<void> };
+const g = globalThis as unknown as { __mf_store?: Store };
 const store: Store =
   g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null });
 
 type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null };
 
-// Load from Redis once per instance, if configured. Call at the top of every
-// API handler.
-export function hydrate(): Promise<void> {
-  if (!g.__mf_hydrated) {
-    g.__mf_hydrated = loadStore<Serialized>().then((s) => {
-      if (!s) return;
-      store.riders = new Map(s.riders);
-      store.events = s.events;
-      store.sim = s.sim;
-    });
-  }
-  return g.__mf_hydrated;
+// With Redis configured, every API request starts by loading the store, so
+// all instances see the same state. Without Redis this is a no-op and the
+// in-memory store on the instance is used. Call at the top of every handler.
+export async function hydrate(): Promise<void> {
+  if (!persistenceEnabled) return;
+  const s = await loadStore<Serialized>();
+  if (!s) return;
+  store.riders = new Map(s.riders);
+  store.events = s.events;
+  store.sim = s.sim;
 }
 
+let dirty = false;
 function persist() {
-  saveStore({ riders: [...store.riders.entries()], events: store.events, sim: store.sim } satisfies Serialized);
+  dirty = true;
+}
+
+// Write once per request, after all mutations, and wait for it. Handlers call
+// this right before they respond.
+export async function flush(): Promise<void> {
+  if (!dirty) return;
+  dirty = false;
+  await saveStore({ riders: [...store.riders.entries()], events: store.events, sim: store.sim } satisfies Serialized);
+  await flushStore();
 }
 
 export const DEMO_RIDER = "rider-demo";

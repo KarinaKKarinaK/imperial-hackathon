@@ -103,7 +103,9 @@ export default function DemoPage() {
           {rider?.lastDetection && (
             <div className="mt-3 flex items-center justify-between rounded-2xl border border-white/15 px-3 py-2">
               <div>
-                <p className="text-[11px] opacity-60">Model {rider.lastDetection.scenario ? `on ${rider.lastDetection.scenario.replace("_", " ")}` : ""}</p>
+                <p className="text-[11px] opacity-60">
+                  Model {rider.lastDetection.scenario ? `on synthetic ${rider.lastDetection.scenario.replace("_", " ")}` : "on live phone data"}
+                </p>
                 <p className="num text-2xl">
                   p = {rider.lastDetection.p.toFixed(2)}
                   <span className={`ml-2 text-sm ${rider.lastDetection.isCrash ? "text-peach" : "opacity-60"}`}>{rider.lastDetection.isCrash ? "crash" : "not a crash"}</span>
@@ -129,7 +131,8 @@ export default function DemoPage() {
       </div>
 
       <p className="mx-auto mt-4 max-w-[1600px] px-2 text-xs opacity-50">
-        Detector, record, cancel window, triage and payout all run on the server. Money figures are illustrative.
+        Detector, record, cancel window, triage and payout all run on the server. The scripted rider and the Feed the detector windows are
+        synthetic. Drop a real phone on /rider for measured data. Money figures are illustrative.
       </p>
     </main>
   );

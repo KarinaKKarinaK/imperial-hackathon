@@ -1,0 +1,127 @@
+1
+00:00:20,000 --> 00:00:24,000
+Every order in this city starts with a human body on two wheels.
+
+2
+00:00:24,000 --> 00:00:28,000
+Every plane has a black box. Every car. The worker has nothing.
+
+3
+00:00:28,000 --> 00:00:32,000
+No employer. No insurance. No proof. Just an algorithm with a countdown.
+
+4
+00:00:32,000 --> 00:00:35,000
+Hong Kong just said: platforms will pay.
+
+5
+00:00:35,000 --> 00:00:38,000
+You cannot pay for a crash nobody can prove.
+
+6
+00:00:38,000 --> 00:00:43,000
+One in three riders runs two apps at once. Two companies. One body. Who pays?
+
+7
+00:00:43,000 --> 00:00:47,000
+A law without evidence is a promise without a price.
+
+8
+00:00:47,000 --> 00:00:50,000
+So we built the black box for the human body.
+
+9
+00:00:50,000 --> 00:00:55,000
+A 3D-printed clip and a forty-dollar board. On the helmet they already wear. Talks to the phone they already carry.
+
+10
+00:00:55,000 --> 00:00:59,000
+Impact. Fall. Stillness. Three signals. Nothing else looks like that.
+
+11
+00:00:59,000 --> 00:01:04,000
+Thirty seconds to say "I'm fine". Silence, and triage knows where and how hard.
+
+12
+00:01:04,000 --> 00:01:08,000
+No new hardware needed to start. The phone in your pocket is already the sensor.
+
+13
+00:01:08,000 --> 00:01:12,000
+Same second, the insurance fires. No form. No adjuster. Paid in a day.
+
+14
+00:01:12,000 --> 00:01:15,000
+It knows which app the rider was on at the moment of impact.
+
+15
+00:01:15,000 --> 00:01:18,000
+"Which company pays" becomes a lookup. Not a lawsuit.
+
+16
+00:01:18,000 --> 00:01:21,000
+Heat and fatigue warnings go to the rider. Never the boss.
+
+17
+00:01:21,000 --> 00:01:25,000
+The rider owns the data. Everyone else sees events. Never a route. Never a score.
+
+18
+00:01:25,000 --> 00:01:28,000
+We are not an insurer. We are the evidence.
+
+19
+00:01:28,000 --> 00:01:33,000
+Hong Kong writes the law. We write the standard. Next door, 84 million workers are waiting for one.
+
+20
+00:01:33,000 --> 00:01:36,000
+Same rider. Same crash. Two different worlds.
+
+21
+00:01:36,000 --> 00:01:40,000
+Same rider. Same rain. Same order.
+
+22
+00:01:51,000 --> 00:01:57,000
+Impact. Fall. Stillness. The model sees it in under a second. The old rule would have missed it.
+
+23
+00:02:06,000 --> 00:02:10,000
+No answer. Triage already knows where, and how hard.
+
+24
+00:02:21,000 --> 00:02:24,000
+One event. One payout. No argument.
+
+25
+00:02:36,000 --> 00:02:40,000
+Which app. Which order. Which second. Done.
+
+26
+00:02:51,000 --> 00:02:54,000
+That is what one typhoon cost one rider.
+
+27
+00:03:01,000 --> 00:03:06,000
+Insurers get a loss history. Platforms get a fair premium. Riders get paid.
+
+28
+00:03:16,000 --> 00:03:18,000
+Four disciplines. One problem.
+
+29
+00:03:18,000 --> 00:03:21,000
+We built it, then broke it until it told the truth.
+
+30
+00:03:21,000 --> 00:03:23,000
+It answers to the rider first.
+
+31
+00:03:23,000 --> 00:03:25,000
+And it pays.
+
+32
+00:03:25,000 --> 00:03:29,000
+Metrics. Proof for the people who keep this city moving.

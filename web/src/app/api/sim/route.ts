@@ -1,37 +1,45 @@
 import { NextResponse } from "next/server";
-import { DEMO_RIDER, replay, setContext, simCrash, simOk, simReset, simStart, hydrate } from "@/lib/store";
-
+import { DEMO_RIDER, flush, hydrate, replay, setContext, simCrash, simOk, simReset, simStart, snapshot } from "@/lib/store";
 
 export async function POST(req: Request) {
   await hydrate();
   const { action, value } = (await req.json().catch(() => ({}))) as { action?: string; value?: unknown };
+  let body: unknown;
   switch (action) {
     case "start":
-      return NextResponse.json(simStart());
+      body = simStart();
+      break;
     case "crash":
-      return NextResponse.json(simCrash());
+      body = simCrash();
+      break;
     case "ok":
-      return NextResponse.json(simOk());
+      body = simOk();
+      break;
     case "reset":
-      return NextResponse.json(simReset());
+      body = simReset();
+      break;
     case "replay": {
       if (typeof value !== "string") return NextResponse.json({ error: "scenario required" }, { status: 400 });
       const out = replay(value);
       if (!out) return NextResponse.json({ error: "unknown scenario" }, { status: 400 });
+      body = snapshot(DEMO_RIDER);
       break;
     }
     case "rain":
       setContext(DEMO_RIDER, { rain: Boolean(value) });
+      body = snapshot(DEMO_RIDER);
       break;
     case "heat":
       if (value === "green" || value === "amber" || value === "red") setContext(DEMO_RIDER, { heat: value });
+      body = snapshot(DEMO_RIDER);
       break;
     case "platform":
       if (value === "Platform A" || value === "Platform B") setContext(DEMO_RIDER, { platform: value });
+      body = snapshot(DEMO_RIDER);
       break;
     default:
       return NextResponse.json({ error: "unknown action" }, { status: 400 });
   }
-  const { snapshot } = await import("@/lib/store");
-  return NextResponse.json(snapshot(DEMO_RIDER));
+  await flush();
+  return NextResponse.json(body);
 }

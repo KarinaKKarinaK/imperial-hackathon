@@ -3,12 +3,14 @@ import { Reveal } from "../Reveal";
 import { BarChart, DotPlot, Heatmap } from "./Charts";
 
 type CI = { value: number; lo: number; hi: number };
+type Sweep = { threshold: number; precision: number; recall: number; tp: number; fp: number; fn: number; tn: number };
 type R = {
   n_trials: number;
   n_falls: number;
   n_subjects: number;
   exported: string;
   models: Record<string, { umafall: Record<string, CI>; synthetic_by_scenario: Record<string, number> }>;
+  threshold_sweep_gbm?: Sweep[];
 };
 
 const r = results as R;
@@ -109,6 +111,41 @@ export function Model() {
             </div>
             <p className="mt-3 text-xs opacity-60">Violet should be full in the crash column. Orange anywhere else is a false alarm.</p>
           </Reveal>
+
+          {r.threshold_sweep_gbm && (
+            <Reveal delay={0.18} className="tile tile-paper p-6 md:col-span-12 sm:p-8">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <p className="eyebrow">Threshold sweep, deployed model, out-of-fold counts</p>
+                <p className="text-xs opacity-50">pick the trade-off in the open, not behind a default</p>
+              </div>
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[560px] text-left text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider opacity-60">
+                    <tr>
+                      <th className="pb-2 font-medium">Threshold</th>
+                      <th className="pb-2 font-medium">Recall</th>
+                      <th className="pb-2 font-medium">Precision</th>
+                      <th className="pb-2 font-medium">Caught</th>
+                      <th className="pb-2 font-medium">Missed</th>
+                      <th className="pb-2 font-medium">False alarms</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {r.threshold_sweep_gbm.map((t) => (
+                      <tr key={t.threshold} className={`border-t border-ink/10 ${t.threshold === 0.5 ? "font-medium" : ""}`}>
+                        <td className="mono py-2">{t.threshold.toFixed(1)}{t.threshold === 0.5 ? " (deployed)" : ""}</td>
+                        <td className="mono py-2">{(t.recall * 100).toFixed(1)}%</td>
+                        <td className="mono py-2">{(t.precision * 100).toFixed(1)}%</td>
+                        <td className="mono py-2">{t.tp} of {t.tp + t.fn}</td>
+                        <td className="mono py-2">{t.fn}</td>
+                        <td className="mono py-2">{t.fp} of {t.fp + t.tn}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Reveal>
+          )}
 
           <Reveal delay={0.2} className="tile tile-haze tile-grain p-6 md:col-span-12 sm:p-8">
             <div className="grid gap-6 md:grid-cols-4">

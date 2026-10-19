@@ -12,7 +12,9 @@ Rules. Every number on screen has a source line in the corner. Anything marked [
 
 ## Part 1. Cold open (0:00 to 0:20)
 
-Black. Sound: rain, an order notification, a skid, silence. White type, one line at a time, 2 seconds each. Type gets bigger each cut. No voice.
+Black. Sound: rain, an order notification, a skid, silence. White type, one line at a time, 2 seconds each. Type gets bigger each cut. No voice from us.
+
+If the rider interviews land (see RIDER_INTERVIEWS.md), open instead on four seconds of a rider's voice over black, verbatim, subtitled: their answer to "what happened after". Then the type. A real voice beats our best line.
 
 | Time | On screen | Source corner |
 |---|---|---|
@@ -49,7 +51,7 @@ One shot per line. Speaker into the lens. Lower third on first appearance only. 
 | # | Speaker | Line | Location |
 |---|---|---|---|
 | 8 | Karina | So we built the black box for the human body. | Lab, helmet sensor held to the lens |
-| 9 | Hannes | Coin-sized. On the helmet they already wear. Talks to the phone they already carry. | 3D printer, the clip coming off the bed |
+| 9 | Hannes | A 3D-printed clip and a forty-dollar board. On the helmet they already wear. Talks to the phone they already carry. | 3D printer, the clip coming off the bed, ESP32 board in the other hand |
 | 10 | Hannes | Impact. Fall. Stillness. Three signals. Nothing else looks like that. | Helmet dropped on the bench, slow motion |
 | 11 | Maalon | Thirty seconds to say "I'm fine". Silence, and triage knows where and how hard. | Dispatcher console at metricsfile.vercel.app/dispatch on a laptop |
 | 11b | Simone | No new hardware needed to start. The phone in your pocket is already the sensor. | Holding a phone on metricsfile.vercel.app/rider, "On shift" lit. Drops it onto a cushion, cut on impact |
@@ -60,6 +62,7 @@ One shot per line. Speaker into the lens. Lower third on first appearance only. 
 | 16 | Hannes | The rider owns the data. Everyone else sees events. Never a route. Never a score. | Consent screen held to camera |
 | 17 | Karina | We are not an insurer. We are the evidence. | Corridor walk, steady |
 | 18 | Alysa | Hong Kong writes the law. We write the standard. Next door, 84 million workers are waiting for one. | Rooftop, skyline behind |
+| 18b | Alysa | [Outside voice, if secured] One line from an insurer, clinician or the union, read as a quote card with their name and role, or their own voice if recorded. | Quote card on dusk gradient |
 | 19 | Karina | Same rider. Same crash. Two different worlds. | Turns to lens, cut to black |
 
 20 lines, about 245 words, 75 seconds. If it runs long, cut 5 and 15 first.
@@ -102,6 +105,8 @@ All from the live site, so the video and the judges' own browser match. Record a
 | D8 | Phone, /rider | Consent screen, tap continue, Allow motion, On shift. Place on a table. Second phone films over the shoulder. | Relay line 11b |
 | D9 | Phone, /rider | Drop the phone onto a cushion from about 40 cm. Capture the countdown appearing. Laptop beside it shows /dispatch receiving the alert. | Relay line 11b, Part 3, 2:00 |
 | D10 | Landing page hero | Hover the signal tile so it drops, three signals light up. | Cold open background, optional |
+| D11 | Street, a real rider | With consent, a rider opens /rider on their own phone, taps through consent, goes on shift. Hands and screen only unless they agreed to more. | Relay 11b replaces Simone's take if this exists |
+| D12 | Street | Rider interview answers, audio clean, subtitled. | Cold open and Part 3 left column |
 
 The site uses placeholder money figures and a synthetic crash window. Say "synthetic" in the caption on D3 if the drop test numbers are not in by the shoot.
 
@@ -117,7 +122,9 @@ Full screen. Whole team, one shot, rooftop.
 | Alysa | And it pays. |
 | All | Metrics. Proof for the people who keep this city moving. |
 
-Final card, 3 seconds: team name, para 385 quote, STEMB map.
+Final card, 4 seconds: team name, para 385 quote, the live URL metricsfile.vercel.app large, STEMB map thumbnail.
+
+Captions: burn in English subtitles for every spoken line (CAPTIONS.srt is the starting point, re-time after the edit). Judges watch on laptops, often muted first.
 
 ## Timing
 - Part 1: 20 seconds, no speech.
@@ -146,3 +153,7 @@ Final card, 3 seconds: team name, para 385 quote, STEMB map.
 - [ ] One caption that a flat drop is not a collision
 - [ ] Under 5:00
 - [ ] No em dashes or emojis on screen
+- [ ] Subtitles on every spoken line
+- [ ] Live URL on the final card
+- [ ] Every member speaks at least twice
+- [ ] Synthetic data labelled as synthetic wherever it is on screen

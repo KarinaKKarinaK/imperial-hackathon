@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { setShift, hydrate } from "@/lib/store";
-
+import { flush, hydrate, setShift } from "@/lib/store";
 
 export async function POST(req: Request) {
   await hydrate();
@@ -9,5 +8,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "riderId required" }, { status: 400 });
   }
   const platform = b.platform === "Platform A" || b.platform === "Platform B" ? b.platform : undefined;
-  return NextResponse.json(setShift(b.riderId, Boolean(b.onShift), platform));
+  const body = setShift(b.riderId, Boolean(b.onShift), platform);
+  await flush();
+  return NextResponse.json(body);
 }

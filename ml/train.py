@@ -134,6 +134,7 @@ def main():
     ap.add_argument("--out", default="out")
     ap.add_argument("--sensor", default="phone")
     ap.add_argument("--folds", type=int, default=5)
+    ap.add_argument("--extra", default="../validation", help="folder of drop test CSVs named SET_condition_rep.csv")
     args = ap.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -194,6 +195,44 @@ def main():
         for name in sorted(set(s_names)):
             idx = np.array([i for i, s in enumerate(s_names) if s == name])
             results["models"][m]["synthetic_by_scenario"][name] = float(np.mean(ps[idx] >= THRESHOLD))
+
+    # helmet drop tests, if the rig has produced any. Evaluated only, never
+    # trained on, so the helmet column is a true held-out measurement.
+    helmet = load_drop_tests(Path(args.extra))
+    if helmet:
+        Xh = np.array([features(w) for w, _, _ in helmet])
+        yh = np.array([lab for _, lab, _ in helmet])
+        sets = np.array([st for _, _, st in helmet])
+        sc_h = StandardScaler().fit(X)
+        gbm_h = HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0).fit(X, y)
+        ph = gbm_h.predict_proba(Xh)[:, 1]
+        rule_h = np.array([rule_detector(f)[1] for f in Xh])
+        results["helmet_drop_tests"] = {
+            "n": int(len(yh)), "n_crash": int(yh.sum()),
+            "gbm": bootstrap(yh, ph) if len(np.unique(yh)) > 1 else metrics(yh, ph),
+            "rule": bootstrap(yh, rule_h) if len(np.unique(yh)) > 1 else metrics(yh, rule_h),
+            "by_set": {st: {"n": int((sets == st).sum()), "flagged": float(np.mean(ph[sets == st] >= THRESHOLD)), "label": int(yh[sets == st][0])} for st in sorted(set(sets))},
+        }
+        del sc_h
+        print(f"helmet drop tests: {len(yh)} runs, {yh.sum()} impacts")
+
+    # out-of-fold predictions, so anyone can recompute every number above
+    import csv
+    with (out / "oof.csv").open("w", newline="") as fh:
+        wtr = csv.writer(fh)
+        wtr.writerow(["subject", "activity", "label"] + [f"p_{m}" for m in oof])
+        for i in range(len(y)):
+            wtr.writerow([int(groups[i]), acts[i], int(y[i])] + [f"{oof[m][i]:.4f}" for m in oof])
+
+    # threshold sweep for the deployed model: how precision and recall trade
+    sweep = []
+    for thr in [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
+        m = metrics(y, oof["gbm"], thr)
+        pred = oof["gbm"] >= thr
+        tp = int(((pred == 1) & (y == 1)).sum()); fp = int(((pred == 1) & (y == 0)).sum())
+        fn = int(((pred == 0) & (y == 1)).sum()); tn = int(((pred == 0) & (y == 0)).sum())
+        sweep.append({"threshold": thr, "precision": m["precision"], "recall": m["recall"], "tp": tp, "fp": fp, "fn": fn, "tn": tn})
+    results["threshold_sweep_gbm"] = sweep
 
     # failure table: which UMAFall activities fool each model
     fails = {}
@@ -260,6 +299,28 @@ def main():
     print(render_md(results))
 
 
+def load_drop_tests(folder: Path) -> list[tuple[np.ndarray, int, str]]:
+    """CSV per run, columns t_ms,ax,ay,az[,gx,gy,gz] with acceleration in g.
+    Set letters A to D are impacts (label 1), E to J are controls (label 0),
+    per validation/DROP_TEST_PROTOCOL.md."""
+    out = []
+    if not folder.exists():
+        return out
+    for p in sorted(folder.glob("*.csv")):
+        st = p.name.split("_")[0].upper()
+        if st not in "ABCDEFGHIJ" or len(st) != 1:
+            continue
+        try:
+            arr = np.genfromtxt(p, delimiter=",", names=True)
+        except Exception:
+            continue
+        if arr.size < 20:
+            continue
+        w = np.column_stack([arr["t_ms"] / 1000.0, arr["ax"], arr["ay"], arr["az"]]).astype(float)
+        out.append((window_around_peak(w), 1 if st in "ABCD" else 0, st))
+    return out
+
+
 def render_md(r: dict) -> str:
     L = [f"# Crash detector results\n", f"UMAFall, {r['sensor']} sensor, {r['n_trials']} trials ({r['n_falls']} falls), {r['n_subjects']} subjects, 5-fold leave-subjects-out. Threshold {r['threshold']}. 95% bootstrap CIs.\n",
          "| Model | Precision | Recall | F1 | AUROC | Brier |", "|---|---|---|---|---|---|"]
@@ -274,6 +335,18 @@ def render_md(r: dict) -> str:
         L.append(f"| {m} | {s['precision']:.3f} | {s['recall']:.3f} | {s['auroc']:.3f} | " + " | ".join(f"{b[k]:.2f}" for k in ["riding", "braking", "pothole", "set_down", "bag_drop", "crash"]) + " |")
     L.append("\nScenario columns show the fraction of windows flagged as a crash. Only the crash column should be high.\n")
     L.append(f"\nExported model: {r['exported']}.\n")
+    if "threshold_sweep_gbm" in r:
+        L += ["\n## Threshold sweep, gradient boosting (out-of-fold)\n", "| Threshold | Precision | Recall | TP | FP | FN | TN |", "|---|---|---|---|---|---|---|"]
+        for t in r["threshold_sweep_gbm"]:
+            L.append(f"| {t['threshold']:.1f} | {t['precision']:.3f} | {t['recall']:.3f} | {t['tp']} | {t['fp']} | {t['fn']} | {t['tn']} |")
+    if "helmet_drop_tests" in r:
+        h = r["helmet_drop_tests"]
+        L += [f"\n## Helmet drop tests (held out, {h['n']} runs, {h['n_crash']} impacts)\n", "| Set | Runs | Label | Flagged as crash |", "|---|---|---|---|"]
+        for st, v in h["by_set"].items():
+            L.append(f"| {st} | {v['n']} | {'impact' if v['label'] else 'control'} | {v['flagged']:.0%} |")
+        g = h["gbm"]
+        if isinstance(g.get("recall"), dict):
+            L.append(f"\nGradient boosting on the helmet: recall {g['recall']['value']:.3f} [{g['recall']['lo']:.3f}, {g['recall']['hi']:.3f}], precision {g['precision']['value']:.3f} [{g['precision']['lo']:.3f}, {g['precision']['hi']:.3f}].\n")
     L.append("\n## Failure table, UMAFall (out-of-fold)\n")
     for m, f in r["failures"].items():
         worst_fp = sorted(f["false_positive_rate_by_adl"].items(), key=lambda kv: -kv[1])[:3]

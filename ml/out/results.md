@@ -26,6 +26,18 @@ Scenario columns show the fraction of windows flagged as a crash. Only the crash
 Exported model: gbm.
 
 
+## Threshold sweep, gradient boosting (out-of-fold)
+
+| Threshold | Precision | Recall | TP | FP | FN | TN |
+|---|---|---|---|---|---|---|
+| 0.2 | 0.919 | 0.981 | 204 | 18 | 4 | 399 |
+| 0.3 | 0.922 | 0.971 | 202 | 17 | 6 | 400 |
+| 0.4 | 0.926 | 0.957 | 199 | 16 | 9 | 401 |
+| 0.5 | 0.930 | 0.952 | 198 | 15 | 10 | 402 |
+| 0.6 | 0.933 | 0.933 | 194 | 14 | 14 | 403 |
+| 0.7 | 0.941 | 0.923 | 192 | 12 | 16 | 405 |
+| 0.8 | 0.946 | 0.923 | 192 | 11 | 16 | 406 |
+
 ## Failure table, UMAFall (out-of-fold)
 
 - rule: most false alarms from MakingACall (15%), Aplausing (0%), Bending (0%); most misses on lateralFall (61%), backwardFall (55%), forwardFall (42%)

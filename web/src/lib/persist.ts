@@ -22,16 +22,23 @@ export async function loadStore<T>(): Promise<T | null> {
   }
 }
 
-let pending: Promise<void> | null = null;
+let pending: Promise<void> = Promise.resolve();
 
-export function saveStore(value: unknown): void {
-  if (!persistenceEnabled) return;
-  // Coalesce bursts: one write in flight at a time, latest value wins.
+// Writes are chained and awaited by the API handler before it responds, so a
+// serverless instance never has a write in flight after its response. That is
+// what stops a stale write from one instance landing after a newer one.
+export function saveStore(value: unknown): Promise<void> {
+  if (!persistenceEnabled) return Promise.resolve();
   const body = JSON.stringify(value);
   const run = async () => {
     try {
-      await fetch(`${URL_}/set/${KEY}`, { method: "POST", headers: { Authorization: `Bearer ${TOKEN}` }, body });
+      await fetch(`${URL_}/set/${KEY}`, { method: "POST", headers: { Authorization: `Bearer ${TOKEN}` }, body, cache: "no-store" });
     } catch {}
   };
-  pending = (pending ?? Promise.resolve()).then(run);
+  pending = pending.then(run, run);
+  return pending;
+}
+
+export function flushStore(): Promise<void> {
+  return pending;
 }

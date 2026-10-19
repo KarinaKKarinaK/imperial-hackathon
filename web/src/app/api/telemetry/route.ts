@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ingest, hydrate } from "@/lib/store";
+import { ingest, hydrate, flush } from "@/lib/store";
 import type { Sample } from "@/lib/schema";
 
 
@@ -32,5 +32,6 @@ export async function POST(req: Request) {
     }
   }
   const out = ingest(b.riderId, b.samples, pos);
+  await flush();
   return NextResponse.json(out);
 }
