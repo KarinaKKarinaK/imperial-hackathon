@@ -12,7 +12,7 @@ Team MetricsFile (registered as "Metrics"). University and Early Career Professi
 | 15 Oct 2026, 19:00 HKT | Online briefing webinar with Imperial judges (several of us could not join, link said "event has concluded") |
 | 17 Oct 2026, 17:30 | Team meeting, Starbucks HKUST |
 | 25 Oct 2026, 23:59 HKT | Team submission deadline. Does not move. (The challenge brief says 24 Oct; the email from Imperial says 25 Oct. Work to 24 Oct to be safe.) |
-| TBC | Grand Final, live demo if shortlisted |
+| 14 Nov 2026 | Grand Final, HKSTP Data Technology Hub, Tseung Kwan O. In person, slides due 48 hours before |
 
 Contact: imperialhackathon@imperial.ac.uk (Jake). FAQ and challenge page: https://www.imperial.ac.uk/study/visit/events/global-hackathons/hackathon-hong-kong-macau/university-professional/challenges/
 
@@ -94,17 +94,29 @@ Expected pillar roles:
 - Business: financial model, regulatory pathway, stakeholder strategy, risk register.
 
 ### Deliverables we know about
-- Scientific poster (with the STEMB map).
-- Video pitch (team decided on this on 8 Oct; confirm format and length against the submission form).
+- Written proposal, 150 words (FAQ).
+- Video pitch, 3 to 5 minutes, English (FAQ).
+- Scientific poster with the STEMB map (challenge brief says the map is assessed as part of the poster; confirm whether the poster is uploaded at submission or shown at the Grand Final).
 - Working prototype plus drop test data. Imperial said a live demo at the Grand Final beats a described prototype.
-- Open question: check the submission portal for exact fields, file formats and limits before 24 Oct.
+- Live site: the demo runs at the deployed URL so judges can open it on their own phone.
 
-### Judges and mentors
-- Professor Shahid Khan, Professor of Practice (Hepatology), consultant hepatologist. Healthcare innovation, inclusivity.
-- Dr Jackie Bell, Senior Teaching Fellow in Computing. EDI, outreach, STEM engagement.
-- Lucas Cheung, Digital Strategy Lead at Google Hong Kong. Start-up growth, AR/VR, regional STEM education.
+### Judges (live panel, confirmed 19 Oct 2026, full notes in research/JUDGES.md)
+- Dr Jackie Bell, Principal Teaching Fellow in Computing, Imperial. EDI, widening participation, science communication.
+- Professor Shahid Khan, Professor of Practice (Hepatology) and Director of Admissions, Imperial. Clinical evidence, guidelines, epidemiology.
+- Dr Pamela Tin, Research Director, Chief Executive's Policy Unit, HKSAR Government. Evidence-based policy, public health, mental health.
+- Helen Kwok, Digital Strategy Lead, Google Hong Kong. Go-to-market, cross-border commercial strategy.
 
-Read: a doctor, a computer scientist and a commercial strategist. Health credibility, clean technical method, and a believable business model all get probed.
+Read: a science communicator, a clinician, a government policy researcher, and a commercial strategist. Evidence, feasibility inside HK institutions, human and ethical dimension, and a believable route to market all get probed.
+
+### Submission facts (FAQ, confirmed 19 Oct 2026)
+- Written proposal: 150 words. Video pitch: 3 to 5 minutes, English.
+- Deadline 25 Oct 2026, 23:59 HKT. No late entries.
+- Criteria named: creativity, innovation, feasibility, potential impact, interdisciplinarity, teamwork.
+- Grand Final: Saturday 14 Nov 2026, Data Technology Hub, Tseung Kwan O InnoPark, HKSTP. In person. Slides due 48 hours before. Seven finalist teams.
+- Awards: Gold (HK$15,000, Imperial letter of recommendation), Silver, Bronze, plus specialist awards for translational research, innovation, social impact, STEMB integration, sustainability.
+
+### What the judges said at the 15 Oct briefing
+They want teams that understand the problem as well as the solution, are honest about limits, can all speak, and build something tangible. They are not impressed by technically impressive solutions without a real need, polished pitches without substance, or solutions that ignore the human and ethical side. Start the pitch with the human story, show scale, back every claim with evidence, show the solution in action, end with a vision.
 
 ### Policy documents
 - Hong Kong 2025 Policy Address: https://www.policyaddress.gov.hk/2025/public/pdf/policy/policy-full_en.pdf
