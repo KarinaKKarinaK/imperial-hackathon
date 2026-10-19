@@ -37,4 +37,13 @@ API
 
 ## State
 
-In memory on the server instance by default. Set `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` (Vercel Marketplace, Upstash Redis) and the store persists across cold starts and instances with no code change.
+Upstash Redis through the Vercel Marketplace (`KV_REST_API_URL` and `KV_REST_API_TOKEN`). Every API request loads the store, applies its change and awaits the write before responding, so all instances agree. Without the variables the store is in memory on one instance, which is fine for local work.
+
+## Validate production
+
+```
+vercel env pull .env.production.local --environment production
+python3 scripts/validate_prod.py .env.production.local
+```
+
+Checks persistence under 24 parallel requests, all six scenarios through the live detector, the event lifecycle including cancel, parity of the production model with the Python model on nine windows, the Observatory feed and input validation. Prints PASS or FAIL per check.
