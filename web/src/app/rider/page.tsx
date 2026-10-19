@@ -33,7 +33,29 @@ export default function RiderPage() {
   const [samplesG, setSamplesG] = useState<number[]>([]);
   const [live, setLive] = useState<{ peakG: number; status: string } | null>(null);
   const buf = useRef<Sample[]>([]);
+  const pos = useRef<{ lat: number; lng: number; speedKmh?: number } | undefined>(undefined);
   const { snap, refresh } = useSnapshot(riderId, 1000);
+
+  // GPS while on shift. Position is sent with each window so the record and
+  // the dispatcher pin are real. Off shift the watch is cleared.
+  useEffect(() => {
+    if (!snap?.rider.onShift || !("geolocation" in navigator)) {
+      pos.current = undefined;
+      return;
+    }
+    const id = navigator.geolocation.watchPosition(
+      (g) => {
+        pos.current = {
+          lat: g.coords.latitude,
+          lng: g.coords.longitude,
+          speedKmh: g.coords.speed != null && g.coords.speed >= 0 ? Math.round(g.coords.speed * 3.6) : undefined,
+        };
+      },
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 },
+    );
+    return () => navigator.geolocation.clearWatch(id);
+  }, [snap?.rider.onShift]);
 
   useEffect(() => {
     setRiderId(riderIdFor());
@@ -87,14 +109,13 @@ export default function RiderPage() {
       const win = buf.current.filter((s) => Date.now() - s.t < 6000);
       if (win.length < 10) return;
       const d = detectCrash(win);
-      setLive({ peakG: d.stats.peakG, status: d.isCrash ? "crash pattern" : d.stats.peakG > THRESHOLDS.impactG ? "impact, no fall" : "normal" });
+      setLive({ peakG: d.stats.peakG, status: d.isCrash ? `crash, p=${d.confidence.toFixed(2)}` : d.stats.peakG > THRESHOLDS.impactG ? `impact, p=${d.confidence.toFixed(2)}` : `normal, p=${d.confidence.toFixed(2)}` });
       if (!snap?.rider.onShift) return;
-      let pos: { lat: number; lng: number } | undefined;
       try {
         await fetch("/api/telemetry", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ riderId, samples: win.filter((_, i) => i % 2 === 0), pos }),
+          body: JSON.stringify({ riderId, samples: win.filter((_, i) => i % 2 === 0), pos: pos.current }),
         });
         if (d.isCrash) refresh();
       } catch {}

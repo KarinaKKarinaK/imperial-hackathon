@@ -2,6 +2,15 @@
 
 import type { RiderState } from "@/lib/schema";
 
+const REPLAY: [string, string][] = [
+  ["riding", "Riding"],
+  ["braking", "Hard brake"],
+  ["pothole", "Pothole"],
+  ["set_down", "Set down"],
+  ["bag_drop", "Bag drop"],
+  ["crash", "Crash"],
+];
+
 export function Controls({
   rider,
   act,
@@ -63,6 +72,21 @@ export function Controls({
       <button onClick={() => act("reset")} className={`${btn} border border-white/30 opacity-70 hover:opacity-100`}>
         Reset
       </button>
+      <div className="flex w-full flex-wrap items-center gap-2 border-t border-white/10 pt-2">
+        <span className="mr-1 text-xs opacity-60">Feed the detector:</span>
+        {REPLAY.map(([k, label]) => (
+          <button
+            key={k}
+            onClick={() => act("replay", k)}
+            disabled={!rider?.onShift}
+            className={`rounded-full border px-3 py-1.5 text-xs transition disabled:opacity-40 ${
+              rider?.lastDetection?.scenario === k ? "border-paper bg-paper text-ink" : "border-white/30 hover:bg-white/10"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,327 @@
+{
+ "n_trials": 625,
+ "n_falls": 208,
+ "n_subjects": 19,
+ "sensor": "phone",
+ "threshold": 0.5,
+ "models": {
+  "rule": {
+   "umafall": {
+    "precision": {
+     "value": 0.9339622641509434,
+     "lo": 0.8841797312430011,
+     "hi": 0.9785059422750425
+    },
+    "recall": {
+     "value": 0.47596153846153844,
+     "lo": 0.4112543998058017,
+     "hi": 0.545084557231169
+    },
+    "f1": {
+     "value": 0.6305732484076433,
+     "lo": 0.5675627755414989,
+     "hi": 0.693073862600984
+    },
+    "auroc": {
+     "value": 0.9753735473159934,
+     "lo": 0.9633097436118608,
+     "hi": 0.9868249978651246
+    },
+    "brier": {
+     "value": 0.09535813717131061,
+     "lo": 0.08295647172829133,
+     "hi": 0.10763285574334407
+    }
+   },
+   "synthetic": {
+    "precision": 0.5119047619047619,
+    "recall": 0.86,
+    "f1": 0.6417910447761194,
+    "auroc": 0.9122533333333332,
+    "brier": 0.11570460317867413
+   },
+   "synthetic_by_scenario": {
+    "bag_drop": 0.8,
+    "braking": 0.0,
+    "crash": 0.86,
+    "pothole": 0.0,
+    "riding": 0.0,
+    "set_down": 0.02
+   }
+  },
+  "logreg": {
+   "umafall": {
+    "precision": {
+     "value": 0.8353909465020576,
+     "lo": 0.788375589000633,
+     "hi": 0.8811909245310885
+    },
+    "recall": {
+     "value": 0.9759615384615384,
+     "lo": 0.9549886363636363,
+     "hi": 0.995
+    },
+    "f1": {
+     "value": 0.9002217294900222,
+     "lo": 0.8708908956312529,
+     "hi": 0.9287171242186572
+    },
+    "auroc": {
+     "value": 0.9704736211031175,
+     "lo": 0.9583120707147896,
+     "hi": 0.9822359702830069
+    },
+    "brier": {
+     "value": 0.05633125489918253,
+     "lo": 0.04268190369164276,
+     "hi": 0.06954438388328654
+    }
+   },
+   "synthetic": {
+    "precision": 0.40540540540540543,
+    "recall": 1.0,
+    "f1": 0.5769230769230769,
+    "auroc": 0.9852622222222223,
+    "brier": 0.22063822643026107
+   },
+   "synthetic_by_scenario": {
+    "bag_drop": 1.0,
+    "braking": 0.0,
+    "crash": 1.0,
+    "pothole": 0.05333333333333334,
+    "riding": 0.0,
+    "set_down": 0.41333333333333333
+   }
+  },
+  "gbm": {
+   "umafall": {
+    "precision": {
+     "value": 0.9295774647887324,
+     "lo": 0.893719806763285,
+     "hi": 0.9601990049751243
+    },
+    "recall": {
+     "value": 0.9519230769230769,
+     "lo": 0.9211725113398039,
+     "hi": 0.9802028732284993
+    },
+    "f1": {
+     "value": 0.9406175771971497,
+     "lo": 0.9151589639664998,
+     "hi": 0.9626027523783135
+    },
+    "auroc": {
+     "value": 0.993520568160856,
+     "lo": 0.9892874028347167,
+     "hi": 0.9969896346006262
+    },
+    "brier": {
+     "value": 0.03179729138302518,
+     "lo": 0.02032645491124602,
+     "hi": 0.04432207089791125
+    }
+   },
+   "synthetic": {
+    "precision": 0.5330739299610895,
+    "recall": 0.9133333333333333,
+    "f1": 0.6732186732186732,
+    "auroc": 0.90176,
+    "brier": 0.1307926750242566
+   },
+   "synthetic_by_scenario": {
+    "bag_drop": 0.8,
+    "braking": 0.0,
+    "crash": 0.9133333333333333,
+    "pothole": 0.0,
+    "riding": 0.0,
+    "set_down": 0.0
+   }
+  },
+  "mlp": {
+   "umafall": {
+    "precision": {
+     "value": 0.8844444444444445,
+     "lo": 0.8409090909090909,
+     "hi": 0.9227951219512195
+    },
+    "recall": {
+     "value": 0.9567307692307693,
+     "lo": 0.9261038131727787,
+     "hi": 0.9845380650277558
+    },
+    "f1": {
+     "value": 0.9191685912240185,
+     "lo": 0.8916147681155722,
+     "hi": 0.9453765006824948
+    },
+    "auroc": {
+     "value": 0.9867874930824571,
+     "lo": 0.979255955777961,
+     "hi": 0.9930086958458226
+    },
+    "brier": {
+     "value": 0.04100936187595171,
+     "lo": 0.028451805851059195,
+     "hi": 0.05375798134106046
+    }
+   },
+   "synthetic": {
+    "precision": 0.4249084249084249,
+    "recall": 0.7733333333333333,
+    "f1": 0.5484633569739953,
+    "auroc": 0.8445688888888888,
+    "brier": 0.15695655345916748
+   },
+   "synthetic_by_scenario": {
+    "bag_drop": 0.86,
+    "braking": 0.0,
+    "crash": 0.7733333333333333,
+    "pothole": 0.18666666666666668,
+    "riding": 0.0,
+    "set_down": 0.0
+   }
+  },
+  "cnn": {
+   "umafall": {
+    "precision": {
+     "value": 0.9432989690721649,
+     "lo": 0.9101108733131205,
+     "hi": 0.9747474747474747
+    },
+    "recall": {
+     "value": 0.8798076923076923,
+     "lo": 0.8325352959200509,
+     "hi": 0.9204078616816905
+    },
+    "f1": {
+     "value": 0.9104477611940298,
+     "lo": 0.8797950470280771,
+     "hi": 0.9395348837209302
+    },
+    "auroc": {
+     "value": 0.9875541874192953,
+     "lo": 0.9793248218347361,
+     "hi": 0.9945294041492198
+    },
+    "brier": {
+     "value": 0.04433758014336073,
+     "lo": 0.030720131277403896,
+     "hi": 0.05930426341220798
+    }
+   },
+   "synthetic": {
+    "precision": 0.1965923984272608,
+    "recall": 1.0,
+    "f1": 0.32858707557502737,
+    "auroc": 0.95036,
+    "brier": 0.5278891921043396
+   },
+   "synthetic_by_scenario": {
+    "bag_drop": 1.0,
+    "braking": 0.9866666666666667,
+    "crash": 1.0,
+    "pothole": 1.0,
+    "riding": 0.1,
+    "set_down": 1.0
+   }
+  }
+ },
+ "failures": {
+  "rule": {
+   "false_positive_rate_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.15217391304347827,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "miss_rate_by_fall": {
+    "backwardFall": 0.547945205479452,
+    "forwardFall": 0.4225352112676056,
+    "lateralFall": 0.609375
+   }
+  },
+  "logreg": {
+   "false_positive_rate_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.01694915254237288,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.1,
+    "HandsUp": 0.0,
+    "Hopping": 0.03773584905660377,
+    "Jogging": 0.03571428571428571,
+    "MakingACall": 0.7391304347826086,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "miss_rate_by_fall": {
+    "backwardFall": 0.013698630136986356,
+    "forwardFall": 0.014084507042253502,
+    "lateralFall": 0.046875
+   }
+  },
+  "gbm": {
+   "false_positive_rate_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.32608695652173914,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "miss_rate_by_fall": {
+    "backwardFall": 0.013698630136986356,
+    "forwardFall": 0.05633802816901412,
+    "lateralFall": 0.078125
+   }
+  },
+  "mlp": {
+   "false_positive_rate_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.01694915254237288,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.5217391304347826,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "miss_rate_by_fall": {
+    "backwardFall": 0.0273972602739726,
+    "forwardFall": 0.028169014084507005,
+    "lateralFall": 0.078125
+   }
+  },
+  "cnn": {
+   "false_positive_rate_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.01694915254237288,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.03773584905660377,
+    "Jogging": 0.03571428571428571,
+    "MakingACall": 0.08695652173913043,
+    "OpeningDoor": 0.0,
+    "Walking": 0.047619047619047616
+   },
+   "miss_rate_by_fall": {
+    "backwardFall": 0.136986301369863,
+    "forwardFall": 0.15492957746478875,
+    "lateralFall": 0.0625
+   }
+  }
+ },
+ "exported": "gbm"
+}

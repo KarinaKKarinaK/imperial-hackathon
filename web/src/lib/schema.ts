@@ -30,6 +30,15 @@ export type RiderState = {
   shiftStartedAt: number | null;
   lastSeenAt: number;
   lastWindow: WindowStats | null;
+  lastDetection: LastDetection | null;
+};
+
+export type LastDetection = {
+  p: number; // model probability of a crash
+  isCrash: boolean;
+  ruleFlag: boolean; // what the three-threshold rule would have said
+  scenario: string | null; // set when the window came from a replay
+  at: number;
 };
 
 export type WindowStats = {

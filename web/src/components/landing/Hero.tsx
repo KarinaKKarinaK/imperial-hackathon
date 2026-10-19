@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { motion } from "motion/react";
 import { Arrow } from "../Arrow";
 import { Counter } from "../Counter";
+import { SignalTile } from "./SignalTile";
 
 const Sphere = dynamic(() => import("../Sphere").then((m) => m.Sphere), { ssr: false });
 
@@ -45,7 +45,7 @@ export function Hero() {
         </motion.div>
 
         <div className="col-span-1 grid grid-cols-2 gap-4 md:col-span-4">
-          <motion.div {...fade(0.1)} className="tile tile-night col-span-2 flex flex-col justify-between p-6">
+          <motion.div {...fade(0.1)} className="tile tile-night tile-lift col-span-2 flex flex-col justify-between p-6">
             <div className="plus" />
             <div>
               <p className="num text-6xl">
@@ -58,15 +58,12 @@ export function Hero() {
           <motion.div {...fade(0.15)} className="tile tile-ink aspect-square">
             <Sphere className="absolute inset-0" />
           </motion.div>
-          <motion.div {...fade(0.2)} className="tile tile-photo aspect-square">
-            <Image src="/img/taxi-motion.jpg" alt="" fill sizes="(max-width: 768px) 50vw, 16vw" priority />
-            <Link href="/demo" aria-label="Open the live demo" className="group flex h-full w-full items-end justify-end p-5 text-paper">
-              <Arrow size={44} className="transition group-hover:translate-x-1 group-hover:-translate-y-1" />
-            </Link>
+          <motion.div {...fade(0.2)} className="tile tile-night aspect-square">
+            <SignalTile className="h-full" />
           </motion.div>
         </div>
 
-        <motion.div {...fade(0.25)} className="tile tile-ink col-span-1 flex items-end p-6 md:col-span-3">
+        <motion.div {...fade(0.25)} className="tile tile-ink tile-lift col-span-1 flex items-end p-6 md:col-span-3">
           <div>
             <p className="num text-5xl">
               <Counter to={12900} />
@@ -75,7 +72,7 @@ export function Hero() {
             <p className="mt-1 text-xs opacity-50">C&amp;SD survey, 2025</p>
           </div>
         </motion.div>
-        <motion.div {...fade(0.3)} className="tile tile-dusk tile-grain col-span-1 flex items-end p-6 md:col-span-3">
+        <motion.div {...fade(0.3)} className="tile tile-dusk tile-flow tile-grain tile-lift col-span-1 flex items-end p-6 md:col-span-3">
           <div>
             <p className="num text-5xl">
               <Counter to={5} suffix=" yrs" />
@@ -84,7 +81,7 @@ export function Hero() {
             <p className="mt-1 text-xs opacity-70">High Court, Sep 2025</p>
           </div>
         </motion.div>
-        <motion.div {...fade(0.35)} className="tile tile-paper tile-dots col-span-1 flex items-end p-6 md:col-span-3">
+        <motion.div {...fade(0.35)} className="tile tile-paper tile-dots tile-lift col-span-1 flex items-end p-6 md:col-span-3">
           <div>
             <p className="num text-5xl">
               <Counter to={41254} />
@@ -93,7 +90,7 @@ export function Hero() {
             <p className="mt-1 text-xs opacity-50">Labour Department, 2024</p>
           </div>
         </motion.div>
-        <motion.div {...fade(0.4)} className="tile tile-peach tile-grain col-span-1 flex flex-col justify-between p-6 md:col-span-3">
+        <motion.div {...fade(0.4)} className="tile tile-ember tile-flow tile-grain tile-lift col-span-1 flex flex-col justify-between p-6 md:col-span-3">
           <div className="flex flex-wrap gap-2">
             <span className="pill pill-paper">Impact</span>
             <span className="pill pill-ink">Fall</span>

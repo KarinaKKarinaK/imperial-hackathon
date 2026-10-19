@@ -121,13 +121,14 @@ web/            Next.js app, deployed at https://metricsfile.vercel.app
                 landing page, /demo (3D map, phone, sensor trace, dispatcher, underwriter),
                 /rider (real phone accelerometer client), /dispatch, /underwriter,
                 API routes and the TypeScript detector with tests
-firmware/       ESP32 sketch
+ml/             detector training, UMAFall loader, synthetic generator, export
+firmware/       ESP32 sketch and BLE protocol
 validation/     drop test CSVs, results table, protocol
 research/       evidence table, insurance model, governance, policy PDFs, judges
 submission/     poster, video plan and script, STEMB map
 ```
 
-Status 19 Oct: the web app, backend and detector are live. The phone client replaces the Expo app for the demo (browser DeviceMotion, no install). The Python detector is replaced by the TypeScript one in web/src/lib/detector.ts, which runs on the server and in the browser. Remaining build work is the helmet firmware and the drop tests.
+Status 19 Oct, late: the web app, backend and detector are live. The detector is now a gradient boosting model trained on UMAFall (625 phone recordings, 19 subjects) plus synthetic rider windows: 95% recall, 93% precision, AUROC 0.994 leave-subjects-out, against 48% recall for the old rule. Results, parity tests and export are in ml/. The rider client sends GPS. Persistence switches on with two Upstash env vars. /record shows the standard. Firmware sketch, drop test protocol, governance page, evidence table, insurance model structure and the 150-word proposal are drafted. The phone client replaces the Expo app for the demo (browser DeviceMotion, no install). The Python detector is replaced by the TypeScript one in web/src/lib/detector.ts, which runs on the server and in the browser. Remaining build work is the helmet firmware and the drop tests.
 
 ## Decisions already made
 - Stack: Expo (React Native), Supabase, Python for the detector, plain HTML for the two dashboards. Chosen for speed, not for production.

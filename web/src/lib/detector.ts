@@ -1,95 +1,39 @@
 import type { HeatBand, Sample, WindowStats } from "./schema";
+import { features } from "./features";
+import { crashProbability, MODEL, MODEL_THRESHOLD } from "./model";
 
-const G = 9.81;
-
-// Thresholds. Start points from fall-detection and helmet-impact literature,
-// to be refit on our own drop-test data. Keep them in one place so the poster
-// and the code agree.
+// Thresholds of the original rule. Kept for display, for the explanation
+// panel, and as the baseline row in ml/out/results.md. Detection itself is
+// the gradient boosting model in model.ts.
 export const THRESHOLDS = {
-  impactG: 6, // peak resultant acceleration, in g
-  tiltDeg: 60, // orientation change after impact
-  stillSec: 3, // near-zero motion after the fall
-  stillG: 0.25, // |resultant - 1g| below this counts as still
+  impactG: 6,
+  tiltDeg: 60,
+  stillSec: 3,
   cancelWindowSec: 30,
 };
 
-export function resultantG(s: Sample): number {
-  return Math.sqrt(s.ax * s.ax + s.ay * s.ay + s.az * s.az) / G;
-}
-
-// Angle between the gravity vector before and after the window, from the
-// low-pass mean of the first and last 20% of samples.
-function tiltBetween(a: Sample[], b: Sample[]): number {
-  const mean = (arr: Sample[]) => {
-    const m = { x: 0, y: 0, z: 0 };
-    for (const s of arr) {
-      m.x += s.ax;
-      m.y += s.ay;
-      m.z += s.az;
-    }
-    const n = Math.max(arr.length, 1);
-    return { x: m.x / n, y: m.y / n, z: m.z / n };
-  };
-  const u = mean(a);
-  const v = mean(b);
-  const nu = Math.hypot(u.x, u.y, u.z) || 1;
-  const nv = Math.hypot(v.x, v.y, v.z) || 1;
-  const cos = Math.min(1, Math.max(-1, (u.x * v.x + u.y * v.y + u.z * v.z) / (nu * nv)));
-  return (Math.acos(cos) * 180) / Math.PI;
-}
-
-export function windowStats(samples: Sample[]): WindowStats {
-  if (samples.length === 0) return { peakG: 0, tiltDeg: 0, stillSec: 0, sampleCount: 0 };
-  const sorted = [...samples].sort((p, q) => p.t - q.t);
-  let peakG = 0;
-  let peakIdx = 0;
-  sorted.forEach((s, i) => {
-    const r = resultantG(s);
-    if (r > peakG) {
-      peakG = r;
-      peakIdx = i;
-    }
-  });
-  // Gravity direction before the peak versus after it settles.
-  const head = sorted.slice(Math.max(0, peakIdx - 50), Math.max(1, peakIdx));
-  const tail = sorted.slice(Math.min(sorted.length - 1, peakIdx + 10));
-  const tiltDeg = head.length && tail.length ? tiltBetween(head, tail) : 0;
-
-  // Stillness: longest run after the peak where |r - 1g| < stillG.
-  let stillMs = 0;
-  let runStart: number | null = null;
-  for (let i = peakIdx + 1; i < sorted.length; i++) {
-    const still = Math.abs(resultantG(sorted[i]) - 1) < THRESHOLDS.stillG;
-    if (still && runStart === null) runStart = sorted[i].t;
-    if (!still && runStart !== null) {
-      stillMs = Math.max(stillMs, sorted[i - 1].t - runStart);
-      runStart = null;
-    }
-  }
-  if (runStart !== null) stillMs = Math.max(stillMs, sorted[sorted.length - 1].t - runStart);
-
-  return { peakG, tiltDeg, stillSec: stillMs / 1000, sampleCount: sorted.length };
-}
-
 export type Detection = {
   isCrash: boolean;
-  confidence: number;
+  confidence: number; // model probability
+  ruleFlag: boolean; // what the old rule would have said
   stats: WindowStats;
+  features: number[];
+  model: string;
 };
 
-// Three signals in sequence: impact, fall, stillness. Confidence is the
-// product of how far each signal clears its threshold, capped at 1.
 export function detectCrash(samples: Sample[]): Detection {
-  const stats = windowStats(samples);
-  const impact = Math.min(1, stats.peakG / THRESHOLDS.impactG);
-  const fall = Math.min(1, stats.tiltDeg / THRESHOLDS.tiltDeg);
-  const still = Math.min(1, stats.stillSec / THRESHOLDS.stillSec);
-  const isCrash =
-    stats.peakG >= THRESHOLDS.impactG &&
-    stats.tiltDeg >= THRESHOLDS.tiltDeg &&
-    stats.stillSec >= THRESHOLDS.stillSec;
-  const confidence = Number((impact * fall * still).toFixed(2));
-  return { isCrash, confidence, stats };
+  const f = features(samples);
+  const [peakG, , , , tiltDeg, stillSec] = f;
+  const p = samples.length >= 5 ? crashProbability(f) : 0;
+  const ruleFlag = peakG >= THRESHOLDS.impactG && tiltDeg >= THRESHOLDS.tiltDeg && stillSec >= THRESHOLDS.stillSec;
+  return {
+    isCrash: p >= MODEL_THRESHOLD,
+    confidence: Number(p.toFixed(3)),
+    ruleFlag,
+    stats: { peakG, tiltDeg, stillSec, sampleCount: samples.length },
+    features: f,
+    model: MODEL.kind,
+  };
 }
 
 // Probable trauma profile from mechanism and magnitude. Labelled probable,
@@ -97,11 +41,7 @@ export function detectCrash(samples: Sample[]): Detection {
 // in the evidence table.
 export function triageProfile(peakG: number, speedKmh: number): { profile: string; mechanism: string } {
   const mechanism =
-    speedKmh > 30
-      ? "High-speed deceleration"
-      : speedKmh > 10
-        ? "Moderate-speed deceleration"
-        : "Low-speed fall";
+    speedKmh > 30 ? "High-speed deceleration" : speedKmh > 10 ? "Moderate-speed deceleration" : "Low-speed fall";
   if (peakG >= 20) return { profile: "Probable severe head impact. Suspect intracranial injury.", mechanism };
   if (peakG >= 12) return { profile: "Probable blunt force trauma. Suspect concussion, limb fracture.", mechanism };
   return { profile: "Probable minor blunt trauma. Assess for concussion.", mechanism };

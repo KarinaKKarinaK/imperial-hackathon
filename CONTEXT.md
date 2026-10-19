@@ -142,7 +142,7 @@ Earlier anchor (2025 Policy Address, para 256, now superseded but useful as back
 
 ### The solution
 Low-cost telemetry (a helmet sensor plus the rider's phone) with ML that:
-1. Detects crashes (G-force spike, then tilt, then no movement).
+1. Detects crashes with a gradient boosting model on ten window features, trained on the UMAFall public dataset and synthetic rider scenarios (ml/out/results.md). The old three-threshold rule is kept as the baseline row.
 2. Flags fatigue (erratic micro-corrections in speed and steering, long shift hours).
 3. Scores heat risk (Hong Kong Observatory heat index plus exertion signals).
 

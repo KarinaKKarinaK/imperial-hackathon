@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ingest } from "@/lib/store";
+import { ingest, hydrate } from "@/lib/store";
 import type { Sample } from "@/lib/schema";
 
 
@@ -10,6 +10,7 @@ function isSample(x: unknown): x is Sample {
 }
 
 export async function POST(req: Request) {
+  await hydrate();
   let body: unknown;
   try {
     body = await req.json();

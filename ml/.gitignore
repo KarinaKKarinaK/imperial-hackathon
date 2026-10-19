@@ -1,0 +1,4 @@
+data/
+out/train.log
+__pycache__/
+.ipynb_checkpoints/

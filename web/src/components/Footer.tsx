@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Arrow } from "./Arrow";
 
@@ -24,14 +23,11 @@ export function Footer() {
             </a>
           </div>
         </div>
-        <div className="tile tile-photo min-h-[220px]">
-          <Image src="/img/skyline.jpg" alt="" fill sizes="(max-width: 768px) 100vw, 25vw" />
-          <div className="flex h-full flex-col justify-end p-7">
-            <p className="eyebrow">Policy anchor</p>
-            <p className="mt-3 text-[15px] leading-relaxed">
-              2026 Policy Address, paragraph 385: &ldquo;statutory compensation for injuries at work&rdquo; for delivery platform workers.
-            </p>
-          </div>
+        <div className="tile tile-haze tile-grain flex flex-col justify-end p-7">
+          <p className="eyebrow">Policy anchor</p>
+          <p className="mt-3 text-[15px] leading-relaxed">
+            2026 Policy Address, paragraph 385: &ldquo;statutory compensation for injuries at work&rdquo; for delivery platform workers.
+          </p>
         </div>
         <div className="tile tile-night p-7">
           <p className="eyebrow">Sources</p>
@@ -40,7 +36,7 @@ export function Footer() {
             <li>Labour Department OSH Statistics 2024</li>
             <li>High Court, Foodpanda typhoon case, 2025</li>
             <li>Labour and Welfare Bureau proposal, Jul 2026</li>
-            <li>ACFTU survey of new forms of employment</li>
+            <li>UMAFall dataset, Universidad de Malaga, CC BY 4.0</li>
           </ul>
         </div>
       </div>

@@ -7,8 +7,8 @@ import { Arrow } from "./Arrow";
 const links = [
   { href: "/#problem", label: "Why" },
   { href: "/#system", label: "How" },
-  { href: "/#applications", label: "Where" },
-  { href: "/#market", label: "Market" },
+  { href: "/#model", label: "Model" },
+  { href: "/record", label: "The record" },
   { href: "/demo", label: "Live demo" },
 ];
 

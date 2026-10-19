@@ -8,6 +8,12 @@ import {
   triageProfile,
 } from "./detector";
 import { ROUTE, pointAt } from "./route";
+import { loadStore, saveStore } from "./persist";
+import demoWindows from "./ml/demo_windows.json";
+
+type DemoWindow = { samples: [number, number, number, number][]; label: number };
+const DEMO_WINDOWS = demoWindows as unknown as Record<string, DemoWindow>;
+export const REPLAY_SCENARIOS = Object.keys(DEMO_WINDOWS);
 
 // ponytail: in-memory store on a single warm instance. Enough for a demo on
 // Fluid Compute. Swap for Supabase or Redis when two instances must agree.
@@ -25,9 +31,29 @@ type SimState = {
   okTapped: boolean;
 };
 
-const g = globalThis as unknown as { __mf_store?: Store };
+const g = globalThis as unknown as { __mf_store?: Store; __mf_hydrated?: Promise<void> };
 const store: Store =
   g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null });
+
+type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null };
+
+// Load from Redis once per instance, if configured. Call at the top of every
+// API handler.
+export function hydrate(): Promise<void> {
+  if (!g.__mf_hydrated) {
+    g.__mf_hydrated = loadStore<Serialized>().then((s) => {
+      if (!s) return;
+      store.riders = new Map(s.riders);
+      store.events = s.events;
+      store.sim = s.sim;
+    });
+  }
+  return g.__mf_hydrated;
+}
+
+function persist() {
+  saveStore({ riders: [...store.riders.entries()], events: store.events, sim: store.sim } satisfies Serialized);
+}
 
 export const DEMO_RIDER = "rider-demo";
 
@@ -47,6 +73,7 @@ function newRider(riderId: string): RiderState {
     shiftStartedAt: null,
     lastSeenAt: Date.now(),
     lastWindow: null,
+    lastDetection: null,
   };
 }
 
@@ -83,6 +110,7 @@ export function setShift(riderId: string, onShift: boolean, platform?: Platform)
   r.shiftStartedAt = onShift ? r.shiftStartedAt ?? Date.now() : null;
   r.jobId = onShift ? r.jobId ?? `ORD-${Math.floor(1000 + Math.random() * 9000)}` : null;
   r.lastSeenAt = Date.now();
+  persist();
   return r;
 }
 
@@ -90,13 +118,17 @@ export function setContext(riderId: string, patch: Partial<Pick<RiderState, "rai
   const r = getRider(riderId);
   Object.assign(r, patch);
   r.lastSeenAt = Date.now();
+  persist();
   return r;
 }
 
 export function cancelEvent(id: string): EventRecord | null {
   const e = store.events.find((x) => x.id === id);
   if (!e) return null;
-  if (e.status === "detected" && Date.now() <= e.cancelDeadline) e.status = "cancelled";
+  if (e.status === "detected" && Date.now() <= e.cancelDeadline) {
+    e.status = "cancelled";
+    persist();
+  }
   return e;
 }
 
@@ -112,11 +144,40 @@ export function ingest(riderId: string, samples: Sample[], pos?: { lat: number; 
   r.fatigue = fatigueScore(hours, 0);
   const d = detectCrash(samples);
   r.lastWindow = d.stats;
+  r.lastDetection = { p: d.confidence, isCrash: d.isCrash, ruleFlag: d.ruleFlag, scenario: null, at: Date.now() };
   let event: EventRecord | null = null;
   const recent = store.events.find((e) => e.riderId === riderId && Date.now() - e.ts < 60_000);
   if (d.isCrash && r.onShift && !recent) {
     event = createEvent(r, d.confidence);
   }
+  persist();
+  return { rider: r, detection: d, event };
+}
+
+// Push one of the synthetic demo windows through the real detector for the
+// demo rider. This is how the website shows a pothole, a hard brake or a bag
+// drop not becoming an event, and a crash becoming one.
+export function replay(scenario: string) {
+  const w = DEMO_WINDOWS[scenario];
+  if (!w) return null;
+  const r = getRider(DEMO_RIDER);
+  const base = Date.now() - 6000;
+  const samples: Sample[] = w.samples.map(([t, ax, ay, az]) => ({ t: base + t * 1000, ax: ax * 9.81, ay: ay * 9.81, az: az * 9.81 }));
+  const d = detectCrash(samples);
+  r.lastWindow = d.stats;
+  r.lastDetection = { p: d.confidence, isCrash: d.isCrash, ruleFlag: d.ruleFlag, scenario, at: Date.now() };
+  r.lastSeenAt = Date.now();
+  let event: EventRecord | null = null;
+  const recent = store.events.find((e) => e.riderId === DEMO_RIDER && e.status === "detected" && Date.now() < e.cancelDeadline);
+  if (d.isCrash && r.onShift && !recent) {
+    if (store.sim) {
+      store.sim.crashAt = Date.now();
+      store.sim.crashFired = true;
+    }
+    r.speedKmh = 0;
+    event = createEvent(r, d.confidence);
+  }
+  persist();
   return { rider: r, detection: d, event };
 }
 
@@ -147,6 +208,7 @@ function createEvent(r: RiderState, confidence: number): EventRecord {
   };
   store.events.unshift(e);
   if (store.events.length > 200) store.events.length = 200;
+  persist();
   return e;
 }
 
@@ -160,7 +222,7 @@ export function simStart() {
 
 export function simCrash() {
   if (!store.sim) simStart();
-  store.sim!.crashAt = Date.now();
+  replay("crash");
   return snapshot(DEMO_RIDER);
 }
 
@@ -175,6 +237,7 @@ export function simReset() {
   store.sim = null;
   store.riders.delete(DEMO_RIDER);
   store.events = store.events.filter((e) => e.riderId !== DEMO_RIDER);
+  persist();
   return snapshot(DEMO_RIDER);
 }
 
@@ -193,8 +256,6 @@ function advanceSim() {
     r.speedKmh = r.rain ? 22 : 28;
   } else if (!s.crashFired) {
     r.speedKmh = 0;
-    r.lastWindow = { peakG: 14.2, tiltDeg: 82, stillSec: 8, sampleCount: 100 };
-    createEvent(r, 0.97);
     s.crashFired = true;
   }
 }
@@ -211,6 +272,7 @@ export function snapshot(riderId: string) {
     events,
     premiumWindowHkd: premiumWindowHkd(rider.rain, rider.heat, rider.fatigue),
     route: ROUTE,
+    scenarios: REPLAY_SCENARIOS,
     serverTime: Date.now(),
   };
 }

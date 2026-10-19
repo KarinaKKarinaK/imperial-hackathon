@@ -98,6 +98,21 @@ export default function DemoPage() {
               peak {rider.lastWindow.peakG.toFixed(1)} g, tilt {Math.round(rider.lastWindow.tiltDeg)} deg, still {rider.lastWindow.stillSec.toFixed(1)} s
             </p>
           )}
+          {rider?.lastDetection && (
+            <div className="mt-3 flex items-center justify-between rounded-2xl border border-white/15 px-3 py-2">
+              <div>
+                <p className="text-[11px] opacity-60">Model {rider.lastDetection.scenario ? `on ${rider.lastDetection.scenario.replace("_", " ")}` : ""}</p>
+                <p className="num text-2xl">
+                  p = {rider.lastDetection.p.toFixed(2)}
+                  <span className={`ml-2 text-sm ${rider.lastDetection.isCrash ? "text-peach" : "opacity-60"}`}>{rider.lastDetection.isCrash ? "crash" : "not a crash"}</span>
+                </p>
+              </div>
+              <div className="text-right text-[11px] opacity-60">
+                <p>old rule</p>
+                <p className={rider.lastDetection.ruleFlag !== rider.lastDetection.isCrash ? "text-peach" : ""}>{rider.lastDetection.ruleFlag ? "crash" : "no"}</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* dispatcher */}

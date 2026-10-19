@@ -31,10 +31,22 @@ function crash(): Sample[] {
 test("a crash is impact, fall, stillness in sequence", () => {
   const d = detectCrash(crash());
   assert.equal(d.isCrash, true);
+  assert.equal(d.ruleFlag, true);
   assert.ok(d.stats.peakG > 6);
   assert.ok(d.stats.tiltDeg > 60);
   assert.ok(d.stats.stillSec >= 3);
-  assert.ok(d.confidence > 0.9);
+  assert.ok(d.confidence >= 0.5);
+});
+
+test("a crash with free fall before impact scores higher", () => {
+  const pre = ride(250);
+  const ff: Sample[] = Array.from({ length: 30 }, (_, i) => ({ t: 2500 + i * 10, ax: 0.3, ay: 0.2, az: 1.5 }));
+  const imp: Sample[] = [{ t: 2800, ax: 60, ay: 20, az: 130 }, { t: 2810, ax: 30, ay: 10, az: 70 }];
+  const tumble: Sample[] = Array.from({ length: 60 }, (_, i) => ({ t: 2820 + i * 10, ax: G * 0.7 + Math.sin(i) * 4, ay: Math.cos(i) * 4, az: G * 0.5 }));
+  const still: Sample[] = Array.from({ length: 300 }, (_, i) => ({ t: 3420 + i * 10, ax: G, ay: 0.05, az: 0.05 }));
+  const d = detectCrash([...pre, ...ff, ...imp, ...tumble, ...still]);
+  assert.equal(d.isCrash, true);
+  assert.ok(d.confidence > 0.8, `p=${d.confidence}`);
 });
 
 test("normal riding is not a crash", () => {

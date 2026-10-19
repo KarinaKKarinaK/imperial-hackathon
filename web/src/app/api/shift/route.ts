@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { setShift } from "@/lib/store";
+import { setShift, hydrate } from "@/lib/store";
 
 
 export async function POST(req: Request) {
+  await hydrate();
   const b = (await req.json().catch(() => ({}))) as { riderId?: unknown; onShift?: unknown; platform?: unknown };
   if (typeof b.riderId !== "string" || b.riderId.length > 64) {
     return NextResponse.json({ error: "riderId required" }, { status: 400 });

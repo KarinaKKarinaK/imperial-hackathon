@@ -146,7 +146,7 @@ export function Pipeline() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.99 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className={`tile ${toneClass[step.tone]} absolute inset-0 flex flex-col justify-between p-7 sm:p-10`}
+                className={`tile ${toneClass[step.tone]} tile-flow absolute inset-0 flex flex-col justify-between p-7 sm:p-10`}
               >
                 <div>
                   <p className="eyebrow">{step.time}</p>

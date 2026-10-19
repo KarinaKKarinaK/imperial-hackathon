@@ -72,6 +72,13 @@ body {
     linear-gradient(160deg, #7a5cff 0%, #3b2a9e 100%);
   color: #fff;
 }
+.tile-ember {
+  background:
+    radial-gradient(100% 80% at 0% 0%, rgba(246, 216, 90, 0.85) 0%, rgba(246, 216, 90, 0) 55%),
+    radial-gradient(90% 90% at 100% 100%, rgba(107, 76, 255, 0.75) 0%, rgba(107, 76, 255, 0) 60%),
+    linear-gradient(150deg, #f5c9a8 0%, #f0a070 100%);
+  color: var(--ink);
+}
 .tile-haze {
   background:
     radial-gradient(90% 70% at 90% 10%, rgba(107, 76, 255, 0.35) 0%, rgba(107, 76, 255, 0) 60%),
@@ -86,34 +93,45 @@ body {
   color: var(--paper);
   border: 1px solid var(--line);
 }
-.tile-photo img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.15) brightness(0.55);
-  transform: scale(1.02);
-  transition: transform 0.8s ease, filter 0.8s ease;
+/* Interactive lift on hover */
+.tile-lift {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s ease;
+  will-change: transform;
 }
-.tile-photo:hover img {
-  transform: scale(1.06);
-  filter: grayscale(0.6) contrast(1.1) brightness(0.6);
+.tile-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
-.tile-photo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(10, 10, 10, 0.1) 0%, rgba(10, 10, 10, 0.75) 100%);
+/* Slow-moving textured gradient */
+.tile-flow {
+  background-size: 180% 180%;
+  animation: mf-flow 14s ease-in-out infinite alternate;
 }
-.tile-photo-violet::before {
-  background: linear-gradient(160deg, rgba(107, 76, 255, 0.75) 0%, rgba(10, 10, 10, 0.85) 100%);
-  mix-blend-mode: multiply;
+@keyframes mf-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
 }
-.tile-photo > :not(img) {
-  position: relative;
-  z-index: 2;
+/* Marquee */
+.marquee {
+  display: flex;
+  gap: 3rem;
+  width: max-content;
+  animation: mf-marquee 38s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+@keyframes mf-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 .tile-grain::after {
   content: "";
