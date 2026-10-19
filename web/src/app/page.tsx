@@ -6,6 +6,7 @@ import { LiveStrip } from "@/components/landing/LiveStrip";
 import { Marquee } from "@/components/landing/Marquee";
 import { Model } from "@/components/landing/Model";
 import { Hardware } from "@/components/landing/Hardware";
+import { Riders } from "@/components/landing/Riders";
 import { Pipeline } from "@/components/landing/Pipeline";
 import { Applications, CTA, Governance, Limits, Market, Problem } from "@/components/landing/Sections";
 
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero />
       <Marquee />
       <Problem />
+      <Riders />
       <Pipeline />
       <LiveStrip />
       <Model />

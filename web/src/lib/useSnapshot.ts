@@ -6,6 +6,8 @@ import type { EventRecord, RiderState } from "./schema";
 export type Snapshot = {
   rider: RiderState;
   events: EventRecord[];
+  others: RiderState[];
+  allEvents: EventRecord[];
   premiumWindowHkd: number;
   route: [number, number][];
   serverTime: number;

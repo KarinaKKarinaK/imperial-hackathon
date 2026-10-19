@@ -6,6 +6,7 @@ import { Arrow } from "@/components/Arrow";
 import { PhonePanel } from "@/components/demo/Panels";
 import { SensorTrace } from "@/components/demo/SensorTrace";
 import { detectCrash, THRESHOLDS } from "@/lib/detector";
+import { connectHelmet, helmetSupported, type HelmetHandle } from "@/lib/helmet";
 import type { Sample } from "@/lib/schema";
 import { useSnapshot } from "@/lib/useSnapshot";
 
@@ -32,6 +33,9 @@ export default function RiderPage() {
   const [permission, setPermission] = useState<"idle" | "granted" | "denied" | "unsupported">("idle");
   const [samplesG, setSamplesG] = useState<number[]>([]);
   const [live, setLive] = useState<{ peakG: number; status: string } | null>(null);
+  const [helmet, setHelmet] = useState<HelmetHandle | null>(null);
+  const [helmetHz, setHelmetHz] = useState(0);
+  const helmetCount = useRef(0);
   const buf = useRef<Sample[]>([]);
   const pos = useRef<{ lat: number; lng: number; speedKmh?: number } | undefined>(undefined);
   const { snap, refresh } = useSnapshot(riderId, 1000);
@@ -77,6 +81,37 @@ export default function RiderPage() {
       return next;
     });
   }, []);
+
+  const pushSamples = useCallback((arr: Sample[]) => {
+    for (const s of arr) {
+      buf.current.push(s);
+      const g = Math.sqrt(s.ax * s.ax + s.ay * s.ay + s.az * s.az) / 9.81;
+      setSamplesG((prev) => {
+        const next = prev.length > 240 ? prev.slice(-240) : prev.slice();
+        next.push(g);
+        return next;
+      });
+    }
+    if (buf.current.length > 600) buf.current.splice(0, buf.current.length - 600);
+    helmetCount.current += arr.length;
+  }, []);
+
+  useEffect(() => {
+    if (!helmet) return;
+    const id = setInterval(() => {
+      setHelmetHz(helmetCount.current);
+      helmetCount.current = 0;
+    }, 1000);
+    return () => clearInterval(id);
+  }, [helmet]);
+
+  const pairHelmet = useCallback(async () => {
+    try {
+      const h = await connectHelmet(pushSamples, undefined, () => setHelmet(null));
+      setHelmet(h);
+      setPermission("granted");
+    } catch {}
+  }, [pushSamples]);
 
   const enableMotion = useCallback(async () => {
     const DM = window.DeviceMotionEvent as unknown as { requestPermission?: () => Promise<"granted" | "denied"> } | undefined;
@@ -193,12 +228,25 @@ export default function RiderPage() {
                 <button onClick={enableMotion} className="mt-5 w-full rounded-full bg-paper py-4 text-lg font-medium text-ink">
                   Allow motion
                 </button>
+                {helmetSupported() && (
+                  <button onClick={pairHelmet} className="mt-3 w-full rounded-full border border-white/60 py-3.5 text-base font-medium">
+                    Pair the helmet clip instead
+                  </button>
+                )}
                 {permission === "denied" && <p className="mt-3 text-sm">Motion access was refused. Reload and try again, or use the scripted demo.</p>}
                 {permission === "unsupported" && <p className="mt-3 text-sm">This browser has no motion sensors. Open this page on a phone.</p>}
               </div>
             ) : (
-              <div className="tile tile-ink h-40 p-4">
+              <div className="tile tile-ink relative h-40 p-4">
                 <SensorTrace rider={snap?.rider ?? null} events={snap?.events ?? []} samplesG={samplesG} />
+                <span className="pill pill-outline absolute left-3 top-3 !py-1 !text-[11px]">
+                  {helmet ? `${helmet.name}, ${helmetHz} Hz` : "phone sensors"}
+                </span>
+                {!helmet && helmetSupported() && (
+                  <button onClick={pairHelmet} className="absolute right-3 top-3 rounded-full border border-white/40 px-3 py-1 text-[11px]">
+                    Pair helmet
+                  </button>
+                )}
               </div>
             )}
           </section>

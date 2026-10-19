@@ -275,13 +275,19 @@ export function snapshot(riderId: string) {
   tickDeadlines();
   const rider = getRider(riderId);
   const events = listEvents(riderId);
+  const now = Date.now();
+  // Other riders seen in the last two minutes, so a judge's phone shows up on
+  // the same map as the scripted rider.
+  const others = [...store.riders.values()].filter((r) => r.riderId !== riderId && now - r.lastSeenAt < 120_000);
   return {
     rider,
     events,
+    others,
+    allEvents: listEvents(),
     premiumWindowHkd: premiumWindowHkd(rider.rain, rider.heat, rider.fatigue),
     route: ROUTE,
     scenarios: REPLAY_SCENARIOS,
-    serverTime: Date.now(),
+    serverTime: now,
   };
 }
 

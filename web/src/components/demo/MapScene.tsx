@@ -11,18 +11,20 @@ type Props = {
   rider: RiderState | null;
   route: [number, number][];
   events: EventRecord[];
+  others?: RiderState[];
   className?: string;
   compact?: boolean;
 };
 
 // 3D map of Kowloon with extruded buildings, the delivery loop, the rider, and
 // a pulse where the crash happened.
-export function MapScene({ rider, route, events, className = "", compact = false }: Props) {
+export function MapScene({ rider, route, events, others = [], className = "", compact = false }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<MlMap | null>(null);
   const riderEl = useRef<HTMLDivElement | null>(null);
   const riderMarker = useRef<Marker | null>(null);
   const crashMarker = useRef<Marker | null>(null);
+  const otherMarkers = useRef<Map<string, Marker>>(new Map());
   const ready = useRef(false);
 
   useEffect(() => {
@@ -126,6 +128,35 @@ export function MapScene({ rider, route, events, className = "", compact = false
     riderEl.current?.classList.toggle("off", !rider.onShift);
   }, [rider, events]);
 
+  // Other riders: real phones that are on shift right now
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !ready.current) return;
+    const seen = new Set<string>();
+    for (const o of others) {
+      if (!o.onShift) continue;
+      seen.add(o.riderId);
+      let mk = otherMarkers.current.get(o.riderId);
+      if (!mk) {
+        const el = document.createElement("div");
+        el.className = "mf-other";
+        el.innerHTML = `<i></i><b>${o.riderId.replace("rider-", "")}</b>`;
+        mk = new Marker({ element: el }).setLngLat([o.lng, o.lat]).addTo(m);
+        otherMarkers.current.set(o.riderId, mk);
+      } else {
+        mk.setLngLat([o.lng, o.lat]);
+      }
+      const down = events.some((e) => e.riderId === o.riderId && e.status !== "cancelled" && Date.now() - e.ts < 120_000);
+      mk.getElement().classList.toggle("down", down);
+    }
+    for (const [id, mk] of otherMarkers.current) {
+      if (!seen.has(id)) {
+        mk.remove();
+        otherMarkers.current.delete(id);
+      }
+    }
+  }, [others, events]);
+
   // Crash pulse
   useEffect(() => {
     const m = map.current;
@@ -176,6 +207,33 @@ export function MapScene({ rider, route, events, className = "", compact = false
         .mf-rider.down {
           background: #f0a070;
           box-shadow: 0 0 0 4px rgba(240, 160, 112, 0.25), 0 0 28px rgba(240, 160, 112, 0.9);
+        }
+        .mf-other {
+          position: relative;
+          width: 14px;
+          height: 14px;
+        }
+        .mf-other i {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: #8f7bff;
+          box-shadow: 0 0 0 3px rgba(143, 123, 255, 0.25), 0 0 16px rgba(143, 123, 255, 0.8);
+        }
+        .mf-other.down i {
+          background: #f0a070;
+          box-shadow: 0 0 0 3px rgba(240, 160, 112, 0.3), 0 0 18px rgba(240, 160, 112, 0.9);
+        }
+        .mf-other b {
+          position: absolute;
+          left: 18px;
+          top: -3px;
+          font: 500 10px/1 ui-monospace, monospace;
+          color: #f3f3f0;
+          background: rgba(10, 10, 10, 0.7);
+          padding: 3px 6px;
+          border-radius: 999px;
+          white-space: nowrap;
         }
         .mf-crash {
           width: 10px;

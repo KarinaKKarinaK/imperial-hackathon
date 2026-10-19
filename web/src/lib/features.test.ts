@@ -33,3 +33,22 @@ test("labels come out right on the parity windows", () => {
     assert.equal(p >= 0.5 ? 1 : 0, v.label, `${v.source}: p=${p.toFixed(3)} label=${v.label}`);
   }
 });
+
+test("helmet frames decode to m/s^2 samples", async () => {
+  const { parseFrames } = await import("./helmet");
+  const b = new ArrayBuffer(32);
+  const v = new DataView(b);
+  // frame 1: t=1000, ax=1000 milli-g (1 g), ay=0, az=0, gyro 0
+  v.setUint32(0, 1000, true);
+  v.setInt16(4, 1000, true);
+  // frame 2: t=1010, az=-14000 milli-g (-14 g), gz=1234 (123.4 deg/s)
+  v.setUint32(16, 1010, true);
+  v.setInt16(24, -14000, true);
+  v.setInt16(30, 1234, true);
+  const s = parseFrames(v, 5000);
+  assert.equal(s.length, 2);
+  assert.equal(s[0].t, 6000);
+  assert.ok(Math.abs(s[0].ax - 9.81) < 1e-9);
+  assert.ok(Math.abs(s[1].az + 14 * 9.81) < 1e-6);
+  assert.equal(s[1].gz, 123.4);
+});

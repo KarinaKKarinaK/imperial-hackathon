@@ -151,9 +151,14 @@ export default function RecordPage() {
                   ))}
                 </div>
               </div>
-              <Link href="/demo" className="arrow-link mt-8 self-start">
-                Watch one get created <Arrow />
-              </Link>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Link href="/demo" className="arrow-link">
+                  Watch one get created <Arrow />
+                </Link>
+                <a href="/api/schema" className="arrow-link" target="_blank" rel="noreferrer">
+                  JSON Schema <Arrow />
+                </a>
+              </div>
             </div>
           </div>
 

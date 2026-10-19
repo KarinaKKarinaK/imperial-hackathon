@@ -22,6 +22,8 @@ export default function DemoPage() {
 
   const rider = snap?.rider ?? null;
   const events = snap?.events ?? [];
+  const allEvents = snap?.allEvents ?? events;
+  const others = snap?.others ?? [];
   const hasActive = events.some((e) => e.status === "detected" && e.cancelDeadline > now);
 
   return (
@@ -54,12 +56,15 @@ export default function DemoPage() {
         {/* map */}
         <div className="tile tile-ink relative flex flex-col lg:col-span-8 lg:h-full lg:min-h-[560px]">
           <div className="relative min-h-[52vh] flex-1 lg:min-h-0">
-            <MapScene rider={rider} route={snap?.route ?? []} events={events} className="h-full min-h-[52vh] lg:min-h-0" />
+            <MapScene rider={rider} route={snap?.route ?? []} events={allEvents} others={others} className="h-full min-h-[52vh] lg:min-h-0" />
           </div>
           <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
             <span className="pill pill-paper">Mong Kok, Kowloon</span>
             {rider?.onShift && <span className="pill pill-outline">{rider.platform}, {rider.jobId}</span>}
             {rider?.onShift && <span className="pill pill-outline">{rider.speedKmh} km/h</span>}
+            {others.filter((o) => o.onShift).length > 0 && (
+              <span className="pill pill-violet">{others.filter((o) => o.onShift).length} real phone{others.filter((o) => o.onShift).length > 1 ? "s" : ""} on shift</span>
+            )}
           </div>
           <div className="p-3 lg:absolute lg:bottom-4 lg:left-4 lg:right-4 lg:p-0">
             <div className="rounded-2xl border border-white/15 bg-ink/85 p-4 backdrop-blur">
@@ -121,12 +126,12 @@ export default function DemoPage() {
 
         {/* dispatcher */}
         <div className="tile tile-paper min-h-[240px] p-5 lg:col-span-4">
-          <DispatcherPanel events={events} />
+          <DispatcherPanel events={allEvents} />
         </div>
 
         {/* underwriter */}
         <div className="tile tile-dusk tile-grain min-h-[240px] p-5 lg:col-span-4">
-          <UnderwriterPanel rider={rider} events={events} premium={snap?.premiumWindowHkd ?? 0} />
+          <UnderwriterPanel rider={rider} events={allEvents} premium={snap?.premiumWindowHkd ?? 0} />
         </div>
       </div>
 

@@ -25,7 +25,7 @@ export function LiveStrip() {
     <section className="px-4 pt-6 sm:px-6">
       <div className="mx-auto grid max-w-[1400px] gap-4 md:grid-cols-12">
         <Reveal className="tile tile-ink min-h-[380px] md:col-span-8 md:min-h-[520px]">
-          <MapScene rider={snap?.rider ?? null} route={snap?.route ?? []} events={snap?.events ?? []} className="h-full min-h-[380px] md:min-h-[520px]" compact />
+          <MapScene rider={snap?.rider ?? null} route={snap?.route ?? []} events={snap?.allEvents ?? []} others={snap?.others ?? []} className="h-full min-h-[380px] md:min-h-[520px]" compact />
           <div className="pointer-events-none absolute left-5 top-5 flex flex-wrap gap-2">
             <span className="pill pill-paper">Kowloon, live</span>
             <span className="pill pill-outline">
