@@ -99,12 +99,12 @@ export function Pipeline() {
         </div>
 
         <div
-          className="grid gap-4 md:grid-cols-[1fr_1.6fr]"
+          className="grid gap-4 md:grid-cols-[1fr_1.6fr] md:items-stretch"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
           {/* Steps rail */}
-          <ol className="tile tile-night flex flex-col p-3">
+          <ol className="tile tile-night flex h-full flex-col justify-between p-3">
             {STEPS.map((s, idx) => {
               const active = idx === i;
               return (
@@ -112,7 +112,7 @@ export function Pipeline() {
                   <button
                     onClick={() => setI(idx)}
                     onFocus={() => setI(idx)}
-                    className={`group flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition ${
+                    className={`group flex w-full items-center justify-between rounded-2xl px-4 py-3.5 text-left transition ${
                       active ? "bg-paper text-ink" : "hover:bg-white/5"
                     }`}
                     aria-current={active}
@@ -138,15 +138,15 @@ export function Pipeline() {
           </ol>
 
           {/* Detail tile */}
-          <div className="relative min-h-[360px]">
-            <AnimatePresence mode="wait">
+          <div className="grid h-full min-h-[360px]">
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={step.key}
                 initial={{ opacity: 0, y: 14, scale: 0.99 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.99 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className={`tile ${toneClass[step.tone]} tile-flow absolute inset-0 flex flex-col justify-between p-7 sm:p-10`}
+                className={`tile ${toneClass[step.tone]} tile-flow flex h-full flex-col justify-between p-7 [grid-area:1/1] sm:p-10`}
               >
                 <div>
                   <p className="eyebrow">{step.time}</p>

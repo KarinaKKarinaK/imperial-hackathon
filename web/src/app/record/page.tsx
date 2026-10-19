@@ -2,89 +2,223 @@ import Link from "next/link";
 import { Arrow } from "@/components/Arrow";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { RecordTile } from "@/components/landing/RecordTile";
 
 export const metadata = { title: "The record. Metrics" };
 
-const SAMPLE = {
-  id: "EVT-7K2M9Q",
-  riderId: "rider-4f2a",
-  platform: "Platform A",
-  jobId: "ORD-4471",
-  ts: "2026-10-19T06:32:07.412Z",
-  lat: 22.3218,
-  lng: 114.1762,
-  peakG: 14.2,
-  tiltDeg: 82,
-  stillSec: 8.0,
-  confidence: 0.97,
-  status: "paid",
-  cancelDeadline: "2026-10-19T06:32:37.412Z",
-  triage: { profile: "Probable blunt force trauma. Suspect concussion, limb fracture.", mechanism: "Moderate-speed deceleration" },
-  insurance: { premiumWindowHkd: 0.84, payoutHkd: 8000, paidAt: "2026-10-19T06:32:37.901Z" },
-  context: { rain: true, heat: "amber", fatigue: 0.31 },
-};
-
-const FIELDS: [string, string, string][] = [
-  ["id", "Event id", "Unique, time-ordered. The reference every party quotes."],
-  ["riderId", "Rider", "A pseudonymous id. The rider maps it to a person. Nobody else can."],
-  ["platform", "Platform at impact", "Which app the rider was working for at the moment of impact. This is the field that makes the July 2026 apportionment rule operable."],
-  ["jobId", "Job at impact", "The order or trip id the platform issued. Platform and rider can both verify it."],
-  ["ts", "Timestamp", "UTC, millisecond. Set by the device, confirmed by the server on receipt."],
-  ["lat, lng", "Location", "Where the impact happened. Sent only with an event, never as a route."],
-  ["peakG", "Peak acceleration", "Maximum resultant acceleration in the 6 second window, in g. From the helmet sensor or the phone."],
-  ["tiltDeg", "Orientation change", "Angle between the gravity vector before and after impact. A fall swings it by 60 degrees or more."],
-  ["stillSec", "Stillness", "Longest run of near-zero motion after impact. The signal that separates a crash from a pothole."],
-  ["confidence", "Model probability", "Output of the gradient boosting detector trained on public fall data and our drop tests. Not a rule, not a guess."],
-  ["status", "Status", "detected, cancelled by the rider inside 30 seconds, confirmed, or paid."],
-  ["cancelDeadline", "Cancel deadline", "Timestamp plus 30 seconds. One tap before this and nothing leaves the phone."],
-  ["triage", "Triage note", "Probable trauma profile and mechanism, for the dispatcher. Probable, never a diagnosis."],
-  ["insurance", "Insurance", "Premium for the active window, the fixed payout, and when it was paid. The parametric trigger is the event itself."],
-  ["context", "Exposure context", "Rain, heat band and the rider's fatigue index at the time. Used for pricing, never shared per rider."],
+type Party = "rider" | "platform" | "insurer" | "court";
+const PARTIES: { key: Party; label: string }[] = [
+  { key: "rider", label: "Rider" },
+  { key: "platform", label: "Platform" },
+  { key: "insurer", label: "Insurer" },
+  { key: "court", label: "Court" },
 ];
 
+type Field = { key: string; type: string; example: string; meaning: string; sees: Party[]; highlight?: boolean };
+type Group = { title: string; note: string; fields: Field[] };
+
+const GROUPS: Group[] = [
+  {
+    title: "Identity",
+    note: "Who, which job, which app. The rider is pseudonymous. The platform field is the one the July 2026 proposal needs.",
+    fields: [
+      { key: "id", type: "string", example: "EVT-7K2M9Q", meaning: "Unique, time-ordered. The reference every party quotes.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "riderId", type: "string", example: "rider-4f2a", meaning: "Random id on the device. Only the rider can map it to a person.", sees: ["rider", "insurer", "court"] },
+      { key: "platform", type: "string", example: "Platform A", meaning: "The app the rider was working for at the moment of impact. Makes apportionment a lookup.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
+      { key: "jobId", type: "string", example: "ORD-4471", meaning: "The order the platform issued. Both sides can verify it.", sees: ["rider", "platform", "insurer", "court"] },
+    ],
+  },
+  {
+    title: "Impact",
+    note: "What the sensor saw in the six seconds around the peak, and what the model made of it.",
+    fields: [
+      { key: "ts", type: "datetime", example: "2026-10-19T06:32:07Z", meaning: "Device time, confirmed by the server on receipt.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "lat, lng", type: "number", example: "22.3218, 114.1762", meaning: "Where. Sent only with an event, never as a route.", sees: ["rider", "insurer", "court"] },
+      { key: "peakG", type: "number", example: "14.2", meaning: "Peak resultant acceleration in g, helmet or phone.", sees: ["rider", "insurer", "court"] },
+      { key: "tiltDeg", type: "number", example: "82", meaning: "Change in gravity direction across the impact. A fall swings it past 60.", sees: ["rider", "insurer", "court"] },
+      { key: "stillSec", type: "number", example: "8.0", meaning: "Longest run of near-zero motion after impact. Separates a crash from a pothole.", sees: ["rider", "insurer", "court"] },
+      { key: "confidence", type: "number", example: "0.97", meaning: "Crash probability from the gradient boosting model. A model output, not a rule.", sees: ["rider", "platform", "insurer", "court"] },
+    ],
+  },
+  {
+    title: "Outcome",
+    note: "What happened next. The event is the parametric trigger, so these fields are the claim.",
+    fields: [
+      { key: "status", type: "enum", example: "paid", meaning: "detected, cancelled by the rider inside 30 s, confirmed, or paid.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "cancelDeadline", type: "datetime", example: "ts + 30 s", meaning: "One tap before this and nothing leaves the phone.", sees: ["rider", "insurer"] },
+      { key: "triage", type: "object", example: "Probable blunt trauma", meaning: "Mechanism and probable profile for dispatch. Probable, never a diagnosis.", sees: ["rider", "court"] },
+      { key: "insurance", type: "object", example: "HK$8,000 paid", meaning: "Premium for the window, the fixed payout, and when it was paid.", sees: ["rider", "platform", "insurer", "court"] },
+    ],
+  },
+  {
+    title: "Context",
+    note: "Exposure at the time. Used to price windows in aggregate, never shown per rider to a platform.",
+    fields: [{ key: "context", type: "object", example: "rain, amber, 0.31", meaning: "Rain, heat band, fatigue index at the time of the event.", sees: ["rider", "insurer"] }],
+  },
+];
+
+const MATRIX: { label: string; rider: boolean; platform: boolean; insurer: boolean; court: boolean }[] = [
+  { label: "Raw motion, route, speed", rider: true, platform: false, insurer: false, court: false },
+  { label: "Heat and fatigue alerts", rider: true, platform: false, insurer: false, court: false },
+  { label: "Shift and job at impact", rider: true, platform: true, insurer: true, court: true },
+  { label: "The event record", rider: true, platform: true, insurer: true, court: true },
+  { label: "Aggregate event statistics", rider: false, platform: true, insurer: true, court: false },
+];
+
+function Dot({ on }: { on: boolean }) {
+  return <span className={`inline-block h-2.5 w-2.5 rounded-full ${on ? "bg-violet" : "bg-current opacity-15"}`} aria-label={on ? "yes" : "no"} />;
+}
+
 export default function RecordPage() {
+  const total = GROUPS.reduce((n, g) => n + g.fields.length, 0);
   return (
     <main>
       <Nav />
       <section className="px-4 pt-10 sm:px-6">
         <div className="mx-auto max-w-[1400px]">
-          <div className="mb-10 max-w-3xl">
-            <span className="pill pill-outline">The standard</span>
-            <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. Fifteen fields.</h1>
-            <p className="mt-6 max-w-xl text-lg opacity-75">
-              Everything a rider, a platform, an insurer and a court need to agree on what happened. Nothing they do not.
-            </p>
-          </div>
-          <div className="grid gap-4 lg:grid-cols-12">
-            <div className="tile tile-night p-6 sm:p-8 lg:col-span-5 lg:sticky lg:top-24 lg:self-start">
-              <p className="eyebrow">event.json</p>
-              <pre className="mono mt-4 overflow-x-auto text-[13px] leading-relaxed text-paper/90">{JSON.stringify(SAMPLE, null, 2)}</pre>
+          <div className="grid gap-4 md:grid-cols-12">
+            <div className="tile tile-paper p-7 md:col-span-7 sm:p-10">
+              <span className="pill pill-ink">The standard</span>
+              <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. Fifteen fields.</h1>
+              <p className="mt-6 max-w-xl text-lg opacity-75">
+                Everything a rider, a platform, an insurer and a court need to agree on what happened. Nothing they do not.
+              </p>
             </div>
-            <div className="grid gap-4 lg:col-span-7">
-              {FIELDS.map(([k, t, b], i) => (
-                <div key={k} className={`tile tile-lift p-6 ${i === 2 ? "tile-dusk tile-grain" : "tile-paper"}`}>
-                  <div className="flex items-baseline justify-between gap-4">
-                    <h2 className="text-xl font-medium">{t}</h2>
-                    <code className="mono text-xs opacity-60">{k}</code>
-                  </div>
-                  <p className="mt-2 text-[15px] leading-relaxed opacity-80">{b}</p>
+            <div className="tile tile-dusk tile-flow tile-grain flex flex-col justify-between p-7 md:col-span-5">
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="num text-5xl">{total}</p>
+                  <p className="mt-2 text-sm opacity-90">fields</p>
                 </div>
-              ))}
-              <div className="tile tile-haze tile-grain p-6">
-                <h2 className="text-xl font-medium">What is not in the record</h2>
-                <p className="mt-2 text-[15px] leading-relaxed opacity-80">
-                  No route. No speed history. No raw sensor trace. No fatigue or heat score per rider. Those stay on the phone. The
-                  record is the only thing that leaves it, and only after thirty seconds of silence.
-                </p>
-                <Link href="/demo" className="arrow-link mt-5">
-                  Watch one get created <Arrow />
-                </Link>
+                <div>
+                  <p className="num text-5xl">4</p>
+                  <p className="mt-2 text-sm opacity-90">parties</p>
+                </div>
+                <div>
+                  <p className="num text-5xl">0</p>
+                  <p className="mt-2 text-sm opacity-90">routes stored</p>
+                </div>
               </div>
+              <RecordTile className="mt-8 opacity-90" />
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-12">
+            <div className="tile tile-night p-6 md:col-span-5 sm:p-8">
+              <p className="eyebrow">Who sees what</p>
+              <div className="mt-5 overflow-x-auto">
+                <table className="w-full min-w-[380px] text-left text-sm">
+                  <thead className="text-[11px] uppercase tracking-wider opacity-60">
+                    <tr>
+                      <th className="pb-3 font-medium">Data</th>
+                      {PARTIES.map((p) => (
+                        <th key={p.key} className="pb-3 text-center font-medium">
+                          {p.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {MATRIX.map((m) => (
+                      <tr key={m.label} className="border-t border-white/10">
+                        <td className="py-3 pr-3">{m.label}</td>
+                        {PARTIES.map((p) => (
+                          <td key={p.key} className="py-3 text-center">
+                            <Dot on={m[p.key]} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="mt-4 text-xs opacity-60">Platforms never see a per-rider score, a route, or an alert. They see the event they are liable for.</p>
+            </div>
+            <div className="tile tile-haze tile-grain flex flex-col justify-between p-6 md:col-span-7 sm:p-8">
+              <div>
+                <p className="eyebrow">What is not in the record</p>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  {[
+                    ["No route", "GPS is sent once, with the event. Never as a trail."],
+                    ["No speed history", "Speed is read on the phone for the fatigue alert and discarded."],
+                    ["No raw trace", "The six second window is reduced to five numbers and a probability."],
+                    ["No per-rider score", "Fatigue and heat exist as alerts on the rider's screen and nowhere else."],
+                  ].map(([t, b]) => (
+                    <div key={t}>
+                      <p className="text-lg font-medium">{t}</p>
+                      <p className="mt-1 text-sm opacity-75">{b}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <Link href="/demo" className="arrow-link mt-8 self-start">
+                Watch one get created <Arrow />
+              </Link>
+            </div>
+          </div>
+
+          <div className="mt-4 tile tile-paper p-6 sm:p-8">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="eyebrow">Data dictionary</p>
+              <p className="text-xs opacity-50">dots: who can read the field</p>
+            </div>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full min-w-[820px] text-left text-sm">
+                <thead className="text-[11px] uppercase tracking-wider opacity-60">
+                  <tr>
+                    <th className="w-[170px] pb-3 font-medium">Field</th>
+                    <th className="w-[90px] pb-3 font-medium">Type</th>
+                    <th className="w-[190px] pb-3 font-medium">Example</th>
+                    <th className="pb-3 font-medium">Meaning</th>
+                    {PARTIES.map((p) => (
+                      <th key={p.key} className="w-[64px] pb-3 text-center font-medium">
+                        {p.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {GROUPS.map((g) => (
+                    <GroupRows key={g.title} g={g} />
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </section>
       <Footer />
     </main>
+  );
+}
+
+function GroupRows({ g }: { g: Group }) {
+  return (
+    <>
+      <tr>
+        <td colSpan={4 + PARTIES.length} className="pb-2 pt-7">
+          <div className="flex flex-wrap items-baseline gap-3">
+            <span className="text-xl font-medium">{g.title}</span>
+            <span className="text-sm opacity-60">{g.note}</span>
+          </div>
+        </td>
+      </tr>
+      {g.fields.map((f) => (
+        <tr key={f.key} className={`border-t border-ink/10 align-top ${f.highlight ? "bg-violet/10" : ""}`}>
+          <td className="py-3 pr-3">
+            <code className="mono text-[13px]">{f.key}</code>
+            {f.highlight && <span className="pill pill-violet ml-2 !py-0.5 !text-[10px]">apportionment</span>}
+          </td>
+          <td className="py-3 pr-3 text-xs opacity-60">{f.type}</td>
+          <td className="py-3 pr-3 mono text-xs">{f.example}</td>
+          <td className="py-3 pr-3 leading-relaxed opacity-85">{f.meaning}</td>
+          {PARTIES.map((p) => (
+            <td key={p.key} className="py-3 text-center">
+              <Dot on={f.sees.includes(p.key)} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
   );
 }
