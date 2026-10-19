@@ -117,14 +117,17 @@ Midterm conflicts this week: Hannes (weekend), Alysa (Friday 17th midterms done)
 ```
 CONTEXT.md
 IMPLEMENTATION_PLAN.md
-app/            Expo app
-detector/       Python detector, thresholds, classifier, evaluation
+web/            Next.js app, deployed at https://metricsfile.vercel.app
+                landing page, /demo (3D map, phone, sensor trace, dispatcher, underwriter),
+                /rider (real phone accelerometer client), /dispatch, /underwriter,
+                API routes and the TypeScript detector with tests
 firmware/       ESP32 sketch
-web/            dispatcher.html, underwriter.html
 validation/     drop test CSVs, results table, protocol
-research/       evidence table, insurance model, governance, policy PDFs
-submission/     poster, video script, STEMB map
+research/       evidence table, insurance model, governance, policy PDFs, judges
+submission/     poster, video plan and script, STEMB map
 ```
+
+Status 19 Oct: the web app, backend and detector are live. The phone client replaces the Expo app for the demo (browser DeviceMotion, no install). The Python detector is replaced by the TypeScript one in web/src/lib/detector.ts, which runs on the server and in the browser. Remaining build work is the helmet firmware and the drop tests.
 
 ## Decisions already made
 - Stack: Expo (React Native), Supabase, Python for the detector, plain HTML for the two dashboards. Chosen for speed, not for production.
