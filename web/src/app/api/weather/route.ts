@@ -1,15 +1,15 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { heatBand } from "@/lib/detector";
 
-export const dynamic = "force-dynamic";
 
 // Hong Kong Observatory open data: current readings. Falls back to a fixed
 // reading if the Observatory is unreachable so the demo never blocks.
 export async function GET() {
+  await connection();
   try {
     const res = await fetch(
       "https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en",
-      { next: { revalidate: 600 } },
+      { cache: "no-store" },
     );
     const j = (await res.json()) as {
       temperature?: { data?: { place: string; value: number }[] };

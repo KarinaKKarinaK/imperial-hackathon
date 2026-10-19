@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { DEMO_RIDER, setContext, simCrash, simOk, simReset, simStart } from "@/lib/store";
 
-export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const { action, value } = (await req.json().catch(() => ({}))) as { action?: string; value?: unknown };

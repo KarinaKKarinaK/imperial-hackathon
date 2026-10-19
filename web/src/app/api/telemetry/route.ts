@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { ingest } from "@/lib/store";
 import type { Sample } from "@/lib/schema";
 
-export const dynamic = "force-dynamic";
 
 function isSample(x: unknown): x is Sample {
   if (!x || typeof x !== "object") return false;

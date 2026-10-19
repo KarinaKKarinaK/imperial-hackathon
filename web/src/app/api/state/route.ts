@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { connection, NextResponse } from "next/server";
 import { allSnapshot, DEMO_RIDER, snapshot } from "@/lib/store";
 
-export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
+  await connection();
   const url = new URL(req.url);
   const riderId = url.searchParams.get("riderId");
   if (riderId === "all") return NextResponse.json(allSnapshot());
