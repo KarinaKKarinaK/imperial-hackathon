@@ -37,8 +37,13 @@ def _base(rng: np.random.Generator, n: int, vib: float = 0.18) -> np.ndarray:
 def _rotate_after(s: np.ndarray, i: int, deg: float, rng: np.random.Generator) -> None:
     """Swing the gravity vector by deg after sample i over about 0.5 s."""
     th = np.radians(deg)
-    axis = rng.normal(size=3)
-    axis /= np.linalg.norm(axis)
+    # Rotate about an axis perpendicular to gravity so the swing in the
+    # gravity direction equals deg. An axis parallel to gravity would barely
+    # move it.
+    g = s[max(0, i - 20) : max(1, i), 1:4].mean(axis=0)
+    g = g / (np.linalg.norm(g) or 1.0)
+    axis = np.cross(g, rng.normal(size=3))
+    axis /= np.linalg.norm(axis) or 1.0
     for k in range(i, len(s)):
         a = th * min(1.0, (k - i) / (0.5 * RATE))
         v = s[k, 1:4]

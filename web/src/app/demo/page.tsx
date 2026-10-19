@@ -45,29 +45,31 @@ export default function DemoPage() {
         </div>
       </div>
 
-      <div className="mx-auto mt-3 md:hidden">
+      <div className="scroll-thin mx-auto mt-3 overflow-x-auto pb-1 md:hidden">
         <PipelineStatus events={events} rider={rider} />
       </div>
 
       {/* grid */}
       <div className="mx-auto mt-3 grid max-w-[1600px] gap-3 lg:grid-cols-12">
         {/* map */}
-        <div className="tile tile-ink relative min-h-[380px] lg:col-span-8 lg:h-[58vh] lg:min-h-[480px]">
-          <MapScene rider={rider} route={snap?.route ?? []} events={events} className="h-full min-h-[380px]" />
+        <div className="tile tile-ink relative flex flex-col lg:col-span-8 lg:h-full lg:min-h-[560px]">
+          <div className="relative min-h-[52vh] flex-1 lg:min-h-0">
+            <MapScene rider={rider} route={snap?.route ?? []} events={events} className="h-full min-h-[52vh] lg:min-h-0" />
+          </div>
           <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
             <span className="pill pill-paper">Mong Kok, Kowloon</span>
             {rider?.onShift && <span className="pill pill-outline">{rider.platform}, {rider.jobId}</span>}
             {rider?.onShift && <span className="pill pill-outline">{rider.speedKmh} km/h</span>}
           </div>
-          <div className="absolute bottom-4 left-4 right-4">
-            <div className="rounded-2xl border border-white/15 bg-ink/80 p-3 backdrop-blur">
+          <div className="p-3 lg:absolute lg:bottom-4 lg:left-4 lg:right-4 lg:p-0">
+            <div className="rounded-2xl border border-white/15 bg-ink/85 p-4 backdrop-blur">
               <Controls rider={rider} act={act} hasActive={hasActive} />
             </div>
           </div>
         </div>
 
         {/* phone */}
-        <div className="tile tile-night flex flex-col items-center p-5 lg:col-span-4">
+        <div className="tile tile-night flex flex-col items-center p-5 lg:col-span-4 lg:self-start">
           <p className="eyebrow self-start">Rider&apos;s phone</p>
           <div className="my-4 w-full flex-1 flex items-center">
             <PhonePanel rider={rider} events={events} onOk={() => act("ok")} />

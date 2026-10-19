@@ -44,8 +44,8 @@ export function Hero() {
           </div>
         </motion.div>
 
-        <div className="col-span-1 grid grid-cols-2 gap-4 md:col-span-4">
-          <motion.div {...fade(0.1)} className="tile tile-night tile-lift col-span-2 flex flex-col justify-between p-6">
+        <div className="col-span-1 grid grid-cols-2 grid-rows-[1fr_auto] gap-4 md:col-span-4">
+          <motion.div {...fade(0.1)} className="tile tile-night tile-lift col-span-2 flex min-h-[220px] flex-col justify-between p-6">
             <div className="plus" />
             <div>
               <p className="num text-6xl">

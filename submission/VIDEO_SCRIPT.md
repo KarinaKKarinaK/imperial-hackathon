@@ -1,6 +1,6 @@
 # Video script
 
-Target 3:30. Ceiling 5:00. Four speakers on camera: Karina, Hannes, Maalon, Alysa. Simone takes any engineering line or runs the demo hands in part 3.
+Target 3:35. Ceiling 5:00. Four speakers on camera: Karina, Hannes, Maalon, Alysa. Simone takes any engineering line or runs the demo hands in part 3.
 
 Four parts:
 1. Cold open, 0:00 to 0:20. No faces. Big type, hard cuts, a beat under it.
@@ -51,7 +51,8 @@ One shot per line. Speaker into the lens. Lower third on first appearance only. 
 | 8 | Karina | So we built the black box for the human body. | Lab, helmet sensor held to the lens |
 | 9 | Hannes | Coin-sized. On the helmet they already wear. Talks to the phone they already carry. | 3D printer, the clip coming off the bed |
 | 10 | Hannes | Impact. Fall. Stillness. Three signals. Nothing else looks like that. | Helmet dropped on the bench, slow motion |
-| 11 | Maalon | Thirty seconds to say "I'm fine". Silence, and triage knows where and how hard. | Dispatcher page on a laptop |
+| 11 | Maalon | Thirty seconds to say "I'm fine". Silence, and triage knows where and how hard. | Dispatcher console at metricsfile.vercel.app/dispatch on a laptop |
+| 11b | Simone | No new hardware needed to start. The phone in your pocket is already the sensor. | Holding a phone on metricsfile.vercel.app/rider, "On shift" lit. Drops it onto a cushion, cut on impact |
 | 12 | Alysa | Same second, the insurance fires. No form. No adjuster. Paid in a day. | Underwriter page, payout line turns green |
 | 13 | Karina | It knows which app the rider was on at the moment of impact. | App screen: "On shift: Platform A" |
 | 14 | Alysa | "Which company pays" becomes a lookup. Not a lawsuit. | Whiteboard, two logos, one split arrow |
@@ -61,7 +62,7 @@ One shot per line. Speaker into the lens. Lower third on first appearance only. 
 | 18 | Alysa | Hong Kong writes the law. We write the standard. Next door, 84 million workers are waiting for one. | Rooftop, skyline behind |
 | 19 | Karina | Same rider. Same crash. Two different worlds. | Turns to lens, cut to black |
 
-19 lines, about 230 words, 70 seconds. If it runs long, cut 5 and 15 first.
+20 lines, about 245 words, 75 seconds. If it runs long, cut 5 and 15 first.
 
 ## Part 3. Split screen (1:30 to 3:10)
 
@@ -70,12 +71,12 @@ Vertical split. Left header: TODAY. Right header: WITH THE RECORD. Same rider, s
 | Time | Left: today | Right: with the record | Narration |
 |---|---|---|---|
 | 1:30 | Rider in rain, next order buzzing. | Same rider. Helmet LED on. App: "On shift: Platform A". | Maalon: "Same rider. Same rain. Same order." |
-| 1:45 | Crash. Black frame. Text: NO RECORD. | Crash. Sensor trace spikes on screen. Text: Impact 14g. Tilt 82 degrees. Still 8 seconds. [drop test] | Hannes: "Impact. Fall. Stillness. Our model sees it in under a second." |
-| 2:00 | Rider on the ground, phoning a friend. Text: WHO DO I CALL? | Countdown 30 to 0. No tap. Dispatcher pin drops. Text: Probable blunt trauma. High deceleration. | Maalon: "No answer. Triage already knows where, and how hard." |
-| 2:15 | Rider at home, leg in a cast. Text: NO INCOME. | Underwriter page: Event verified. Payout released. Text: Paid in 24 hours. [target] | Alysa: "One event. One payout. No argument." |
-| 2:30 | Email to platform. Reply: "You were not on a job." | Event record: Platform A. Order 4471. 14:32:07. | Alysa: "Which app. Which order. Which second. Done." |
+| 1:45 | Crash. Black frame. Text: NO RECORD. | Screen recording of /demo: "Crash" pressed under Feed the detector. Helmet sensor panel spikes past the 6 g line, readout shows p = 0.99 crash, old rule: no. Text: Impact 14g. Tilt 82 degrees. Still 8 seconds. [replace with drop test values] | Hannes: "Impact. Fall. Stillness. The model sees it in under a second. The old rule would have missed it." |
+| 2:00 | Rider on the ground, phoning a friend. Text: WHO DO I CALL? | Phone screen (/rider): orange 30, 29, 28 countdown, "I'm OK" button untouched. Cut to /demo map: orange pulse drops on Mong Kok, dispatcher card slides in: "Probable blunt force trauma. Peak 14.2 g, tilt 82 deg, still 8 s." | Maalon: "No answer. Triage already knows where, and how hard." |
+| 2:15 | Rider at home, leg in a cast. Text: NO INCOME. | Underwriter panel on /demo: status pill flips to Paid, "Paid out HK$8,000". Phone screen shows the yellow Paid card: "Your record. You own this." Text: Paid in 24 hours. [target] | Alysa: "One event. One payout. No argument." |
+| 2:30 | Email to platform. Reply: "You were not on a job." | /record page, slow scroll: the Platform at impact row highlighted in violet, then the who-sees-what dots. Text: Platform A. ORD-4471. 14:32:07. | Alysa: "Which app. Which order. Which second. Done." |
 | 2:45 | Calendar pages flipping. Text: 5 YEARS. HK$1.35M. ONE JUDGE. | Text: DAYS. [target] | Maalon: "That is what one typhoon cost one rider." |
-| 2:55 | Insurer's screen: blank. Text: NO DATA. NO PRICE. NO COVER. | Insurer's screen: live event stream, premium per 20-minute window moving with rain and heat. Text: PRICED PER DELIVERY. VERIFIED PER CLAIM. | Karina: "Insurers get a loss history. Platforms get a fair premium. Riders get paid." |
+| 2:55 | Insurer's screen: blank. Text: NO DATA. NO PRICE. NO COVER. | /demo: Rain toggled on, heat set to red, the premium per window ticks from HK$0.60 to HK$1.26 live. Then the model section of the landing page: the recall bars, rule at 48%, gradient boosting at 95%. Text: PRICED PER DELIVERY. VERIFIED PER CLAIM. | Karina: "Insurers get a loss history. Platforms get a fair premium. Riders get paid." |
 
 Stats strip, bottom of the right side, one at a time from 2:45:
 - Drop test detection: [X]% (95% CI [a, b]) [drop test]
@@ -84,6 +85,25 @@ Stats strip, bottom of the right side, one at a time from 2:45:
 - Hong Kong pilot: 15,000 riders. Mainland scheme next door: 84 million workers, 14 platforms.
 
 No insurer savings figure on screen unless Alysa's model produces one with assumptions shown. Label it "modelled".
+
+## Demo footage to capture before the edit
+
+All from the live site, so the video and the judges' own browser match. Record at 1440 by 900, 60 fps, cursor visible, no browser chrome (use a kiosk window). Phone shots are screen recordings from iOS or Android.
+
+| Clip | Where | What to do | Used in |
+|---|---|---|---|
+| D1 | metricsfile.vercel.app/demo | Reset. Start shift. Let the rider move 5 s on the 3D map. | Part 3, 1:30 |
+| D2 | /demo | Press Pothole, then Set down, then Bag drop under Feed the detector. Hold on each readout: p = 0.00, 0.00, 0.20, no event. | Part 3, 1:45 (short insert before the crash) |
+| D3 | /demo | Press Crash. Capture the sensor spike, the p = 0.99 readout with "old rule: no", the orange pulse on the map, the dispatcher card, the countdown on the phone panel. | Part 3, 1:45 and 2:00 |
+| D4 | /demo | Let the 30 s run out. Capture the status pill flipping to Paid and HK$8,000 on the underwriter panel and the phone panel. | Part 3, 2:15 |
+| D5 | /record | Slow scroll from the top tile to the Platform at impact row, then the who-sees-what matrix. | Part 3, 2:30 |
+| D6 | /demo | Toggle Rain on, Heat to red. Capture the premium per window changing. | Part 3, 2:55 |
+| D7 | Landing page, Model section | Scroll into the recall and precision bars so they animate in. Hold 3 s. | Part 3, 2:55 |
+| D8 | Phone, /rider | Consent screen, tap continue, Allow motion, On shift. Place on a table. Second phone films over the shoulder. | Relay line 11b |
+| D9 | Phone, /rider | Drop the phone onto a cushion from about 40 cm. Capture the countdown appearing. Laptop beside it shows /dispatch receiving the alert. | Relay line 11b, Part 3, 2:00 |
+| D10 | Landing page hero | Hover the signal tile so it drops, three signals light up. | Cold open background, optional |
+
+The site uses placeholder money figures and a synthetic crash window. Say "synthetic" in the caption on D3 if the drop test numbers are not in by the shoot.
 
 ## Part 4. Close (3:10 to 3:30)
 
@@ -101,10 +121,10 @@ Final card, 3 seconds: team name, para 385 quote, STEMB map.
 
 ## Timing
 - Part 1: 20 seconds, no speech.
-- Part 2: 70 seconds, about 230 words.
+- Part 2: 75 seconds, about 245 words.
 - Part 3: 100 seconds, about 110 words of narration. Let the visuals breathe.
 - Part 4: 20 seconds, 30 words.
-- Total about 370 words, 3:30.
+- Total about 385 words, 3:35.
 
 ## Shot list by location
 - HKUST entrance and road crossing: 1, 2

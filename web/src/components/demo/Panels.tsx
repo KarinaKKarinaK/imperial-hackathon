@@ -276,7 +276,7 @@ export function PipelineStatus({ events, rider }: { events: EventRecord[]; rider
             : 5;
   const steps = ["Off shift", "Riding", "Impact", "30 s window", "Triage", "Record", "Paid"];
   return (
-    <ol className="flex flex-wrap items-center gap-2">
+    <ol className="flex items-center gap-2 whitespace-nowrap md:flex-wrap">
       {steps.map((s, i) => {
         const done = i < stage || (stage === 6 && i === 6);
         const cur = i === stage;
