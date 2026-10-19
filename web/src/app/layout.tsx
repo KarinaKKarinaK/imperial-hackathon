@@ -8,7 +8,7 @@ const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono", weigh
 export const metadata: Metadata = {
   title: "Metrics",
   description:
-    "The verified work-injury event record for Hong Kong's platform workers. A 3D-printed helmet clip, phone telemetry, a crash model with error bars, triage alert, parametric payout.",
+    "The verified work-injury event record for Hong Kong's delivery workers. The phone they already carry, a 3D-printed helmet clip, a crash model with error bars, a signed record, a payout in a day.",
   metadataBase: new URL("https://metricsfile.vercel.app"),
   openGraph: {
     title: "Metrics",

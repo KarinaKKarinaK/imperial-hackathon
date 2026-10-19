@@ -33,6 +33,8 @@ const GROUPS: Group[] = [
     note: "What the sensor saw in the six seconds around the peak, and what the model made of it.",
     fields: [
       { key: "ts", type: "datetime", example: "2026-10-19T06:32:07Z", meaning: "Device time, confirmed by the server on receipt.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "deadlineSec", type: "integer", example: "94", meaning: "Seconds left on the delivery countdown at impact, negative if already late. Across many events, the first dataset linking time pressure to injury.", sees: ["rider", "insurer", "court"], highlight: true },
+      { key: "mode", type: "enum", example: "bicycle", meaning: "Travel mode at impact: motorcycle, bicycle, walking or unknown. Phone-only riders are covered on every mode.", sees: ["rider", "platform", "insurer", "court"] },
       { key: "lat, lng", type: "number", example: "22.3218, 114.1762", meaning: "Where. Sent only with an event, never as a route.", sees: ["rider", "insurer", "court"] },
       { key: "peakG", type: "number", example: "14.2", meaning: "Peak resultant acceleration in g, helmet or phone.", sees: ["rider", "insurer", "court"] },
       { key: "tiltDeg", type: "number", example: "82", meaning: "Change in gravity direction across the impact. A fall swings it past 60.", sees: ["rider", "insurer", "court"] },
@@ -49,6 +51,11 @@ const GROUPS: Group[] = [
       { key: "triage", type: "object", example: "Probable blunt trauma", meaning: "Mechanism and probable profile for dispatch. Probable, never a diagnosis.", sees: ["rider", "court"] },
       { key: "insurance", type: "object", example: "HK$8,000 paid", meaning: "Premium for the window, the fixed payout, and when it was paid.", sees: ["rider", "platform", "insurer", "court"] },
     ],
+  },
+  {
+    title: "Integrity",
+    note: "The impact facts are signed when the record is created. Anyone can verify a copy without asking us.",
+    fields: [{ key: "signature", type: "string", example: "Ed25519, base64url", meaning: "Signature over id, rider, platform, job, time, deadline, mode, location, impact numbers and context. Status and payment are not signed because they change.", sees: ["rider", "platform", "insurer", "court"] }],
   },
   {
     title: "Context",
@@ -79,7 +86,7 @@ export default function RecordPage() {
           <div className="grid gap-4 md:grid-cols-12">
             <div className="tile tile-paper p-7 md:col-span-7 sm:p-10">
               <span className="pill pill-ink">The standard</span>
-              <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. Fifteen fields.</h1>
+              <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. Eighteen fields.</h1>
               <p className="mt-6 max-w-xl text-lg opacity-75">
                 Everything a rider, a platform, an insurer and a court need to agree on what happened. Nothing they do not.
               </p>
@@ -157,6 +164,9 @@ export default function RecordPage() {
                 </Link>
                 <a href="/api/schema" className="arrow-link" target="_blank" rel="noreferrer">
                   JSON Schema <Arrow />
+                </a>
+                <a href="/api/verify" className="arrow-link" target="_blank" rel="noreferrer">
+                  Public key <Arrow />
                 </a>
               </div>
             </div>

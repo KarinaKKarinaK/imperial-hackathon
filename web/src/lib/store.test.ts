@@ -109,3 +109,28 @@ test("the scripted rider moves along the route while on shift", () => {
   assert.ok(later.speedKmh > 0);
   assert.ok(typeof start[0] === "number" && typeof start[1] === "number");
 });
+
+test("every event is signed and verifies, and tampering breaks it", async () => {
+  const { verifyRecord } = await import("./sign");
+  simReset();
+  simStart();
+  const e = replay("crash")!.event!;
+  assert.ok(e.signature, "signature present");
+  assert.equal(verifyRecord(e, e.signature!), true);
+  const tampered = { ...e, platform: "Platform B" as const };
+  assert.equal(verifyRecord(tampered, e.signature!), false, "changing the platform must break the signature");
+  assert.equal(typeof e.deadlineSec, "number", "demo rider has a deadline so the record carries one");
+  assert.ok(["motorcycle", "bicycle", "walking", "unknown"].includes(e.mode));
+});
+
+test("jolts that are not crashes become de-identified hazard cells", () => {
+  simReset();
+  simStart();
+  replay("pothole");
+  replay("braking");
+  const snap = snapshot(DEMO_RIDER);
+  assert.ok(snap.hazards.length >= 1);
+  const cell = snap.hazards[0];
+  assert.ok(cell.bumps + cell.brakes >= 2);
+  assert.equal("riderId" in cell, false, "no rider id on a hazard cell");
+});

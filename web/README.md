@@ -19,6 +19,8 @@ Routes
 | /dispatch | Dispatcher view only |
 | /underwriter | Underwriter view only |
 | /record | The event record, field by field |
+| /r/[id] | A rider's signed copy of one record, printable, with verification code |
+| /poster | Printable A0 poster with the STEMB map |
 
 API
 
@@ -30,6 +32,18 @@ API
 | POST /api/shift | `{riderId, onShift, platform?}` |
 | POST /api/events/:id/cancel | Rider taps "I'm OK" inside the 30 second window |
 | GET /api/weather | Hong Kong Observatory current reading and heat band |
+| GET /api/schema | The record as JSON Schema, with the signing public key |
+| GET /api/verify, POST /api/verify | Public key, and verification of a posted record |
+| GET /api/events/:id | Rider export: record, signature, public key |
+| POST /api/rider | `{riderId, deadlineMinutes?, emergencyContact?}` |
+
+## Signing
+
+Every event's impact facts are signed with Ed25519 (`src/lib/sign.ts`). The private key is `RECORD_SIGNING_KEY` in production (PKCS8 PEM, newlines as `\n`). Without it a per-process key is generated, which is fine locally. Generate a new key with:
+
+```
+node -e 'const {generateKeyPairSync}=require("crypto");console.log(generateKeyPairSync("ed25519").privateKey.export({type:"pkcs8",format:"pem"}))'
+```
 
 ## Detector
 

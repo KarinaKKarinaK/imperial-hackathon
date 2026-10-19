@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { EventRecord, RiderState } from "./schema";
+import type { EventRecord, HazardCell, RiderState } from "./schema";
 
 export type Snapshot = {
   rider: RiderState;
   events: EventRecord[];
   others: RiderState[];
   allEvents: EventRecord[];
+  hazards: HazardCell[];
+  deadlineSec: number | null;
   premiumWindowHkd: number;
   route: [number, number][];
   serverTime: number;

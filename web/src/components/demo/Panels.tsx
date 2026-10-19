@@ -35,23 +35,40 @@ export function StatusPill({ s }: { s: EventRecord["status"] }) {
 }
 
 /* Rider phone */
+function emergencyLinks(e: EventRecord, contact?: string) {
+  const body = encodeURIComponent(
+    `Metrics crash alert. ${e.triage.profile} ${e.triage.mechanism}. Location https://maps.google.com/?q=${e.lat.toFixed(5)},${e.lng.toFixed(5)} Record ${e.id}.`,
+  );
+  return {
+    sms: contact ? `sms:${contact}?&body=${body}` : null,
+    call: "tel:999",
+  };
+}
+
 export function PhonePanel({
   rider,
   events,
   onOk,
   onShift,
   live,
+  deadlineSec,
+  onDeadline,
+  emergencyContact,
 }: {
   rider: RiderState | null;
   events: EventRecord[];
   onOk: () => void;
   onShift?: (on: boolean) => void;
   live?: { peakG: number; status: string } | null;
+  deadlineSec?: number | null;
+  onDeadline?: (minutes: number | null) => void;
+  emergencyContact?: string;
 }) {
   const now = useNow();
   const active = events.find((e) => e.status === "detected" && e.cancelDeadline > now);
   const paid = events.find((e) => e.status === "paid");
   const secs = active ? Math.max(0, Math.ceil((active.cancelDeadline - now) / 1000)) : 0;
+  const links = (active ?? paid) ? emergencyLinks((active ?? paid)!, emergencyContact) : null;
   return (
     <div className="mx-auto w-full max-w-[300px]">
       <div className="rounded-[36px] border border-white/20 bg-[#141414] p-2.5 shadow-[0_30px_80px_rgba(0,0,0,0.6)]">
@@ -77,6 +94,18 @@ export function PhonePanel({
                   <button onClick={onOk} className="mt-8 w-full rounded-full bg-paper py-4 text-lg font-medium text-ink active:scale-[0.98]">
                     I&apos;m OK
                   </button>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <a href={links?.call} className="rounded-full border border-peach/70 py-3 text-center text-sm font-medium text-peach">
+                      Call 999
+                    </a>
+                    {links?.sms ? (
+                      <a href={links.sms} className="rounded-full border border-white/40 py-3 text-center text-sm font-medium">
+                        Text my contact
+                      </a>
+                    ) : (
+                      <span className="rounded-full border border-white/15 py-3 text-center text-xs opacity-50">No contact set</span>
+                    )}
+                  </div>
                   <p className="mt-4 text-xs opacity-60">Silence sends your location and a triage note to dispatch.</p>
                 </motion.div>
               ) : paid ? (
@@ -84,7 +113,20 @@ export function PhonePanel({
                   <span className="pill pill-lemon self-start">Paid</span>
                   <p className="num mt-6 text-5xl">HK${paid.insurance.payoutHkd.toLocaleString()}</p>
                   <p className="mt-3 text-sm opacity-80">Verified event {paid.id}. Paid at {paid.insurance.paidAt ? timeHK(paid.insurance.paidAt) : ""}.</p>
-                  <p className="mt-6 text-xs opacity-60">Your record: {paid.platform}, {paid.jobId}, {timeHK(paid.ts)}. You own this. Share it if you need it.</p>
+                  <p className="mt-6 text-xs opacity-60">Your record: {paid.platform}, {paid.jobId}, {timeHK(paid.ts)}. You own this.</p>
+                  <a href={`/r/${paid.id}`} target="_blank" rel="noreferrer" className="mt-3 block w-full rounded-full border border-white/40 py-3 text-center text-sm font-medium">
+                    Open my signed record
+                  </a>
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <a href={links?.call} className="rounded-full border border-peach/70 py-2.5 text-center text-sm text-peach">
+                      Call 999
+                    </a>
+                    {links?.sms && (
+                      <a href={links.sms} className="rounded-full border border-white/40 py-2.5 text-center text-sm">
+                        Text my contact
+                      </a>
+                    )}
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div key="shift" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-1 flex-col">
@@ -102,6 +144,24 @@ export function PhonePanel({
                     </button>
                     <p className="mt-2 text-xs opacity-60">{rider?.onShift ? `${rider.platform}, ${rider.jobId ?? ""}` : "Nothing is recorded off shift."}</p>
                   </div>
+                  {rider?.onShift && onDeadline && (
+                    <div className="mt-4">
+                      <p className="eyebrow">Order due in</p>
+                      <div className="mt-2 flex gap-2">
+                        {[5, 10, 20].map((m) => (
+                          <button key={m} onClick={() => onDeadline(m)} className="flex-1 rounded-full border border-white/25 py-2 text-sm">
+                            {m} min
+                          </button>
+                        ))}
+                      </div>
+                      {deadlineSec !== null && deadlineSec !== undefined && (
+                        <p className={`mono mt-2 text-sm ${deadlineSec < 120 ? "text-peach" : "opacity-70"}`}>
+                          {deadlineSec >= 0 ? `${Math.floor(deadlineSec / 60)}:${String(deadlineSec % 60).padStart(2, "0")} left` : `${Math.abs(deadlineSec)} s late`}
+                        </p>
+                      )}
+                      <p className="mt-1 text-[11px] opacity-50">Written into the record at impact. Nowhere else.</p>
+                    </div>
+                  )}
                   <div className="mt-6 grid grid-cols-2 gap-2">
                     <div className="rounded-2xl border border-white/15 p-3">
                       <p className="text-[11px] opacity-60">Heat</p>
@@ -237,8 +297,11 @@ export function UnderwriterPanel({
               {events.map((e) => (
                 <motion.tr key={e.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="border-t border-current/10 align-top">
                   <td className="py-3 pr-2">
-                    <p className="mono text-xs">{e.id}</p>
+                    <a href={`/r/${e.id}`} target="_blank" rel="noreferrer" className="mono text-xs underline-offset-2 hover:underline">
+                      {e.id}
+                    </a>
                     <p className="text-xs opacity-60">{timeHK(e.ts)}</p>
+                    {e.deadlineSec !== null && <p className="text-[11px] opacity-60">{e.deadlineSec >= 0 ? `${Math.round(e.deadlineSec / 60)} min to deadline` : "already late"}</p>}
                   </td>
                   <td className="py-3 pr-2">
                     <p className="font-medium">{e.platform}</p>

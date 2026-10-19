@@ -31,8 +31,8 @@ export function Hero() {
             gets paid.
           </h1>
           <p className="mt-8 max-w-lg text-lg leading-relaxed opacity-75 sm:text-xl">
-            The work-injury record for riders. A small 3D-printed clip on the helmet, the phone already in their pocket, and a
-            payout that fires the second it should.
+            The work-injury record for every delivery worker, on foot, bicycle or motorbike. The phone already in their pocket, a
+            3D-printed clip for helmets, and a payout that fires the second it should.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-6">
             <Link href="/demo" className="inline-flex items-center gap-3 rounded-full bg-ink px-6 py-3.5 text-paper transition hover:bg-violet">

@@ -11,9 +11,9 @@ const REPLAY: [string, string][] = [
   ["crash", "Crash"],
 ];
 
-function Group({ label, children }: { label: string; children: React.ReactNode }) {
+function Group({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <div className={`flex min-w-0 flex-col gap-2 ${className}`}>
       <span className="text-[10px] uppercase tracking-[0.14em] opacity-50">{label}</span>
       <div className="flex flex-wrap items-center gap-2">{children}</div>
     </div>
@@ -33,7 +33,7 @@ export function Controls({
   const seg = "flex overflow-hidden rounded-full border border-white/30";
   const segBtn = "px-3 py-2 text-sm transition";
   return (
-    <div className="grid gap-4 sm:grid-cols-[auto_1fr] lg:grid-cols-[auto_auto_1fr] lg:gap-6">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr] lg:gap-6">
       <Group label="Shift">
         {!rider?.onShift ? (
           <button onClick={() => act("start")} className={`${btn} bg-paper text-ink hover:bg-violet hover:text-white`}>
@@ -88,7 +88,15 @@ export function Controls({
         </div>
       </Group>
 
-      <Group label="Feed the detector">
+      <Group label="Order countdown">
+        {[3, 8, 15].map((m) => (
+          <button key={m} onClick={() => act("deadline", m)} disabled={!rider?.onShift} className={`${btn} border border-white/30 hover:bg-white/10`}>
+            {m} min
+          </button>
+        ))}
+      </Group>
+
+      <Group label="Feed the detector" className="sm:col-span-2 lg:col-span-3 lg:border-t lg:border-white/10 lg:pt-3">
         {REPLAY.map(([k, label]) => (
           <button
             key={k}

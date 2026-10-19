@@ -50,6 +50,12 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 **What kills this?** Three things, in our risk register: a regulator classing verification as claims handling, riders declining consent, and a platform building it in-house. The answers are a sandbox legal opinion, a consent study in the pilot, and neutrality: a platform cannot be the trusted record of its own liability.
 
+**Most riders are not on motorbikes. Does a helmet clip help a cyclist?** More than half of Hong Kong's riders are cyclists or walkers, so the phone is the product and the clip is the upgrade for helmets. The record has a travel mode field and the detector is trained on phone data. Nobody is excluded by what they ride.
+
+**A platform says the rider was not on a job. Then what?** The record is signed at creation with the platform, order id and the seconds left on the delivery countdown. The rider holds a copy that verifies against a published key. The next step is capturing the platform's own order notification on the phone, which Android allows and iPhone does not.
+
+**What does the data do for prevention, not just payment?** Jolts and hard brakes that never become events are aggregated to 50 m cells with no rider id. That is a hazard map for the Transport Department and a route-risk input for platforms. The delivery-countdown field, across many events, is the first dataset linking time windows to injuries.
+
 ## Team and process (anyone)
 
 **Who did what?** Point at the STEMB map on the poster. Each pillar has a deliverable you can open: the model results, the drop test protocol, the triage bands, the two-column financial model.

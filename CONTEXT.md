@@ -182,7 +182,7 @@ Four things they told us to work on. Treat these as judging questions.
 - Domestic helpers are out of scope. They are employees with compulsory compensation insurance already.
 
 ### What we are
-A verified work-injury event record for self-employed two-wheeler and outdoor platform workers. Built in Hong Kong for the riders para 385 covers, priced through parametric insurance, designed as a standard that travels. We are the sensor, the trigger and the data standard. We are not the insurer.
+A verified, signed work-injury event record for every delivery worker, on foot, bicycle or motorbike. The phone they already carry is the sensor; the 3D-printed helmet clip is the upgrade for motorbike riders. The record names the app and the order active at impact and the seconds left on the delivery clock, so apportionment is a lookup and time pressure becomes measurable. Built in Hong Kong for the riders para 385 covers, priced through parametric insurance, designed as a standard that travels. We are the sensor, the trigger and the data standard. We are not the insurer.
 
 ### Why the business case holds
 1. The Jul 2026 Hong Kong proposal makes platforms liable on a no-fault basis. They will insure it. Insurers must price a risk with no history.

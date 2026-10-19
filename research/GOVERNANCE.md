@@ -9,8 +9,10 @@ One page. Answers Imperial's fourth feedback point and Dr Tin's likely questions
 | Raw accelerometer, gyroscope, GPS trace, speed | The rider's phone and helmet sensor only. Rolling 6 second buffer, overwritten | The rider |
 | Shift state (on or off), active platform and job id | Phone, sent with an event only | Rider, and the platform for its own jobs |
 | Heat band, fatigue index | Phone, computed locally | The rider. Shown as an alert, never stored upstream |
-| Event record (15 fields, see /record) | Server, after 30 seconds of silence from the rider | Rider, the liable platform, the insurer, and on request a court or the Labour Department |
+| Event record (18 fields, see /record) | Server, after 30 seconds of silence from the rider | Rider, the liable platform, the insurer, and on request a court or the Labour Department |
 | Aggregate, de-identified event statistics | Server | Insurers for pricing, the Labour Department for the heat warning review |
+| Hazard cells: jolts and hard brakes that were not crashes, counted per 50 m grid cell, no rider id | Server | Transport Department and platforms for road and route safety. Public in aggregate |
+| Delivery countdown at impact (`deadlineSec`) | In the event record only | Rider, insurer, court. Across many events: the Tripartite Committee, as the first dataset linking time pressure to injury |
 
 The rider owns the raw data and the event record. Platforms and insurers hold a licence to read events for the job they are liable for. No per-rider risk score exists anywhere in the system.
 
@@ -38,6 +40,10 @@ The rider owns the raw data and the event record. Platforms and insurers hold a 
 - Not a fatigue score for the platform. Alerts go to the rider only.
 - Not a deactivation signal. The platform receives an event, not a judgement.
 - Not a biometric or emotional profile. The EU Platform Work Directive bans automated processing of a worker's psychological state; we design to that bar even though Hong Kong does not yet require it.
+
+## Integrity
+
+Every record's impact facts are signed by the server with Ed25519 at creation. The public key is published with the schema. A rider's exported copy verifies anywhere, so the record does not depend on us being trusted or even existing. Status and payment are not signed because they change; the facts a dispute turns on do not.
 
 ## Dual use, named
 

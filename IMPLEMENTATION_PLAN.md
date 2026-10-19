@@ -128,6 +128,8 @@ research/       evidence table, insurance model, governance, policy PDFs, judges
 submission/     poster, video plan and script, STEMB map
 ```
 
+Status 20 Oct: records are signed with Ed25519 and verifiable at /api/verify, riders get a printable signed copy at /r/[id], the record carries the delivery countdown and travel mode, non-crash jolts aggregate into de-identified hazard cells on the map, the rider app has an order countdown, an emergency contact and one-tap 999 and SMS actions, real phones show on the demo map, a helmet Bluetooth client is ready for the clip, and GitHub runs the tests on every push.
+
 Status 19 Oct, late: the web app, backend and detector are live. The detector is now a gradient boosting model trained on UMAFall (625 phone recordings, 19 subjects) plus synthetic rider windows: 95% recall, 93% precision, AUROC 0.994 leave-subjects-out, against 48% recall for the old rule. Results, parity tests and export are in ml/. The rider client sends GPS. Persistence is live on Upstash Redis and validated under parallel load. /record shows the standard. Firmware sketch, drop test protocol, governance page, evidence table, insurance model structure and the 150-word proposal are drafted. The phone client replaces the Expo app for the demo (browser DeviceMotion, no install). The Python detector is replaced by the TypeScript one in web/src/lib/detector.ts, which runs on the server and in the browser. Remaining build work is the helmet firmware and the drop tests.
 
 ## Decisions already made

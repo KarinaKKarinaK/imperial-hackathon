@@ -56,12 +56,18 @@ export default function DemoPage() {
         {/* map */}
         <div className="tile tile-ink relative flex flex-col lg:col-span-8 lg:h-full lg:min-h-[560px]">
           <div className="relative min-h-[52vh] flex-1 lg:min-h-0">
-            <MapScene rider={rider} route={snap?.route ?? []} events={allEvents} others={others} className="h-full min-h-[52vh] lg:min-h-0" />
+            <MapScene rider={rider} route={snap?.route ?? []} events={allEvents} others={others} hazards={snap?.hazards ?? []} className="h-full min-h-[52vh] lg:min-h-0" />
           </div>
           <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
             <span className="pill pill-paper">Mong Kok, Kowloon</span>
             {rider?.onShift && <span className="pill pill-outline">{rider.platform}, {rider.jobId}</span>}
             {rider?.onShift && <span className="pill pill-outline">{rider.speedKmh} km/h</span>}
+            {rider?.onShift && snap?.deadlineSec !== null && snap?.deadlineSec !== undefined && (
+              <span className={`pill ${snap.deadlineSec < 120 ? "pill-peach" : "pill-outline"}`}>
+                order due in {Math.max(0, Math.floor(snap.deadlineSec / 60))}:{String(Math.max(0, snap.deadlineSec % 60)).padStart(2, "0")}
+              </span>
+            )}
+            {(snap?.hazards?.length ?? 0) > 0 && <span className="pill pill-lemon">{snap!.hazards.length} hazard cells, de-identified</span>}
             {others.filter((o) => o.onShift).length > 0 && (
               <span className="pill pill-violet">{others.filter((o) => o.onShift).length} real phone{others.filter((o) => o.onShift).length > 1 ? "s" : ""} on shift</span>
             )}
@@ -77,7 +83,7 @@ export default function DemoPage() {
         <div className="tile tile-night flex flex-col items-center p-5 lg:col-span-4 lg:self-start">
           <p className="eyebrow self-start">Rider&apos;s phone</p>
           <div className="my-4 w-full flex-1 flex items-center">
-            <PhonePanel rider={rider} events={events} onOk={() => act("ok")} />
+            <PhonePanel rider={rider} events={events} onOk={() => act("ok")} deadlineSec={snap?.deadlineSec ?? null} onDeadline={(m) => act("deadline", m)} />
           </div>
           <div className="mt-auto flex w-full items-center gap-4 rounded-2xl border border-white/15 p-3">
             {qr ? <img src={qr} alt="QR code to open the rider client" className="h-20 w-20 rounded-lg" /> : <div className="h-20 w-20 rounded-lg bg-white/5" />}

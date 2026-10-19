@@ -1,4 +1,5 @@
-import type { EventRecord, Platform, RiderState, Sample } from "./schema";
+import type { EventRecord, HazardCell, Platform, RiderState, Sample } from "./schema";
+import { signRecord } from "./sign";
 import {
   detectCrash,
   fatigueScore,
@@ -21,6 +22,7 @@ type Store = {
   riders: Map<string, RiderState>;
   events: EventRecord[];
   sim: SimState | null;
+  hazards: Map<string, HazardCell>;
 };
 
 type SimState = {
@@ -33,9 +35,9 @@ type SimState = {
 
 const g = globalThis as unknown as { __mf_store?: Store };
 const store: Store =
-  g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null });
+  g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null, hazards: new Map() });
 
-type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null };
+type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null; hazards?: [string, HazardCell][] };
 
 // With Redis configured, every API request starts by loading the store, so
 // all instances see the same state. Without Redis this is a no-op and the
@@ -47,6 +49,7 @@ export async function hydrate(): Promise<void> {
   store.riders = new Map(s.riders);
   store.events = s.events;
   store.sim = s.sim;
+  store.hazards = new Map(s.hazards ?? []);
 }
 
 let dirty = false;
@@ -59,7 +62,7 @@ function persist() {
 export async function flush(): Promise<void> {
   if (!dirty) return;
   dirty = false;
-  await saveStore({ riders: [...store.riders.entries()], events: store.events, sim: store.sim } satisfies Serialized);
+  await saveStore({ riders: [...store.riders.entries()], events: store.events, sim: store.sim, hazards: [...store.hazards.entries()] } satisfies Serialized);
   await flushStore();
 }
 
@@ -79,6 +82,8 @@ function newRider(riderId: string): RiderState {
     heat: "green",
     fatigue: 0,
     shiftStartedAt: null,
+    deadlineAt: null,
+    emergencyContact: null,
     lastSeenAt: Date.now(),
     lastWindow: null,
     lastDetection: null,
@@ -122,6 +127,43 @@ export function setShift(riderId: string, onShift: boolean, platform?: Platform)
   return r;
 }
 
+// The delivery countdown. The rider taps it when an order is accepted. At
+// impact the seconds left are written into the record.
+export function setDeadline(riderId: string, minutesFromNow: number | null) {
+  const r = getRider(riderId);
+  r.deadlineAt = minutesFromNow === null ? null : Date.now() + minutesFromNow * 60_000;
+  r.lastSeenAt = Date.now();
+  persist();
+  return r;
+}
+
+export function setEmergencyContact(riderId: string, phone: string | null) {
+  const r = getRider(riderId);
+  r.emergencyContact = phone ? phone.replace(/[^+\d]/g, "").slice(0, 20) : null;
+  persist();
+  return r;
+}
+
+function deadlineSecAt(r: RiderState, at: number): number | null {
+  return r.deadlineAt ? Math.round((r.deadlineAt - at) / 1000) : null;
+}
+
+// Hazards: anything that is clearly not a crash but was a real jolt or a hard
+// brake, aggregated to a 50 m cell with no rider id attached.
+function recordHazard(r: RiderState, peakG: number, isCrash: boolean, kind: "bump" | "brake") {
+  if (isCrash || !r.onShift) return;
+  const lat = Math.round(r.lat * 2000) / 2000;
+  const lng = Math.round(r.lng * 2000) / 2000;
+  const key = `${lat},${lng}`;
+  const c = store.hazards.get(key) ?? { cell: key, lat, lng, bumps: 0, brakes: 0, lastAt: 0 };
+  if (kind === "bump") c.bumps++;
+  else c.brakes++;
+  c.lastAt = Date.now();
+  store.hazards.set(key, c);
+  if (store.hazards.size > 5000) store.hazards.delete(store.hazards.keys().next().value!);
+  void peakG;
+}
+
 export function setContext(riderId: string, patch: Partial<Pick<RiderState, "rain" | "heat" | "platform">>) {
   const r = getRider(riderId);
   Object.assign(r, patch);
@@ -157,6 +199,8 @@ export function ingest(riderId: string, samples: Sample[], pos?: { lat: number; 
   const recent = store.events.find((e) => e.riderId === riderId && Date.now() - e.ts < 60_000);
   if (d.isCrash && r.onShift && !recent) {
     event = createEvent(r, d.confidence);
+  } else if (d.stats.peakG >= 2.5) {
+    recordHazard(r, d.stats.peakG, d.isCrash, "bump");
   }
   persist();
   return { rider: r, detection: d, event };
@@ -182,8 +226,12 @@ export function replay(scenario: string) {
       store.sim.crashAt = Date.now();
       store.sim.crashFired = true;
     }
+    event = createEvent(r, d.confidence); // mode is read from speed, so create before stopping the rider
     r.speedKmh = 0;
-    event = createEvent(r, d.confidence);
+  } else if (scenario === "pothole" || scenario === "set_down" || scenario === "bag_drop") {
+    recordHazard(r, d.stats.peakG, d.isCrash, "bump");
+  } else if (scenario === "braking") {
+    recordHazard(r, d.stats.peakG, d.isCrash, "brake");
   }
   persist();
   return { rider: r, detection: d, event };
@@ -192,18 +240,24 @@ export function replay(scenario: string) {
 function createEvent(r: RiderState, confidence: number): EventRecord {
   const now = Date.now();
   const stats = r.lastWindow ?? { peakG: 0, tiltDeg: 0, stillSec: 0, sampleCount: 0 };
-  const e: EventRecord = {
+  const facts = {
     id: `EVT-${now.toString(36).toUpperCase()}`,
     riderId: r.riderId,
     platform: r.platform,
     jobId: r.jobId,
     ts: now,
+    deadlineSec: deadlineSecAt(r, now),
+    mode: (r.speedKmh > 25 ? "motorcycle" : r.speedKmh > 8 ? "bicycle" : r.speedKmh > 0 ? "walking" : "unknown") as EventRecord["mode"],
     lat: r.lat,
     lng: r.lng,
     peakG: Number(stats.peakG.toFixed(1)),
     tiltDeg: Math.round(stats.tiltDeg),
     stillSec: Number(stats.stillSec.toFixed(1)),
     confidence,
+    context: { rain: r.rain, heat: r.heat, fatigue: r.fatigue },
+  };
+  const e: EventRecord = {
+    ...facts,
     status: "detected",
     cancelDeadline: now + THRESHOLDS.cancelWindowSec * 1000,
     triage: triageProfile(stats.peakG, r.speedKmh),
@@ -212,7 +266,7 @@ function createEvent(r: RiderState, confidence: number): EventRecord {
       payoutHkd: FIXED_PAYOUT_HKD,
       paidAt: null,
     },
-    context: { rain: r.rain, heat: r.heat, fatigue: r.fatigue },
+    signature: signRecord(facts),
   };
   store.events.unshift(e);
   if (store.events.length > 200) store.events.length = 200;
@@ -224,6 +278,7 @@ function createEvent(r: RiderState, confidence: number): EventRecord {
 export function simStart() {
   const r = getRider(DEMO_RIDER);
   setShift(DEMO_RIDER, true, r.platform);
+  setDeadline(DEMO_RIDER, 12);
   store.sim = { riderId: DEMO_RIDER, startedAt: Date.now(), crashAt: null, crashFired: false, okTapped: false };
   return snapshot(DEMO_RIDER);
 }
@@ -245,6 +300,7 @@ export function simReset() {
   store.sim = null;
   store.riders.delete(DEMO_RIDER);
   store.events = store.events.filter((e) => e.riderId !== DEMO_RIDER);
+  store.hazards.clear();
   persist();
   return snapshot(DEMO_RIDER);
 }
@@ -284,6 +340,8 @@ export function snapshot(riderId: string) {
     events,
     others,
     allEvents: listEvents(),
+    hazards: [...store.hazards.values()],
+    deadlineSec: deadlineSecAt(rider, now),
     premiumWindowHkd: premiumWindowHkd(rider.rain, rider.heat, rider.fatigue),
     route: ROUTE,
     scenarios: REPLAY_SCENARIOS,

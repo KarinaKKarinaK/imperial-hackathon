@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DEMO_RIDER, flush, hydrate, replay, setContext, simCrash, simOk, simReset, simStart, snapshot } from "@/lib/store";
+import { DEMO_RIDER, flush, hydrate, replay, setContext, setDeadline, simCrash, simOk, simReset, simStart, snapshot } from "@/lib/store";
 
 export async function POST(req: Request) {
   await hydrate();
@@ -31,6 +31,10 @@ export async function POST(req: Request) {
       break;
     case "heat":
       if (value === "green" || value === "amber" || value === "red") setContext(DEMO_RIDER, { heat: value });
+      body = snapshot(DEMO_RIDER);
+      break;
+    case "deadline":
+      if (typeof value === "number" && value >= 0 && value <= 240) setDeadline(DEMO_RIDER, value);
       body = snapshot(DEMO_RIDER);
       break;
     case "platform":

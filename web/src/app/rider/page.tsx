@@ -158,6 +158,24 @@ export default function RiderPage() {
     return () => clearInterval(id);
   }, [permission, riderId, snap?.rider.onShift, refresh]);
 
+  const [contact, setContact] = useState("");
+  useEffect(() => {
+    try {
+      setContact(localStorage.getItem("mf-contact") ?? "");
+    } catch {}
+  }, []);
+  const saveContact = async (v: string) => {
+    setContact(v);
+    try {
+      localStorage.setItem("mf-contact", v);
+    } catch {}
+    await fetch("/api/rider", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ riderId, emergencyContact: v || null }) });
+  };
+  const setDeadline = async (minutes: number | null) => {
+    await fetch("/api/rider", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ riderId, deadlineMinutes: minutes }) });
+    refresh();
+  };
+
   const setShift = async (on: boolean) => {
     await fetch("/api/shift", {
       method: "POST",
@@ -251,7 +269,28 @@ export default function RiderPage() {
             )}
           </section>
           <section className="mt-4">
-            <PhonePanel rider={snap?.rider ?? null} events={snap?.events ?? []} onOk={ok} onShift={setShift} live={live} />
+            <PhonePanel
+              rider={snap?.rider ?? null}
+              events={snap?.events ?? []}
+              onOk={ok}
+              onShift={setShift}
+              live={live}
+              deadlineSec={snap?.deadlineSec ?? null}
+              onDeadline={setDeadline}
+              emergencyContact={contact}
+            />
+          </section>
+          <section className="tile tile-night mt-4 p-5">
+            <p className="eyebrow">Emergency contact</p>
+            <p className="mt-2 text-xs opacity-60">Stays on this phone. If you do not respond after a crash, one tap texts them your location and the triage note.</p>
+            <input
+              type="tel"
+              inputMode="tel"
+              value={contact}
+              onChange={(e) => saveContact(e.target.value)}
+              placeholder="+852 ..."
+              className="mt-3 w-full rounded-full border border-white/20 bg-transparent px-4 py-3 text-base outline-none focus:border-violet"
+            />
           </section>
           <p className="mt-6 text-center text-xs opacity-50">
             Watch it land on the{" "}

@@ -3,7 +3,7 @@
 import { Map as MlMap, Marker, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
-import type { EventRecord, RiderState } from "@/lib/schema";
+import type { EventRecord, HazardCell, RiderState } from "@/lib/schema";
 
 const STYLE = "https://tiles.openfreemap.org/styles/liberty";
 
@@ -12,13 +12,14 @@ type Props = {
   route: [number, number][];
   events: EventRecord[];
   others?: RiderState[];
+  hazards?: HazardCell[];
   className?: string;
   compact?: boolean;
 };
 
 // 3D map of Kowloon with extruded buildings, the delivery loop, the rider, and
 // a pulse where the crash happened.
-export function MapScene({ rider, route, events, others = [], className = "", compact = false }: Props) {
+export function MapScene({ rider, route, events, others = [], hazards = [], className = "", compact = false }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<MlMap | null>(null);
   const riderEl = useRef<HTMLDivElement | null>(null);
@@ -100,6 +101,21 @@ export function MapScene({ rider, route, events, others = [], className = "", co
         paint: { "line-color": "#8f7bff", "line-width": 3 },
         layout: { "line-cap": "round", "line-join": "round" },
       });
+      m.addSource("mf-hazards", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+      m.addLayer({
+        id: "mf-hazards",
+        type: "circle",
+        source: "mf-hazards",
+        paint: {
+          "circle-radius": ["interpolate", ["linear"], ["get", "n"], 1, 10, 5, 18, 20, 30],
+          "circle-color": ["case", [">", ["get", "brakes"], ["get", "bumps"]], "#f6d85a", "#f0a070"],
+          "circle-opacity": 0.28,
+          "circle-blur": 0.6,
+          "circle-stroke-color": "#f0a070",
+          "circle-stroke-width": 1,
+          "circle-stroke-opacity": 0.5,
+        },
+      });
       ready.current = true;
 
       const rEl = document.createElement("div");
@@ -127,6 +143,21 @@ export function MapScene({ rider, route, events, others = [], className = "", co
     riderEl.current?.classList.toggle("down", crashed);
     riderEl.current?.classList.toggle("off", !rider.onShift);
   }, [rider, events]);
+
+  // Hazard cells: de-identified jolts and hard brakes
+  useEffect(() => {
+    const m = map.current;
+    if (!m || !ready.current) return;
+    const src = m.getSource("mf-hazards") as { setData: (d: unknown) => void } | undefined;
+    src?.setData({
+      type: "FeatureCollection",
+      features: hazards.map((h) => ({
+        type: "Feature",
+        properties: { n: h.bumps + h.brakes, bumps: h.bumps, brakes: h.brakes },
+        geometry: { type: "Point", coordinates: [h.lng, h.lat] },
+      })),
+    });
+  }, [hazards]);
 
   // Other riders: real phones that are on shift right now
   useEffect(() => {
