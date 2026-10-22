@@ -25,6 +25,7 @@
   <a href="#the-problem">Problem</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#the-crash-detector">Detector</a> ·
+  <a href="#roadmap">Roadmap</a> ·
   <a href="#hardware">Hardware</a> ·
   <a href="#market-research">Market</a> ·
   <a href="#business-model">Business</a> ·
@@ -268,6 +269,31 @@ We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `p
 - Triage bands come from head-impact literature[^rowson][^zhang] and are not clinically validated.
 
 Retrain with `python3 ml/train.py`. Details in [ml/README.md](ml/README.md).
+
+### What we tried next
+
+Twelve variants, same protocol, nothing chosen on test people. Full write-up: [ml/experiments/RESULTS.md](ml/experiments/RESULTS.md).
+
+| Variant | Recall | Precision | Missed falls | False alarms | AUROC | Synthetic bag drops flagged |
+|---|---|---|---|---|---|---|
+| UMAFall only, threshold 0.5 (headline) | 0.952 | 0.930 | 10 | 15 | 0.994 | 98% |
+| + synthetic negatives + 9 new features | 0.957 | 0.930 | 9 | 15 | 0.996 | 19% |
+| same, threshold 0.2 | 0.981 | 0.915 | 4 | 19 | 0.996 | 39% |
+
+Synthetic negatives were the only change that moved bag drops. Tuning and calibration did not help. A lower threshold trades four extra false alarms for five fewer missed falls, a good trade when the rider can cancel within 30 seconds.
+
+## Roadmap
+
+From our dataset search and from fields that solved similar problems first. Details and sources: [docs/research/ROADMAP.md](docs/research/ROADMAP.md).
+
+| Next step | Borrowed from | Why |
+|---|---|---|
+| Helmet and phone must agree within a second | Earthquake early warning networks | A dropped bag moves the phone, not the head |
+| Each record carries the hash of the one before | Certificate Transparency | Nobody, including us, can backdate or delete a record unseen |
+| Freeze 5 s before and after impact, 200 g sensor | Car event data recorders, concussion mouthguards | Full crash context, no clipping at 16 g, clip sleeps until a hit |
+| Cancel taps and hospital records become labels | Weak supervision | Real road crashes replace simulated falls over time |
+| Hazard cells divided by rider traffic | Disease mapping | Busy roads stop looking dangerous just for being busy |
+| Add head-worn and two-wheeler data | Erciyes head sensor, Boubezoul motorcycle falls, CYCLEGYRO helmet gyro | Moves the model from trouser pocket to helmet and road |
 
 ---
 

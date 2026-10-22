@@ -1,0 +1,1404 @@
+{
+ "cost_fn": 10.0,
+ "cost_fp": 1.0,
+ "extra_features": [
+  "ff_s",
+  "settle_s",
+  "post1_std",
+  "rot_path_deg",
+  "n_peaks_2g",
+  "impact_w_s",
+  "rough_post",
+  "pre_act",
+  "peak2_ratio"
+ ],
+ "runs": [
+  {
+   "name": "baseline (train.py evaluation, UMAFall only)",
+   "extra": false,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9295774647887324,
+     "lo": 0.893719806763285,
+     "hi": 0.9601990049751243
+    },
+    "recall": {
+     "value": 0.9519230769230769,
+     "lo": 0.9211725113398039,
+     "hi": 0.9802028732284993
+    },
+    "f1": {
+     "value": 0.9406175771971497,
+     "lo": 0.9151589639664998,
+     "hi": 0.9626027523783135
+    },
+    "auroc": {
+     "value": 0.993520568160856,
+     "lo": 0.9892874028347167,
+     "hi": 0.9969896346006262
+    },
+    "brier": {
+     "value": 0.03179729138302518
+    }
+   },
+   "tp": 198,
+   "fp": 15,
+   "fn": 10,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.32608695652173914,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.01,
+    "bag_drop": 0.9833333333333333,
+    "crash": 0.9866666666666667
+   },
+   "syn_test_auroc": 0.9004422222222223,
+   "syn_shift_bag_drop": 0.9766666666666667,
+   "syn_shift_crash": 0.9633333333333334
+  },
+  {
+   "name": "+ extra features",
+   "extra": true,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9348837209302325,
+     "lo": 0.901946975973488,
+     "hi": 0.9675963261648746
+    },
+    "recall": {
+     "value": 0.9663461538461539,
+     "lo": 0.9406381391563814,
+     "hi": 0.9900497512437811
+    },
+    "f1": {
+     "value": 0.950354609929078,
+     "lo": 0.9289014895057549,
+     "hi": 0.9721568570261914
+    },
+    "auroc": {
+     "value": 0.9964720531267294,
+     "lo": 0.9938761217299048,
+     "hi": 0.9986248144323511
+    },
+    "brier": {
+     "value": 0.02571881263559319
+    }
+   },
+   "tp": 201,
+   "fp": 14,
+   "fn": 7,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.30434782608695654,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.95,
+    "crash": 0.9366666666666666
+   },
+   "syn_test_auroc": 0.8985355555555554,
+   "syn_shift_bag_drop": 0.9466666666666667,
+   "syn_shift_crash": 0.9566666666666667,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.006884548514301525,
+     0.02857530882334156
+    ],
+    "recall": [
+     -0.009394164027225576,
+     0.03960396039603953
+    ],
+    "fp": [
+     -7.0,
+     4.0
+    ]
+   }
+  },
+  {
+   "name": "+ waist and chest windows",
+   "extra": false,
+   "syn": null,
+   "aug": [
+    "waist",
+    "chest"
+   ],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.8864628820960698,
+     "lo": 0.8464560631325861,
+     "hi": 0.9259299516908213
+    },
+    "recall": {
+     "value": 0.9759615384615384,
+     "lo": 0.9537037037037037,
+     "hi": 0.9950738916256158
+    },
+    "f1": {
+     "value": 0.9290617848970252,
+     "lo": 0.9044280009396288,
+     "hi": 0.9523858615611193
+    },
+    "auroc": {
+     "value": 0.9936704482567792,
+     "lo": 0.9892811240535817,
+     "hi": 0.9971227099372673
+    },
+    "brier": {
+     "value": 0.03727569266954223
+    }
+   },
+   "tp": 203,
+   "fp": 26,
+   "fn": 5,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.05,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.018867924528301886,
+    "Jogging": 0.0,
+    "MakingACall": 0.5,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0033333333333333335,
+    "set_down": 0.02,
+    "bag_drop": 0.9966666666666667,
+    "crash": 1.0
+   },
+   "syn_test_auroc": 0.9172111111111111,
+   "syn_shift_bag_drop": 1.0,
+   "syn_shift_crash": 1.0,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.030511237499933026,
+     0.008449523273608562
+    ],
+    "recall": [
+     0.0,
+     0.04786217144784269
+    ],
+    "fp": [
+     4.0,
+     18.0
+    ]
+   }
+  },
+  {
+   "name": "tuned (nested random search)",
+   "extra": false,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 2,
+     "learning_rate": 0.04,
+     "max_iter": 200,
+     "min_samples_leaf": 10,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.15,
+     "max_iter": 400,
+     "min_samples_leaf": 20,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.15,
+     "max_iter": 400,
+     "min_samples_leaf": 10,
+     "l2_regularization": 1.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.15,
+     "max_iter": 200,
+     "min_samples_leaf": 20,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.15,
+     "max_iter": 200,
+     "min_samples_leaf": 10,
+     "l2_regularization": 0.0
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9383886255924171,
+     "lo": 0.9019564075630252,
+     "hi": 0.9674621631598376
+    },
+    "recall": {
+     "value": 0.9519230769230769,
+     "lo": 0.9207920792079208,
+     "hi": 0.9807692307692307
+    },
+    "f1": {
+     "value": 0.9451073985680191,
+     "lo": 0.9207901800410221,
+     "hi": 0.9675813360118223
+    },
+    "auroc": {
+     "value": 0.9894161593801882,
+     "lo": 0.9817393965921922,
+     "hi": 0.9955889730478941
+    },
+    "brier": {
+     "value": 0.03276987883578033
+    }
+   },
+   "tp": 198,
+   "fp": 13,
+   "fn": 10,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.2826086956521739,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.013333333333333334,
+    "bag_drop": 0.9766666666666667,
+    "crash": 0.9866666666666667
+   },
+   "syn_test_auroc": 0.9048977777777778,
+   "syn_shift_bag_drop": 0.9633333333333334,
+   "syn_shift_crash": 0.9633333333333334,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.008045253590198864,
+     0.018826878497937065
+    ],
+    "recall": [
+     -0.023156298904538332,
+     0.02315906708595386
+    ],
+    "fp": [
+     -5.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "name": "platt calibration",
+   "extra": false,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": "platt",
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9333333333333333,
+     "lo": 0.8990802520619035,
+     "hi": 0.9641295643818065
+    },
+    "recall": {
+     "value": 0.9423076923076923,
+     "lo": 0.9086525537634409,
+     "hi": 0.971830985915493
+    },
+    "f1": {
+     "value": 0.937799043062201,
+     "lo": 0.9138682143068108,
+     "hi": 0.9603735373537354
+    },
+    "auroc": {
+     "value": 0.9831327245895591,
+     "lo": 0.9721225751464044,
+     "hi": 0.9919531502359418
+    },
+    "brier": {
+     "value": 0.03432426290800588
+    }
+   },
+   "tp": 196,
+   "fp": 14,
+   "fn": 12,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.30434782608695654,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.01,
+    "bag_drop": 0.97,
+    "crash": 0.9866666666666667
+   },
+   "syn_test_auroc": 0.9002711111111112,
+   "syn_shift_bag_drop": 0.9633333333333334,
+   "syn_shift_crash": 0.95,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.011450830936742026,
+     0.004755832529372611
+    ],
+    "recall": [
+     -0.025643776824034355,
+     0.0
+    ],
+    "fp": [
+     -3.0,
+     0.0
+    ]
+   }
+  },
+  {
+   "name": "isotonic calibration",
+   "extra": false,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": "isotonic",
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9178082191780822,
+     "lo": 0.8820690394511149,
+     "hi": 0.9517023784758338
+    },
+    "recall": {
+     "value": 0.9663461538461539,
+     "lo": 0.9402933489235848,
+     "hi": 0.9901501862309263
+    },
+    "f1": {
+     "value": 0.9414519906323185,
+     "lo": 0.917872741711336,
+     "hi": 0.9631489078736785
+    },
+    "auroc": {
+     "value": 0.9887071112340896,
+     "lo": 0.980496947168983,
+     "hi": 0.9951305216891435
+    },
+    "brier": {
+     "value": 0.03151438072446639
+    }
+   },
+   "tp": 201,
+   "fp": 18,
+   "fn": 7,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.3695652173913043,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.01,
+    "bag_drop": 0.9733333333333334,
+    "crash": 0.9866666666666667
+   },
+   "syn_test_auroc": 0.9009988888888889,
+   "syn_shift_bag_drop": 0.98,
+   "syn_shift_crash": 0.9533333333333334,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.00913843077077239,
+     0.012326344100298838
+    ],
+    "recall": [
+     0.0,
+     0.031685105234754436
+    ],
+    "fp": [
+     0.0,
+     6.0
+    ]
+   }
+  },
+  {
+   "name": "cost threshold 10:1",
+   "extra": false,
+   "syn": null,
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.15,
+    0.05,
+    0.15,
+    0.05,
+    0.05
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.8951965065502183,
+     "lo": 0.8565391383322927,
+     "hi": 0.9345845184884193
+    },
+    "recall": {
+     "value": 0.9855769230769231,
+     "lo": 0.9677344336084022,
+     "hi": 1.0
+    },
+    "f1": {
+     "value": 0.9382151029748284,
+     "lo": 0.9147888868178977,
+     "hi": 0.9615449438202247
+    },
+    "auroc": {
+     "value": 0.993520568160856,
+     "lo": 0.9892874028347167,
+     "hi": 0.9969896346006262
+    },
+    "brier": {
+     "value": 0.03179729138302518
+    }
+   },
+   "tp": 205,
+   "fp": 24,
+   "fn": 3,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.03571428571428571,
+    "MakingACall": 0.4782608695652174,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.02666666666666667,
+    "set_down": 0.03333333333333333,
+    "bag_drop": 0.9966666666666667,
+    "crash": 0.9933333333333333
+   },
+   "syn_test_auroc": 0.9004422222222223,
+   "syn_shift_bag_drop": 1.0,
+   "syn_shift_crash": 1.0,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.021889051171524145,
+     0.01503455620190374
+    ],
+    "recall": [
+     0.009707565311195532,
+     0.0585365853658536
+    ],
+    "fp": [
+     4.0,
+     15.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic hard negatives",
+   "extra": false,
+   "syn": "hard",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9259259259259259,
+     "lo": 0.8893682399213373,
+     "hi": 0.9601775414960596
+    },
+    "recall": {
+     "value": 0.9615384615384616,
+     "lo": 0.9351851851851852,
+     "hi": 0.9849265075376885
+    },
+    "f1": {
+     "value": 0.9433962264150944,
+     "lo": 0.919029485966572,
+     "hi": 0.9641316851826209
+    },
+    "auroc": {
+     "value": 0.9897505072864785,
+     "lo": 0.9829946675517904,
+     "hi": 0.9952813002211067
+    },
+    "brier": {
+     "value": 0.03225932353727946
+    }
+   },
+   "tp": 200,
+   "fp": 16,
+   "fn": 8,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.32608695652173914,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.16333333333333333,
+    "crash": 0.8633333333333333
+   },
+   "syn_test_auroc": 0.9895799999999999,
+   "syn_shift_bag_drop": 0.68,
+   "syn_shift_crash": 0.8733333333333333,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.01772718169719734,
+     0.025138870861220554
+    ],
+    "recall": [
+     -0.023258530754183916,
+     0.041479454685099774
+    ],
+    "fp": [
+     -5.0,
+     7.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic all scenarios",
+   "extra": false,
+   "syn": "all",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9124423963133641,
+     "lo": 0.8734177215189873,
+     "hi": 0.9480028301886791
+    },
+    "recall": {
+     "value": 0.9519230769230769,
+     "lo": 0.9212934455391352,
+     "hi": 0.9782667134174848
+    },
+    "f1": {
+     "value": 0.9317647058823529,
+     "lo": 0.9048696276654514,
+     "hi": 0.955225636523266
+    },
+    "auroc": {
+     "value": 0.9881710016602103,
+     "lo": 0.9802517191705519,
+     "hi": 0.994382525723201
+    },
+    "brier": {
+     "value": 0.03435766648664183
+    }
+   },
+   "tp": 198,
+   "fp": 19,
+   "fn": 10,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.391304347826087,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.2,
+    "crash": 0.8966666666666666
+   },
+   "syn_test_auroc": 0.9897444444444445,
+   "syn_shift_bag_drop": 0.7333333333333333,
+   "syn_shift_crash": 0.8933333333333333,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.031253274382554416,
+     0.010969558124581114
+    ],
+    "recall": [
+     -0.03208556149732611,
+     0.03047668147208118
+    ],
+    "fp": [
+     -2.0,
+     10.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic all + extra features",
+   "extra": true,
+   "syn": "all",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.9299065420560748,
+     "lo": 0.8911867986150332,
+     "hi": 0.9627950043066322
+    },
+    "recall": {
+     "value": 0.9567307692307693,
+     "lo": 0.9271755860762492,
+     "hi": 0.9812250245660006
+    },
+    "f1": {
+     "value": 0.943127962085308,
+     "lo": 0.9190565238868111,
+     "hi": 0.9646479500891265
+    },
+    "auroc": {
+     "value": 0.9958610035048884,
+     "lo": 0.9926855239377834,
+     "hi": 0.9982503943262532
+    },
+    "brier": {
+     "value": 0.02699155918586671
+    }
+   },
+   "tp": 199,
+   "fp": 15,
+   "fn": 9,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.01694915254237288,
+    "GoDownstairs": 0.0,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.0,
+    "MakingACall": 0.30434782608695654,
+    "OpeningDoor": 0.0,
+    "Walking": 0.0
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.19333333333333333,
+    "crash": 0.8733333333333333
+   },
+   "syn_test_auroc": 0.98948,
+   "syn_shift_bag_drop": 0.7033333333333334,
+   "syn_shift_crash": 0.8933333333333333,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.019773642950305405,
+     0.02512210227641259
+    ],
+    "recall": [
+     -0.02844282183269458,
+     0.03847560975609763
+    ],
+    "fp": [
+     -6.0,
+     6.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic all + cost threshold",
+   "extra": false,
+   "syn": "all",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.2,
+    0.05,
+    0.1,
+    0.1,
+    0.05
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.8547717842323651,
+     "lo": 0.8114471452798191,
+     "hi": 0.8978848815083895
+    },
+    "recall": {
+     "value": 0.9903846153846154,
+     "lo": 0.9759586352657005,
+     "hi": 1.0
+    },
+    "f1": {
+     "value": 0.9175946547884187,
+     "lo": 0.8909931064196467,
+     "hi": 0.9434782608695652
+    },
+    "auroc": {
+     "value": 0.9881710016602103,
+     "lo": 0.9802517191705519,
+     "hi": 0.994382525723201
+    },
+    "brier": {
+     "value": 0.03435766648664183
+    }
+   },
+   "tp": 206,
+   "fp": 35,
+   "fn": 2,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.0,
+    "GoDownstairs": 0.2,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.018867924528301886,
+    "Jogging": 0.0,
+    "MakingACall": 0.6086956521739131,
+    "OpeningDoor": 0.0,
+    "Walking": 0.015873015873015872
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.5666666666666667,
+    "crash": 0.9933333333333333
+   },
+   "syn_test_auroc": 0.9897444444444445,
+   "syn_shift_bag_drop": 0.8966666666666666,
+   "syn_shift_crash": 0.98,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.04680350594481318,
+     0.0018226464314538985
+    ],
+    "recall": [
+     0.009661835748792202,
+     0.06796370660295833
+    ],
+    "fp": [
+     11.0,
+     29.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic all + extra + cost",
+   "extra": true,
+   "syn": "all",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    },
+    {
+     "max_depth": 3,
+     "learning_rate": 0.08,
+     "max_iter": 200
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.05,
+    0.25,
+    0.1,
+    0.15,
+    0.15
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.8836206896551724,
+     "lo": 0.8392713133640554,
+     "hi": 0.9255936114378789
+    },
+    "recall": {
+     "value": 0.9855769230769231,
+     "lo": 0.9701341010682628,
+     "hi": 1.0
+    },
+    "f1": {
+     "value": 0.9318181818181818,
+     "lo": 0.9050667391080894,
+     "hi": 0.9567410714285715
+    },
+    "auroc": {
+     "value": 0.9958610035048884,
+     "lo": 0.9926855239377834,
+     "hi": 0.9982503943262532
+    },
+    "brier": {
+     "value": 0.02699155918586671
+    }
+   },
+   "tp": 205,
+   "fp": 27,
+   "fn": 3,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.01694915254237288,
+    "GoDownstairs": 0.15,
+    "GoUpstairs": 0.0,
+    "HandsUp": 0.0,
+    "Hopping": 0.0,
+    "Jogging": 0.03571428571428571,
+    "MakingACall": 0.45652173913043476,
+    "OpeningDoor": 0.0,
+    "Walking": 0.015873015873015872
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.0,
+    "bag_drop": 0.45,
+    "crash": 0.9833333333333333
+   },
+   "syn_test_auroc": 0.98948,
+   "syn_shift_bag_drop": 0.9033333333333333,
+   "syn_shift_crash": 0.9833333333333333,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.031664903080897144,
+     0.015548781150391188
+    ],
+    "recall": [
+     0.004876870507835518,
+     0.0625
+    ],
+    "fp": [
+     4.0,
+     20.0
+    ]
+   }
+  },
+  {
+   "name": "+ synthetic all + tuned + cost",
+   "extra": false,
+   "syn": "all",
+   "aug": [],
+   "params": [
+    {
+     "max_depth": 2,
+     "learning_rate": 0.08,
+     "max_iter": 200,
+     "min_samples_leaf": 40,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.15,
+     "max_iter": 400,
+     "min_samples_leaf": 20,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.15,
+     "max_iter": 400,
+     "min_samples_leaf": 40,
+     "l2_regularization": 1.0
+    },
+    {
+     "max_depth": 2,
+     "learning_rate": 0.15,
+     "max_iter": 400,
+     "min_samples_leaf": 10,
+     "l2_regularization": 0.0
+    },
+    {
+     "max_depth": 4,
+     "learning_rate": 0.08,
+     "max_iter": 400,
+     "min_samples_leaf": 10,
+     "l2_regularization": 0.0
+    }
+   ],
+   "calib": null,
+   "thresholds": [
+    0.05,
+    0.05,
+    0.05,
+    0.05,
+    0.05
+   ],
+   "umafall": {
+    "precision": {
+     "value": 0.8541666666666666,
+     "lo": 0.8080357142857143,
+     "hi": 0.8966983841678093
+    },
+    "recall": {
+     "value": 0.9855769230769231,
+     "lo": 0.9687464966367713,
+     "hi": 1.0
+    },
+    "f1": {
+     "value": 0.9151785714285714,
+     "lo": 0.8868349383415399,
+     "hi": 0.9411824123588829
+    },
+    "auroc": {
+     "value": 0.9879173584209554,
+     "lo": 0.9810246501911016,
+     "hi": 0.9936302858039299
+    },
+    "brier": {
+     "value": 0.03797562847749958
+    }
+   },
+   "tp": 205,
+   "fp": 35,
+   "fn": 3,
+   "fp_by_adl": {
+    "Aplausing": 0.0,
+    "Bending": 0.05084745762711865,
+    "GoDownstairs": 0.2,
+    "GoUpstairs": 0.05,
+    "HandsUp": 0.0,
+    "Hopping": 0.03773584905660377,
+    "Jogging": 0.03571428571428571,
+    "MakingACall": 0.5,
+    "OpeningDoor": 0.0,
+    "Walking": 0.015873015873015872
+   },
+   "syn_test": {
+    "riding": 0.0,
+    "braking": 0.0,
+    "pothole": 0.0,
+    "set_down": 0.006666666666666667,
+    "bag_drop": 0.6266666666666667,
+    "crash": 0.9966666666666667
+   },
+   "syn_test_auroc": 0.98948,
+   "syn_shift_bag_drop": 0.9133333333333333,
+   "syn_shift_crash": 0.9866666666666667,
+   "delta_vs_baseline": {
+    "f1": [
+     -0.049657893076077625,
+     -0.0019116170489168252
+    ],
+    "recall": [
+     0.009086850649350709,
+     0.06280846063454754
+    ],
+    "fp": [
+     12.0,
+     29.0
+    ]
+   }
+  }
+ ]
+}
