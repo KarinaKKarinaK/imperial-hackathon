@@ -16,6 +16,11 @@ Evaluation
   the synthetic rider set (seed 7). So the table describes the shipped model.
   Domain shift: every model is scored on a fresh synthetic draw (seed 123) that
   no model trains on.
+  Hard negative mining (gbm only, mining.py): the app's 6 s / 1.5 s window is
+  slid over the daily activity recordings of the training subjects, windows
+  the model scores at 0.2 or above are added as negatives, two rounds. Inside
+  each fold only that fold's training subjects are mined; the export mines all
+  subjects. --mine-rounds 0 reproduces the unmined model.
 
 Export
   out/model.json          scaler plus MLP weights (or logreg if it wins)
@@ -39,6 +44,7 @@ from sklearn.model_selection import GroupKFold
 from sklearn.preprocessing import StandardScaler
 
 from data_umafall import load_all
+from mining import MINE_ROUNDS, MINE_THR, fit_mined, stream_windows
 from features import FEATURE_NAMES, RATE_HZ, WINDOW_S, features, resample, rule_detector, window_around_peak
 from synthetic import dataset as synthetic_dataset
 
@@ -137,6 +143,7 @@ def main():
     ap.add_argument("--sensor", default="phone")
     ap.add_argument("--folds", type=int, default=5)
     ap.add_argument("--extra", default="../validation", help="folder of drop test CSVs named SET_condition_rep.csv")
+    ap.add_argument("--mine-rounds", type=int, default=MINE_ROUNDS, help="hard negative mining rounds for gbm, 0 to switch off")
     args = ap.parse_args()
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -148,6 +155,10 @@ def main():
     groups = np.array([t.subject for t in trials])
     acts = np.array([t.activity for t in trials])
     print(f"UMAFall {args.sensor}: {len(trials)} trials, {y.sum()} falls, {len(set(groups))} subjects")
+    # streaming windows of every daily activity recording, the pool for hard negative mining
+    adl_stream = {i: stream_windows(t.signals[args.sensor])[1] for i, t in enumerate(trials) if t.label == 0}
+    pool = lambda idx: np.vstack([adl_stream[i] for i in idx if i in adl_stream] or [np.zeros((0, X.shape[1]))])  # noqa: E731
+    mined_per_fold = []
 
     # synthetic train set (seed 7) joins every training fold and the export;
     # a fresh draw (seed 123) is the held-out domain shift test
@@ -177,7 +188,8 @@ def main():
         oof["logreg"][te] = lr.predict_proba(Xte)[:, 1]
         syn["logreg"].append(lr.predict_proba(sc.transform(Xt))[:, 1])
 
-        gbm = HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0).fit(Xf, yf)
+        gbm, n_mined = fit_mined(Xf, yf, pool(tr), rounds=args.mine_rounds)  # training subjects only
+        mined_per_fold.append(n_mined)
         oof["gbm"][te] = gbm.predict_proba(X[te])[:, 1]
         syn["gbm"].append(gbm.predict_proba(Xt)[:, 1])
 
@@ -194,7 +206,8 @@ def main():
         syn["cnn"].append(predict_torch(cnn, (raw_t - mu) / sd))
         print(f"fold {fold + 1}/{args.folds} done")
 
-    results = {"n_trials": int(len(y)), "n_falls": int(y.sum()), "n_subjects": int(len(set(groups))), "sensor": args.sensor, "threshold": THRESHOLD, "models": {}}
+    results = {"n_trials": int(len(y)), "n_falls": int(y.sum()), "n_subjects": int(len(set(groups))), "sensor": args.sensor, "threshold": THRESHOLD,
+               "hard_negative_mining": {"rounds": args.mine_rounds, "threshold": MINE_THR, "mined_per_fold": mined_per_fold}, "models": {}}
     for m in oof:
         results["models"][m] = {
             "umafall": bootstrap(y, oof[m]),
@@ -269,7 +282,10 @@ def main():
     export = {"kind": "gbm", "features": FEATURE_NAMES, "rate_hz": RATE_HZ, "window_s": WINDOW_S, "threshold": THRESHOLD,
               "scaler": {"mean": sc.mean_.tolist(), "scale": sc.scale_.tolist()},
               "trained_on": f"UMAFall {args.sensor} ({len(y)} trials, {len(set(groups))} subjects) plus {len(ys)} synthetic rider windows"}
-    gbm = HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0).fit(Xall_raw, yall)
+    gbm, n_mined = fit_mined(Xall_raw, yall, pool(range(len(y))), rounds=args.mine_rounds)
+    results["hard_negative_mining"]["mined_export"] = n_mined
+    if n_mined:
+        export["trained_on"] += f" plus {n_mined} hard negative streaming windows from UMAFall daily activities"
     trees = []
     for stage in gbm._predictors:
         nodes = stage[0].nodes
@@ -345,6 +361,9 @@ def render_md(r: dict) -> str:
         L.append(f"| {m} | {s['precision']:.3f} | {s['recall']:.3f} | {s['auroc']:.3f} | " + " | ".join(f"{b[k]:.2f}" for k in ["riding", "braking", "pothole", "set_down", "bag_drop", "crash"]) + " |")
     L.append("\nScenario columns show the fraction of windows flagged as a crash. Only the crash column should be high.\n")
     L.append(f"\nExported model: {r['exported']}.\n")
+    if r.get("hard_negative_mining", {}).get("rounds"):
+        h = r["hard_negative_mining"]
+        L.append(f"gbm uses hard negative mining: {h['rounds']} rounds, streaming windows of training-subject daily activities scored at {h['threshold']} or above added as negatives. Mined per fold {h['mined_per_fold']}, {h.get('mined_export', 0)} for the export. Other models are not mined.\n")
     if "threshold_sweep_gbm" in r:
         L += ["\n## Threshold sweep, gradient boosting (out-of-fold)\n", "| Threshold | Precision | Recall | TP | FP | FN | TN |", "|---|---|---|---|---|---|---|"]
         for t in r["threshold_sweep_gbm"]:

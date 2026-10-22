@@ -35,7 +35,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/readme/stats.svg" alt="94.2% crash recall, 90.3% precision, 0.987 AUROC, HK$110 of parts, 30 seconds from impact to dispatch" width="100%">
+  <img src="docs/assets/readme/stats.svg" alt="93.3% crash recall, 93.3% precision, 0.992 AUROC, HK$110 of parts, 30 seconds from impact to dispatch" width="100%">
 </p>
 
 <p align="center"><sub>Detector numbers: UMAFall, 625 trials, 5-fold leave-subjects-out, threshold 0.5. Every number describes the model the site runs, trained on UMAFall plus synthetic rider windows. Full table with 95% confidence intervals in <a href="ml/out/results.md">ml/out/results.md</a>. <a href="ml/VALIDITY.md">How we checked</a>.</sub></p>
@@ -239,7 +239,7 @@ Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily 
 |---|---|---|---|---|---|
 | Threshold rule | 0.934 [0.884, 0.979] | 0.476 [0.411, 0.545] | 0.631 | 0.975 | 0.095 |
 | Logistic regression | 0.831 [0.778, 0.881] | 0.899 [0.855, 0.938] | 0.864 | 0.944 | 0.082 |
-| **Gradient boosting (shipped)** | **0.903 [0.864, 0.941]** | **0.942 [0.911, 0.972]** | **0.922** | **0.987** | **0.037** |
+| **Gradient boosting (shipped)** | **0.933 [0.898, 0.962]** | **0.933 [0.898, 0.963]** | **0.933** | **0.992** | **0.033** |
 | MLP | 0.866 [0.821, 0.908] | 0.933 [0.897, 0.966] | 0.898 | 0.981 | 0.051 |
 | 1D CNN | 0.926 [0.885, 0.961] | 0.841 [0.791, 0.887] | 0.882 | 0.969 | 0.063 |
 
@@ -252,13 +252,13 @@ Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily 
 
 **Parity.** [web/src/lib/features.ts](web/src/lib/features.ts) is a line-for-line port of [ml/features.py](ml/features.py). A test checks both produce the same features and probabilities on fixed windows.
 
-**Threshold.** At 0.5: 196 falls caught, 12 missed, 21 false alarms out of 417 non-falls. Most false alarms come from *making a phone call*, which the 30 second cancel window absorbs.
+**Threshold.** At 0.5: 194 falls caught, 14 missed, 14 false alarms out of 417 non-falls. Most false alarms come from *making a phone call*, which the 30 second cancel window absorbs.
 
 </td>
 </tr>
 </table>
 
-**Domain shift test.** We score the model on a fresh synthetic draw it never trained on: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. It flags 0% of riding, braking, potholes and set-downs, catches 88% of crashes, and still flags 22% of bag drops. Without synthetic windows in training it flagged 97% of bag drops. Bag drops are the open problem the helmet clip is meant to solve.
+**Domain shift test.** We score the model on a fresh synthetic draw it never trained on: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. It flags 0% of riding, braking, potholes and set-downs, catches 89% of crashes, and still flags 27% of bag drops. Without synthetic windows in training it flagged 97% of bag drops. Bag drops are the open problem the helmet clip is meant to solve.
 
 ### Are the numbers real?
 
@@ -267,19 +267,19 @@ We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `p
 | Check | Result |
 |---|---|
 | Recompute every metric from raw data and from the saved predictions | Identical to the published table |
-| Shuffle the labels and rerun the same cross-validation | AUROC 0.47 to 0.54, chance level, so no leakage |
+| Shuffle the labels and rerun the same cross-validation | AUROC 0.47 to 0.51, chance level, so no leakage |
 | Could recording length give the answer away? | AUROC 0.52, no |
-| Confidence intervals resampling whole people instead of trials | Recall [0.898, 0.971], precision [0.864, 0.953] |
-| Worst individual people | Two of the 13 people who fell had a third of their falls missed |
+| Confidence intervals resampling whole people instead of trials | Recall [0.898, 0.963], precision [0.896, 0.972] |
+| Worst individual people | One of the 13 people who fell had a third of their falls missed, another a fifth |
 | One feature alone (tilt angle) | AUROC 0.91. Simulated falls are an easier task than road crashes |
-| Live loop on full recordings (6 s window every 1.5 s, 60 s hold), held-out people | 201 of 208 falls caught, median 0.88 s after impact |
-| False alarms per hour, phone in a pocket during daily activities | **20.3 per hour** [14.2, 28.3], half from taking the phone out for a call |
-| False alarms per hour, our synthetic ride | 0.30 per hour [0.06, 0.88], all from bag drops. Potholes and hard braking never fired |
+| Live loop on full recordings (6 s window every 1.5 s, 60 s hold), held-out people | 200 of 208 falls caught, median 2.1 s after impact |
+| False alarms per hour, phone in a pocket during daily activities | **10.5 per hour** [6.2, 16.5], down from 19.2 before hard negative mining. All that remain come from taking the phone out for a call |
+| False alarms per hour, our synthetic ride | 0.20 per hour [0.02, 0.72], all from bag drops. Potholes and hard braking never fired |
 
 ### What this does not prove
 
 - UMAFall falls are simulated by volunteers, not real road crashes, and only 13 of the 19 people performed falls. Threshold detectors lose sensitivity on real-world falls.[^bagala]
-- In a live loop over everyday phone handling the phone-only detector raises about 20 false alarms an hour ([ml/STREAMING.md](ml/STREAMING.md)). The 30 second cancel catches them, but that is too many for a walking rider, which is why the helmet clip and the two-sensor rule matter. UMAFall has only 1.7 hours of daily activity, and our synthetic ride is our own model, so neither is a real riding hour.
+- In a live loop over everyday phone handling the phone-only detector raised about 19 false alarms an hour. Hard negative mining (retraining on the windows it wrongly flagged, from training people only) cut that to 10.5, with 200 of 208 falls still caught ([ml/STREAMING.md](ml/STREAMING.md)). The mining setting was picked from four tried after seeing held-out results, so treat the gain as indicative. 10.5 an hour is still too many for a walking rider, which is why the helmet clip and the two-sensor rule matter. UMAFall has only 1.7 hours of daily activity, and our synthetic ride is our own model, so neither is a real riding hour.
 - The MPU-6050 in the clip is set to 16 g, so harder helmet impacts are capped.
 - The synthetic rider set is ours, so the domain shift test is a sanity check, not validation.
 - Helmet drop tests are in progress. Protocol: [validation/DROP_TEST_PROTOCOL.md](validation/DROP_TEST_PROTOCOL.md).
@@ -293,7 +293,7 @@ Twelve variants, same protocol, nothing chosen on test people. The experiment ro
 
 | Variant | Recall | Precision | Missed falls | False alarms | AUROC | Synthetic bag drops flagged |
 |---|---|---|---|---|---|---|
-| Shipped: UMAFall + synthetic, threshold 0.5 | 0.942 | 0.903 | 12 | 21 | 0.987 | 22% |
+| Shipped: UMAFall + synthetic + mined hard negatives, threshold 0.5 | 0.933 | 0.933 | 14 | 14 | 0.992 | 27% |
 | UMAFall only, threshold 0.5 | 0.952 | 0.930 | 10 | 15 | 0.994 | 98% |
 | + synthetic negatives + 9 new features | 0.957 | 0.930 | 9 | 15 | 0.996 | 19% |
 | same, threshold 0.2 | 0.981 | 0.915 | 4 | 19 | 0.996 | 39% |

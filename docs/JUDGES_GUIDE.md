@@ -32,7 +32,7 @@ Not done yet: helmet drop tests, running the helmet firmware on hardware, false 
 3. Drop the phone onto a bed or cushion from about 40 cm. A countdown should appear. Tap to cancel, or let it run.
 4. On a laptop, https://metricsfile.vercel.app/dispatch shows the alert. Other riders appear only with a short id and a position rounded to about 100 m.
 
-Expect some false alarms when you take the phone out of a pocket: the phone-only detector raises about 20 per hour of everyday handling (see `ml/STREAMING.md`). The 30 second cancel and the helmet clip are the answers we propose.
+Expect some false alarms when you take the phone out of a pocket: the phone-only detector raises about 10 per hour of everyday handling (see `ml/STREAMING.md`). The 30 second cancel and the helmet clip are the answers we propose.
 
 ## Minute 3: the record and its signature
 
@@ -82,7 +82,7 @@ python3 audit.py          # recomputes every metric, shuffled-label leakage test
 python3 stream_eval.py    # false alarms per hour, about 15 s
 ```
 
-Headline: recall 0.942 [0.911, 0.972], precision 0.903 [0.864, 0.941], AUROC 0.987, five folds that hold out whole people. UMAFall falls are simulated by volunteers onto a mattress, so these numbers show the method works, not that it detects road crashes.
+Headline: recall 0.933 [0.898, 0.963], precision 0.933 [0.898, 0.962], AUROC 0.992, five folds that hold out whole people. UMAFall falls are simulated by volunteers onto a mattress, so these numbers show the method works, not that it detects road crashes.
 
 ## Where each Imperial step lives
 

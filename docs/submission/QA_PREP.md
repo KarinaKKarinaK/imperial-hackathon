@@ -18,7 +18,7 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 **Why gradient boosting and not deep learning?** We trained both. The 1D CNN had lower recall (84% against 94%) and a worse Brier score on held-out people. Boosting on ten physical features is better calibrated, is a few kilobytes of JSON, and runs on the server and on the phone for the live readout.
 
-**What is the false alarm rate in practice?** On held-out subjects, 21 false alarms in 417 non-fall recordings at threshold 0.5 (precision 90%). Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published. In a live loop over everyday phone handling the phone-only detector raised about 20 false alarms an hour (ml/STREAMING.md); that number, and the fix, are on the README.
+**What is the false alarm rate in practice?** On held-out subjects, 14 false alarms in 417 non-fall recordings at threshold 0.5 (precision 93%). Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published. In a live loop over everyday phone handling the phone-only detector raised about 19 false alarms an hour; retraining on the windows it wrongly flagged cut that to 10.5 with 200 of 208 falls caught (ml/STREAMING.md). The rest are phones taken out for a call; the helmet and phone agreement rule and real ride data are the next fix.
 
 **Can the model be gamed by a rider?** A rider could drop the helmet on purpose. The event is a trigger for a fixed first-tier payout, hospital records unlock the second tier, and repeated events from one record id are visible to the insurer. Fraud risk is priced like any parametric product.
 

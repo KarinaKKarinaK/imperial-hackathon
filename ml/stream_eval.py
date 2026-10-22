@@ -7,7 +7,8 @@ This script replays that loop.
 
 1. UMAFall. 5-fold GroupKFold by subject, each fold trained exactly as
    train.py trains (UMAFall peak windows of the training subjects plus the
-   synthetic set, seed 7, same gradient boosting settings). Every FULL phone
+   synthetic set, seed 7, same gradient boosting settings, plus hard negative
+   mining over the training subjects' daily activity recordings only). Every FULL phone
    recording of the held-out subjects is streamed with a 6 s window and a
    1.5 s hop. Every alarm on an ADL recording is false. A fall is caught when
    an alarm window contains the true peak; other alarms on fall recordings
@@ -16,24 +17,31 @@ This script replays that loop.
    with events dropped in at the rates in RATES_PER_HOUR, fresh seeds
    (2026 + fold). Our own generator, not real riding.
 
-Both at threshold 0.5 (shipped) and 0.2.
+3. Confirmation rules the app could add on top, at threshold 0.5.
+4. Field data. If ml/data/field/*.json exist, the shipped model (out/model.json)
+   is streamed over every ride segment and scored on every labelled event.
+
+Both at threshold 0.5 (shipped) and 0.2. --mine-rounds 0 gives the unmined model.
 """
 
 from __future__ import annotations
 
+import argparse
+import json
 from pathlib import Path
 
 import numpy as np
 from scipy.stats import chi2
-from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.model_selection import GroupKFold
 
 from data_umafall import load_all
-from features import features, resultant, window_around_peak
+from features import FEATURE_NAMES, features, resultant, window_around_peak
+from mining import HOP_S, MINE_ROUNDS, WIN_S, fit_mined, stream_windows
 from synthetic import RATE, _base, dataset, scenario
 
 ML = Path(__file__).resolve().parent
-WIN_S, HOP_S, REFRACTORY_S = 6.0, 1.5, 60.0
+REFRACTORY_S = 60.0
+STILL = FEATURE_NAMES.index("still_s")
 THRESHOLDS = [0.5, 0.2]
 RIDE_HOURS = 2.0
 RIDE_SEED = 2026
@@ -43,34 +51,44 @@ RATES_PER_HOUR = {"pothole": 20, "braking": 12, "set_down": 4, "bag_drop": 1}
 CRASHES_PER_RUN = 5
 
 
-def gbm():
-    return HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0)
-
-
-def stream_probs(sig: np.ndarray, model) -> tuple[np.ndarray, np.ndarray]:
-    """Window end times and crash probabilities, as the phone would post them.
-    Like the app, skip windows with under 10 samples or under 0.5 s span."""
-    t = sig[:, 0]
-    ends, feats = [], []
-    te = HOP_S
-    while te <= t[-1] + 1e-9:
-        lo, hi = np.searchsorted(t, te - WIN_S, side="right"), np.searchsorted(t, te, side="right")
-        w = sig[lo:hi]
-        if len(w) >= 10 and w[-1, 0] - w[0, 0] >= 0.5:
-            ends.append(te)
-            feats.append(features(w))
-        te += HOP_S
-    if not feats:
-        return np.array([]), np.array([])
-    return np.array(ends), model.predict_proba(np.array(feats))[:, 1]
-
-
 def alarms(ends: np.ndarray, p: np.ndarray, thr: float) -> list[float]:
     """Server rule: an event only if none in the last 60 s."""
     out: list[float] = []
     for te, pi in zip(ends, p):
         if pi >= thr and (not out or te - out[-1] >= REFRACTORY_S):
             out.append(float(te))
+    return out
+
+
+def confirmed_alarms(ends, p, still, thr: float, rule) -> list[tuple[float, float]]:
+    """Alarms under a confirmation rule, as (alarm_time, trigger_time). A window
+    at or above thr triggers; the alarm fires on the window that confirms it.
+    rule None: fire at once. ("n", N, M): N positive windows among the trigger
+    and the next M - 1. ("still", K, S): a window among the trigger and the
+    next K has still_s >= S. The 60 s hold runs from the alarm."""
+    out, last, k, n = [], -1e9, 0, len(ends)
+    while k < n:
+        fire = None
+        if p[k] >= thr and ends[k] - last >= REFRACTORY_S:
+            span = rule[2] - 1 if rule and rule[0] == "n" else (rule[1] if rule else 0)
+            cnt = 0
+            for j in range(k, n):
+                if ends[j] - ends[k] > span * HOP_S + 1e-6:
+                    break
+                if rule is None or (rule[0] == "still" and still[j] >= rule[2]):
+                    fire = j
+                    break
+                if rule[0] == "n":
+                    cnt += p[j] >= thr
+                    if cnt >= rule[1]:
+                        fire = j
+                        break
+        if fire is None:
+            k += 1
+            continue
+        out.append((float(ends[fire]), float(ends[k])))
+        last = ends[fire]
+        k = fire + 1
     return out
 
 
@@ -142,11 +160,94 @@ def build_ride(seed: int):
     return s, events
 
 
+# ---------- shipped model and field data ----------
+class ShippedModel:
+    """The exported gradient boosting trees from out/model.json, evaluated the
+    way web/src/lib/model.ts does."""
+
+    def __init__(self, path: Path):
+        m = json.loads(path.read_text())
+        self.thr = float(m["threshold"])
+        self.base = float(m["gbm"]["baseline"])
+        self.trees = m["gbm"]["trees"]
+
+    def predict_proba(self, F: np.ndarray) -> np.ndarray:
+        out = np.empty(len(F))
+        for r, x in enumerate(F):
+            z = self.base
+            for tree in self.trees:
+                n = tree[0]
+                while not n["leaf"]:
+                    n = tree[n["l"] if x[n["f"]] <= n["t"] else n["r"]]
+                z += n["v"]
+            out[r] = 1.0 / (1.0 + np.exp(-z))
+        return np.column_stack([1 - out, out])
+
+
+def field_report(folder: Path = ML / "data/field") -> None:
+    """Real recordings from the app, one JSON per segment:
+    {"id", "kind": "ride"|"event", "label": "riding"|"crash"|"false_alarm"|"real_fall"|"unsure",
+     "source": "phone"|"helmet", "durationS", "samples": [[t_s, ax_g, ay_g, az_g], ...]}.
+    Never trained on."""
+    print("\n===== field data =====")
+    files = sorted(folder.glob("*.json")) if folder.exists() else []
+    if not files:
+        print("no field data yet")
+        return
+    model = ShippedModel(ML / "out/model.json")
+    ride_s, ride_alarms, events, skipped = 0.0, [], [], 0
+    for f in files:
+        try:
+            d = json.loads(f.read_text())
+            sig = np.asarray(d["samples"], dtype=float).reshape(-1, 4)
+        except (ValueError, KeyError, TypeError) as e:
+            print(f"  skipped {f.name}: {e}")
+            skipped += 1
+            continue
+        if len(sig) < 10:
+            skipped += 1
+            continue
+        sig = sig[np.argsort(sig[:, 0])]
+        ends, F = stream_windows(sig)
+        p = model.predict_proba(F)[:, 1] if len(F) else np.array([])
+        n_al = len(alarms(ends, p, model.thr))
+        if d.get("kind") == "ride":
+            ride_s += float(d.get("durationS") or sig[-1, 0] - sig[0, 0])
+            ride_alarms.append((d.get("id", f.stem), d.get("source"), n_al))
+        elif d.get("kind") == "event":
+            pk = float(model.predict_proba(features(window_around_peak(sig))[None])[0, 1])
+            events.append((d.get("id", f.stem), d.get("label"), d.get("source"), pk, n_al))
+    if ride_s > 0:
+        k = sum(a for _, _, a in ride_alarms)
+        lo, hi = poisson_ci(k, ride_s / 3600)
+        print(f"rides: {len(ride_alarms)} segments, {ride_s / 3600:.2f} h, {k} alarms = {k / (ride_s / 3600):.2f} false alarms per riding hour, Poisson 95% [{lo:.2f}, {hi:.2f}]")
+        print("  by source:", {s_: sum(a for _, src, a in ride_alarms if src == s_) for s_ in sorted({str(src) for _, src, _ in ride_alarms})})
+    else:
+        print("rides: none")
+    if events:
+        pos, neg = {"crash", "real_fall"}, {"false_alarm", "riding"}
+        for lab in sorted({str(e[1]) for e in events}):
+            ev = [e for e in events if str(e[1]) == lab]
+            flagged = sum(1 for e in ev if e[3] >= model.thr)
+            print(f"  events labelled {lab}: {len(ev)}, peak window flagged {flagged}, any streaming alarm {sum(1 for e in ev if e[4])}")
+        yy = np.array([1 if e[1] in pos else 0 for e in events if e[1] in pos | neg])
+        pp = np.array([e[3] for e in events if e[1] in pos | neg])
+        if len(yy):
+            tp = int(((pp >= model.thr) & (yy == 1)).sum()); fp = int(((pp >= model.thr) & (yy == 0)).sum())
+            print(f"  scored events (unsure left out): {len(yy)}, {int(yy.sum())} real, recall {tp}/{int(yy.sum())}, false positives {fp}/{int((yy == 0).sum())}")
+    if skipped:
+        print(f"  {skipped} files skipped")
+
+
 # ---------- main ----------
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mine-rounds", type=int, default=MINE_ROUNDS, help="hard negative mining rounds, 0 for the unmined model")
+    args = ap.parse_args()
     trials = [t for t in load_all(ML / "data/umafall") if "phone" in t.signals]
     sigs = [t.signals["phone"][np.argsort(t.signals["phone"][:, 0])] for t in trials]
-    X = np.array([features(window_around_peak(s)) for s in sigs])
+    raw = [t.signals["phone"] for t in trials]  # unsorted, exactly as train.py sees them, so fold models match train.py
+    X = np.array([features(window_around_peak(s)) for s in raw])
     y = np.array([t.label for t in trials])
     G = np.array([t.subject for t in trials])
     acts = np.array([t.activity for t in trials])
@@ -158,16 +259,21 @@ def main():
     print(f"recording length: median {np.median(dur):.1f} s, min {dur.min():.1f}, max {dur.max():.1f}")
     print(f"ADL time {dur[y == 0].sum() / 3600:.3f} h, fall recording time {dur[y == 1].sum() / 3600:.3f} h")
 
+    win = [stream_windows(s) for s in raw]  # (ends, features) per recording
     streams = [None] * len(trials)  # (ends, p) per recording, from the fold that held it out
-    rides = []
+    stills = [w[1][:, STILL] for w in win]
+    rides, ride_stills = [], []
     for fold, (tr, te) in enumerate(GroupKFold(5).split(X, y, G)):
-        model = gbm().fit(np.vstack([X[tr], Xs]), np.concatenate([y[tr], ys]))
+        negs = np.vstack([win[i][1] for i in tr if y[i] == 0])  # training subjects only
+        model, n_mined = fit_mined(np.vstack([X[tr], Xs]), np.concatenate([y[tr], ys]), negs, rounds=args.mine_rounds)
         for i in te:
-            streams[i] = stream_probs(sigs[i], model)
+            ends, F = win[i]
+            streams[i] = (ends, model.predict_proba(F)[:, 1] if len(F) else np.array([]))
         ride, events = build_ride(RIDE_SEED + fold)
-        ends, p = stream_probs(ride, model)
-        rides.append((ends, p, events))
-        print(f"fold {fold + 1}/5 done, held-out subjects {sorted(set(G[te]))}")
+        ends, F = stream_windows(ride)
+        rides.append((ends, model.predict_proba(F)[:, 1], events))
+        ride_stills.append(F[:, STILL])
+        print(f"fold {fold + 1}/5 done, held-out subjects {sorted(set(G[te]))}, mined {n_mined} hard negatives from training subjects")
 
     print(f"\nwindows scored: UMAFall {sum(len(e) for e, _ in streams)}, synthetic ride {sum(len(e) for e, _, _ in rides)}")
     subs = np.unique(G)
@@ -251,6 +357,43 @@ def main():
         print(f"  false alarms by event in the window: {cause}")
         print("  events that fell inside an alarm window (alarms / events):", {k_: f"{v[1]}/{v[0]}" for k_, v in per_ev.items()})
         print(f"  crashes caught {crash_hit} of {crash_n}, Wilson 95% [{clo:.2f}, {chi_:.2f}]" + (f", impact to alarm median {np.median(cd):.2f} s, max {max(cd):.2f}" if cd else ""))
+
+    # confirmation rules on top of the model, threshold 0.5
+    print("\n===== confirmation rules, threshold 0.5 =====")
+    rules = {"none (shipped)": None, "2 of 2 consecutive": ("n", 2, 2), "2 of next 3": ("n", 2, 3),
+             "still_s >= 1 s within 2 hops": ("still", 2, 1.0), "still_s >= 2 s within 2 hops": ("still", 2, 2.0)}
+    adl = y == 0
+    for name, rule in rules.items():
+        fa, caught, d = 0, 0, []
+        for i in range(len(y)):
+            ends, p = streams[i]
+            al = confirmed_alarms(ends, p, stills[i], 0.5, rule)
+            if y[i] == 0:
+                fa += len(al)
+            else:
+                hit = [a for a, tg in al if tg - WIN_S < peak_t[i] <= tg]
+                if hit:
+                    caught += 1
+                    d.append(hit[0] - peak_t[i])
+        rf, rc, rn, rd = 0, 0, 0, []
+        for (ends, p, events), st in zip(rides, ride_stills):
+            al = confirmed_alarms(ends, p, st, 0.5, rule)
+            crashes = [t for k_, t in events if k_ == "crash"]
+            rn += len(crashes)
+            for ct in crashes:
+                h_ = [a for a, tg in al if tg - WIN_S < ct <= tg]
+                if h_:
+                    rc += 1
+                    rd.append(h_[0] - ct)
+            rf += sum(1 for a, tg in al if not any(tg - WIN_S < ct <= tg for ct in crashes))
+        h = dur[adl].sum() / 3600
+        lo, hi = poisson_ci(fa, h)
+        rlo, rhi = poisson_ci(rf, RIDE_HOURS * len(rides))
+        d = np.array(d)
+        print(f"{name}: UMAFall ADL {fa / h:.1f} per hour [{lo:.1f}, {hi:.1f}], falls {caught} of {int(y.sum())}, impact to alarm median {np.median(d):.2f} s, p90 {np.percentile(d, 90):.2f}, max {d.max():.2f}; "
+              f"ride {rf / (RIDE_HOURS * len(rides)):.2f} per hour [{rlo:.2f}, {rhi:.2f}], crashes {rc} of {rn}" + (f", crash to alarm max {max(rd):.2f} s" if rd else ""))
+
+    field_report()
 
     counts = {}
     for _, _, events in rides:

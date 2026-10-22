@@ -12,6 +12,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 from data_umafall import load_all
 from features import features, window_around_peak, FEATURE_NAMES
 from synthetic import dataset
+from mining import fit_mined, stream_windows
 
 ML = Path(__file__).resolve().parent
 rows = list(csv.DictReader(open(ML/"out/oof.csv")))
@@ -37,17 +38,20 @@ print("4. single-feature AUROC:", {n: round(max(roc_auc_score(Y,X[:,i]),1-roc_au
 
 _sw, _sy, _ = dataset(n_per=150)  # seed 7, the synthetic set train.py adds to every fold
 _SX = np.array([features(w) for w in _sw])
+_SW = [stream_windows(t.signals["phone"])[1] for t in trials]  # streaming windows, pool for hard negative mining
 def cv(Xm, Ym):
+    # as train.py: mining only from recordings of the fold's training subjects labelled daily activity
     o=np.zeros(len(Ym))
     for tr,te in GroupKFold(5).split(Xm,Ym,G):
-        o[te]=HistGradientBoostingClassifier(max_depth=3,learning_rate=0.08,max_iter=200,class_weight="balanced",random_state=0).fit(np.vstack([Xm[tr],_SX]),np.concatenate([Ym[tr],_sy])).predict_proba(Xm[te])[:,1]
+        negs=np.vstack([_SW[i] for i in tr if Ym[i]==0])
+        o[te]=fit_mined(np.vstack([Xm[tr],_SX]),np.concatenate([Ym[tr],_sy]),negs)[0].predict_proba(Xm[te])[:,1]
     return o
 o=cv(X,Y); print("5. rerun CV from raw data: auc %.3f rec %.3f prec %.3f" % (roc_auc_score(Y,o), recall_score(Y,o>=.5), precision_score(Y,o>=.5)))
 perm=[roc_auc_score(Yp:=rng.permutation(Y), cv(X,Yp)) for _ in range(5)]
 print("6. shuffled-label CV AUROC (should be ~0.5):", np.round(perm,3))
 
 Xs_w, ys, names = dataset(n_per=150); Xs=np.array([features(w) for w in Xs_w])
-full = HistGradientBoostingClassifier(max_depth=3,learning_rate=0.08,max_iter=200,class_weight="balanced",random_state=0).fit(np.vstack([X,Xs]),np.concatenate([Y,ys]))
+full = fit_mined(np.vstack([X,Xs]),np.concatenate([Y,ys]),np.vstack([_SW[i] for i in range(len(Y)) if Y[i]==0]))[0]
 ps=full.predict_proba(Xs)[:,1]
 print("7. SHIPPED model (UMAFall+synthetic) on its own synthetic training set, flagged:", {n: round(float(np.mean(ps[np.array(names)==n]>=.5)),2) for n in sorted(set(names))})
 Xs2_w, ys2, n2 = dataset(n_per=150, seed=123) if "seed" in dataset.__code__.co_varnames else (None,None,None)
@@ -63,8 +67,7 @@ B_w,yb,nb=dataset(n_per=150,seed=123);XB=np.array([features(w) for w in B_w]);nb
 from sklearn.ensemble import HistGradientBoostingClassifier as H
 mk=lambda:H(max_depth=3,learning_rate=0.08,max_iter=200,class_weight="balanced",random_state=0)
 o=np.zeros(len(Y))
-for tr,te in GroupKFold(5).split(X,Y,G):
-    o[te]=mk().fit(np.vstack([X[tr],XA]),np.concatenate([Y[tr],ya])).predict_proba(X[te])[:,1]
+o=cv(X,Y)
 print("shipped recipe (UMAFall folds + synthetic) on held-out UMAFall subjects: auc %.3f rec %.3f prec %.3f"%(roc_auc_score(Y,o),recall_score(Y,o>=.5),precision_score(Y,o>=.5)))
 u=mk().fit(X,Y).predict_proba(XB)[:,1]
 print("UMAFall-only model on fresh synthetic:",{n:round(float(np.mean(u[nb==n]>=.5)),2) for n in sorted(set(nb))})
