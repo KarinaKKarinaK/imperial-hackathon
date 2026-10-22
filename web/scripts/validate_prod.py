@@ -148,6 +148,22 @@ check("tier two signature verifies", vr.get("valid") is True and vr.get("settlem
 s, d = req("/api/sim", {"action": "feedback", "value": "real_fall"})
 check("rider label stored", any(e.get("feedback") == "real_fall" for e in d["events"]))
 check("labels counted in the labour view", req("/api/labour")[1]["labels"]["real_fall"] >= 1)
+print("== F. research mode, real data in")
+before = req("/api/labour")[1]["field"]
+seg = [{"t": int(time.time() * 1000) - 25000 + i * 20, "ax": 0.2, "ay": 0.1, "az": 9.81} for i in range(1250)]
+check("donation refused before opt-in", req("/api/field", {"riderId": rid, "kind": "ride", "label": "riding", "samples": seg}, key=KEY)[0] == 403)
+req("/api/rider", {"riderId": rid, "research": True}, key=KEY)
+s, d = req("/api/field", {"riderId": rid, "kind": "ride", "label": "riding", "samples": seg}, key=KEY)
+check("ride segment accepted after opt-in", s == 200 and d.get("id", "").startswith("FLD-"))
+mid = req("/api/labour")[1]["field"]
+check("ride counted on /labour", mid["rides"] == before["rides"] + 1)
+raw = urllib.request.Request(KV, data=json.dumps(["LRANGE", "metrics:field:v1", 0, 0]).encode(), headers={"Authorization": f"Bearer {TOK}", "content-type": "application/json"})
+with urllib.request.urlopen(raw, timeout=20, context=CTX) as resp:
+    top = (json.loads(resp.read())["result"] or [""])[0]
+check("stored window has no rider id and no position", rid not in top and '"lat"' not in top and '"lng"' not in top)
+req("/api/rider", {"riderId": rid, "research": False}, key=KEY)
+after = req("/api/labour")[1]["field"]
+check("withdrawing deletes it and takes it out of the counts", after["rides"] == before["rides"])
 req("/api/sim", {"action": "reset", "key": DEMO_KEY})
 print("\nALL PASS" if ok else "\nSOME CHECKS FAILED")
 sys.exit(0 if ok else 1)

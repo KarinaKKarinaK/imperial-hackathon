@@ -30,8 +30,24 @@ type Store = {
 
 // Counters for donated windows. The windows themselves live in a separate
 // Redis list (persist.ts); these are what /labour shows.
-export type FieldStats = { rides: number; rideSeconds: number; events: number; labels: Record<string, number> };
-const emptyField = (): FieldStats => ({ rides: 0, rideSeconds: 0, events: 0, labels: {} });
+export type FieldStats = { rides: number; rideSeconds: number; events: number; labels: Record<string, number>; byTag?: Record<string, FieldCount> };
+type FieldCount = { rides: number; rideSeconds: number; events: number; labels: Record<string, number> };
+const emptyField = (): FieldStats => ({ rides: 0, rideSeconds: 0, events: 0, labels: {}, byTag: {} });
+
+// Totals plus a per-tag tally, so withdrawing one rider's windows also takes
+// them out of the counts on /labour.
+function tally(tag: string, kind: FieldKind, label: string, seconds: number, sign: 1 | -1) {
+  const f = store.field;
+  f.byTag ??= {};
+  const t = (f.byTag[tag] ??= { rides: 0, rideSeconds: 0, events: 0, labels: {} });
+  for (const c of [f, t]) {
+    if (kind === "ride") {
+      c.rides += sign;
+      c.rideSeconds = Number((c.rideSeconds + sign * seconds).toFixed(1));
+    } else c.events += sign;
+    c.labels[label] = (c.labels[label] ?? 0) + sign;
+  }
+}
 
 type SimState = {
   riderId: string;
@@ -412,12 +428,8 @@ export function prepareDonation(
     durationS: Number(durationS.toFixed(2)),
     samples: input.samples.map((x) => [Number(((x.t - t0) / 1000).toFixed(3)), Number((x.ax / 9.81).toFixed(3)), Number((x.ay / 9.81).toFixed(3)), Number((x.az / 9.81).toFixed(3))]),
   };
-  if (input.kind === "ride") {
-    r.lastRideDonationAt = Date.now();
-    store.field.rides++;
-    store.field.rideSeconds = Number((store.field.rideSeconds + durationS).toFixed(1));
-  } else store.field.events++;
-  store.field.labels[input.label] = (store.field.labels[input.label] ?? 0) + 1;
+  if (input.kind === "ride") r.lastRideDonationAt = Date.now();
+  tally(entry.tag, input.kind, input.label, durationS, 1);
   persist();
   return { ok: true, entry };
 }
@@ -427,6 +439,15 @@ export { pushField };
 export async function withdrawResearch(riderId: string): Promise<number> {
   const tag = fieldTag(riderId);
   setResearch(riderId, false);
+  const mine = tag ? store.field.byTag?.[tag] : undefined;
+  if (tag && mine) {
+    const f = store.field;
+    f.rides -= mine.rides;
+    f.rideSeconds = Number((f.rideSeconds - mine.rideSeconds).toFixed(1));
+    f.events -= mine.events;
+    for (const [k, v] of Object.entries(mine.labels)) f.labels[k] = (f.labels[k] ?? 0) - v;
+    delete f.byTag![tag];
+  }
   return tag ? deleteField(tag) : 0;
 }
 
@@ -760,7 +781,7 @@ export function labourAggregate() {
     byRain: count(["rain", "dry"], (e) => (e.context.rain ? "rain" : "dry")),
     byHour: count(["00-06", "06-11", "11-14", "14-17", "17-21", "21-24"], (e) => band(hourHK(e))),
     hazards: publicHazards().map(({ lat, lng, bumps, brakes, passes, rate }) => ({ lat, lng, bumps, brakes, passes, rate })),
-    field: { ...store.field, rideHours: Number((store.field.rideSeconds / 3600).toFixed(2)) },
+    field: { rides: store.field.rides, rideSeconds: store.field.rideSeconds, events: store.field.events, labels: store.field.labels, rideHours: Number((store.field.rideSeconds / 3600).toFixed(2)) },
     hazardMin: HAZARD_MIN,
     hazardPrior: HAZARD_PRIOR,
     generatedAt: Date.now(),

@@ -289,5 +289,7 @@ test("research mode: donations need opt-in, carry no rider id or position, and w
   assert.equal(prepareDonation(id, ride30).ok, false, "rate floor between ride segments");
   assert.ok(agg().field.rideSeconds >= 29);
   assert.equal(await withdrawResearch(id), 1, "withdrawing deletes the donation");
+  assert.equal(agg().field.rides, 0, "and takes it out of the counts");
+  assert.equal("byTag" in agg().field, false, "tags never leave the server");
   assert.equal(memFieldForTests().some((x) => x.includes(String(out.entry.tag))), false);
 });
