@@ -43,7 +43,7 @@ export default function PosterPage() {
           <div className="tile tile-dusk tile-grain col-span-4 flex flex-col justify-between p-6">
             <p className="eyebrow !opacity-80">The problem in four numbers</p>
             <div className="grid grid-cols-2 gap-4">
-              {[["12,900", "riders, zero employers"], ["13%", "of injured riders compensated"], ["1 in 3", "riders on two apps at once"], ["5 yrs", "for one typhoon case to pay"]].map(([n, t]) => (
+              {[["12,900", "riders, zero employers"], ["2 of 22", "injured riders compensated by the platform"], ["1 in 3", "riders on two apps at once"], ["5 yrs", "for one typhoon case to pay"]].map(([n, t]) => (
                 <div key={n}>
                   <p className="num text-4xl">{n}</p>
                   <p className="text-xs opacity-85">{t}</p>

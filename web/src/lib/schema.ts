@@ -1,5 +1,5 @@
 // The work-injury event record. This is the standard: what a rider, a platform,
-// an insurer and a court all read. Everything upstream of it is raw telemetry
+// an insurer and a court all read. Everything upstream of it is raw telemetry, checked and discarded,
 // and stays with the rider.
 
 export type Platform = "Platform A" | "Platform B";
@@ -39,7 +39,9 @@ export type RiderState = {
   deadlineAt: number | null; // when the current order is due, ms since epoch
   emergencyContact: string | null; // phone number held on the device, mirrored for the demo rider only
   lastSeenAt: number;
-  lastCell?: string | null; // hazard grid cell last passed, so a pass is counted once per cell
+  lastCell?: string | null;
+  research?: boolean; // opted in to donate labelled sensor windows, separate from the shift consent
+  lastRideDonationAt?: number | null; // hazard grid cell last passed, so a pass is counted once per cell
   lastWindow: WindowStats | null;
   lastDetection: LastDetection | null;
 };

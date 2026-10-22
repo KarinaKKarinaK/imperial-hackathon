@@ -8,7 +8,7 @@ const schema = {
   $id: "https://metricsfile.vercel.app/api/schema",
   title: "Metrics work-injury event record",
   description:
-    "One verified work-time impact for a platform worker. Everything upstream of this record stays on the worker's device. Version 2.",
+    "One verified work-time impact for a platform worker. Raw sensor windows upstream of this record are checked and discarded, never stored. Version 2.",
   type: "object",
   required: ["id", "riderId", "platform", "activeJobs", "apportionment", "sources", "prevHash", "ts", "deadlineSec", "mode", "lat", "lng", "peakG", "tiltDeg", "stillSec", "confidence", "status", "cancelDeadline", "triage", "insurance", "context", "signature", "settlement"],
   additionalProperties: false,

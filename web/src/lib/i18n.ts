@@ -22,7 +22,7 @@ const en = {
   "consent.eyebrow": "Before anything is recorded",
   "consent.title": "Your data. Your record.",
   "consent.b1": "Motion is read only while you are on shift. Off shift, nothing is read.",
-  "consent.b2": "Raw motion stays on this phone. Only a crash event leaves it, after 30 seconds of silence from you.",
+  "consent.b2": "Motion is checked on our server in 6 second windows and then discarded. Only a crash event is kept, after 30 seconds of silence from you.",
   "consent.b3": "Your platform never sees your route, speed, heat or fatigue. They see one thing: a verified event, if there is one.",
   "consent.b4": "You can stop at any time. Stopping deletes the buffer.",
   "consent.cta": "I understand, continue",
@@ -87,6 +87,11 @@ const en = {
   "hosp.fail": "Could not send. Try again.",
   "sms.head": "Metrics crash alert {time} HKT. No reply in 30 s.",
   "sms.ref": "Ref",
+  "research.title": "Help make detection better",
+  "research.body": "Optional, separate from your shift consent. While on shift, 60 seconds of normal riding is sent every 10 minutes, and the 6 seconds behind any alarm once you say what it was. No location, no rider id. Turning this off deletes everything you sent.",
+  "research.off": "Research mode is off. Turn on",
+  "research.on": "Research mode is on. Turn off and delete my data",
+  "research.status": "Ride segments sent from this phone this session: {n}",
 };
 
 export type Key = keyof typeof en;
@@ -95,7 +100,7 @@ const zhHK: Record<Key, string> = {
   "consent.eyebrow": "開始記錄之前",
   "consent.title": "你的數據，你的紀錄。",
   "consent.b1": "只會喺你返工時讀取動作數據。收工之後，乜都唔會讀。",
-  "consent.b2": "原始動作數據只留喺呢部手機。只有撞車事件會傳出，而且要你 30 秒冇回應先會傳。",
+  "consent.b2": "動作數據會以每 6 秒一段傳到我哋伺服器檢查，檢查完即刻棄置。只有撞車事件會被保存，而且要你 30 秒冇回應先會保存。",
   "consent.b3": "平台永遠睇唔到你嘅路線、車速、熱度或疲勞。佢哋只會見到一樣嘢：如有發生，一宗經核實嘅事件。",
   "consent.b4": "你可以隨時停止。停止會刪除緩存數據。",
   "consent.cta": "我明白，繼續",
@@ -160,13 +165,18 @@ const zhHK: Record<Key, string> = {
   "hosp.fail": "傳送唔到，請再試。",
   "sms.head": "Metrics 撞車警報 {time}。30 秒冇回應。",
   "sms.ref": "編號",
+  "research.title": "幫手令偵測更準",
+  "research.body": "自願參加，同返工同意分開。返工時每 10 分鐘會傳送 60 秒正常行車數據；任何警報後你標明係乜嘢，就會傳送警報前 6 秒數據。唔包括位置，唔包括騎手編號。關閉就會刪除你傳送過嘅所有數據。",
+  "research.off": "研究模式已關閉。開啟",
+  "research.on": "研究模式已開啟。關閉並刪除我的數據",
+  "research.status": "今次由呢部手機傳送嘅行車片段：{n}",
 };
 
 const ne: Record<Key, string> = {
   "consent.eyebrow": "केही रेकर्ड हुनुअघि",
   "consent.title": "तपाईंको डाटा। तपाईंको रेकर्ड।",
   "consent.b1": "तपाईं सिफ्टमा हुँदा मात्र चाल पढिन्छ। सिफ्ट बाहिर केही पढिँदैन।",
-  "consent.b2": "कच्चा चाल डाटा यही फोनमा रहन्छ। तपाईं 30 सेकेन्ड चुप रहनुभयो भने मात्र दुर्घटनाको घटना बाहिर जान्छ।",
+  "consent.b2": "गति डेटा ६ सेकेन्डका टुक्रामा हाम्रो सर्भरमा जाँचिन्छ र त्यसपछि फ्याँकिन्छ। तपाईं ३० सेकेन्डसम्म नबोल्नुभए मात्र दुर्घटना घटना राखिन्छ।",
   "consent.b3": "तपाईंको प्लेटफर्मले तपाईंको बाटो, गति, गर्मी वा थकान कहिल्यै देख्दैन। उनीहरूले एउटा कुरा मात्र देख्छन्: प्रमाणित घटना, यदि भयो भने।",
   "consent.b4": "तपाईं जुनसुकै बेला रोक्न सक्नुहुन्छ। रोक्दा बफर मेटिन्छ।",
   "consent.cta": "मैले बुझें, अगाडि बढ्नुहोस्",
@@ -231,13 +241,18 @@ const ne: Record<Key, string> = {
   "hosp.fail": "पठाउन सकिएन। फेरि प्रयास गर्नुहोस्।",
   "sms.head": "Metrics दुर्घटना सूचना {time}। 30 सेकेन्डमा जवाफ छैन।",
   "sms.ref": "रेफ",
+  "research.title": "पत्ता लगाउने क्षमता सुधार्न मद्दत गर्नुहोस्",
+  "research.body": "ऐच्छिक, सिफ्टको सहमतिभन्दा अलग। सिफ्टमा हुँदा हरेक १० मिनेटमा ६० सेकेन्डको सामान्य सवारी डेटा पठाइन्छ, र कुनै अलार्म के थियो भनेपछि त्यसको अघिल्लो ६ सेकेन्ड पठाइन्छ। स्थान छैन, राइडर आईडी छैन। बन्द गर्दा तपाईंले पठाएका सबै डेटा मेटिन्छ।",
+  "research.off": "अनुसन्धान मोड बन्द छ। खोल्नुहोस्",
+  "research.on": "अनुसन्धान मोड खुला छ। बन्द गरेर मेरो डेटा मेटाउनुहोस्",
+  "research.status": "यस सत्रमा यो फोनबाट पठाइएका सवारी खण्ड: {n}",
 };
 
 const ur: Record<Key, string> = {
   "consent.eyebrow": "کچھ بھی ریکارڈ ہونے سے پہلے",
   "consent.title": "آپ کا ڈیٹا۔ آپ کا ریکارڈ۔",
   "consent.b1": "حرکت صرف تب پڑھی جاتی ہے جب آپ شفٹ پر ہوں۔ شفٹ کے بعد کچھ نہیں پڑھا جاتا۔",
-  "consent.b2": "خام حرکت کا ڈیٹا اسی فون پر رہتا ہے۔ صرف حادثے کا واقعہ باہر جاتا ہے، وہ بھی آپ کے 30 سیکنڈ خاموش رہنے کے بعد۔",
+  "consent.b2": "حرکت کا ڈیٹا 6 سیکنڈ کے حصوں میں ہمارے سرور پر جانچا جاتا ہے اور پھر ضائع کر دیا جاتا ہے۔ صرف حادثے کا واقعہ رکھا جاتا ہے، وہ بھی جب آپ 30 سیکنڈ تک جواب نہ دیں۔",
   "consent.b3": "آپ کا پلیٹ فارم کبھی آپ کا راستہ، رفتار، گرمی یا تھکن نہیں دیکھتا۔ وہ صرف ایک چیز دیکھتے ہیں: تصدیق شدہ واقعہ، اگر ہو۔",
   "consent.b4": "آپ کسی بھی وقت روک سکتے ہیں۔ روکنے سے بفر مٹ جاتا ہے۔",
   "consent.cta": "میں سمجھ گیا، آگے بڑھیں",
@@ -302,6 +317,11 @@ const ur: Record<Key, string> = {
   "hosp.fail": "بھیج نہیں سکے۔ دوبارہ کوشش کریں۔",
   "sms.head": "Metrics حادثے کا الرٹ {time}۔ 30 سیکنڈ میں جواب نہیں۔",
   "sms.ref": "حوالہ",
+  "research.title": "حادثے کی پہچان بہتر بنانے میں مدد کریں",
+  "research.body": "اختیاری، شفٹ کی رضامندی سے الگ۔ شفٹ کے دوران ہر 10 منٹ بعد 60 سیکنڈ کی عام سواری کا ڈیٹا بھیجا جاتا ہے، اور کسی الارم کے بعد آپ بتائیں کہ وہ کیا تھا تو اس سے پہلے کے 6 سیکنڈ۔ کوئی مقام نہیں، کوئی رائیڈر آئی ڈی نہیں۔ بند کرنے سے آپ کا بھیجا ہوا سارا ڈیٹا حذف ہو جاتا ہے۔",
+  "research.off": "تحقیقی موڈ بند ہے۔ آن کریں",
+  "research.on": "تحقیقی موڈ آن ہے۔ بند کریں اور میرا ڈیٹا حذف کریں",
+  "research.status": "اس سیشن میں اس فون سے بھیجے گئے سواری کے حصے: {n}",
 };
 
 const TABLE: Record<Lang, Record<Key, string>> = { en, "zh-HK": zhHK, ne, ur };

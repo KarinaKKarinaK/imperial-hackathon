@@ -269,3 +269,25 @@ test("hazard cells carry passes and a shrunk rate", () => {
   assert.ok((cell.passes ?? 0) >= cell.bumps + cell.brakes);
   assert.ok(typeof cell.rate === "number" && cell.rate > 0 && cell.rate <= 1);
 });
+
+test("research mode: donations need opt-in, carry no rider id or position, and withdrawing deletes them", async () => {
+  const { prepareDonation, setResearch, withdrawResearch, pushField, labourAggregate: agg } = await import("./store");
+  const { memFieldForTests } = await import("./persist");
+  const id = "rider-research-test";
+  authorizeRider(id, KEY);
+  const samples = ride(3000, Date.now() - 30_000); // 30 s at 100 Hz
+  const ride30 = { kind: "ride" as const, label: "riding" as const, source: "phone" as const, samples };
+  assert.equal(prepareDonation(id, ride30).ok, false, "off by default");
+  setResearch(id, true);
+  const out = prepareDonation(id, ride30);
+  assert.ok(out.ok);
+  if (!out.ok) return;
+  await pushField(out.entry);
+  const raw = memFieldForTests()[0];
+  assert.equal(raw.includes(id), false, "no rider id in the donation");
+  assert.equal(/lat|lng/.test(raw), false, "no position in the donation");
+  assert.equal(prepareDonation(id, ride30).ok, false, "rate floor between ride segments");
+  assert.ok(agg().field.rideSeconds >= 29);
+  assert.equal(await withdrawResearch(id), 1, "withdrawing deletes the donation");
+  assert.equal(memFieldForTests().some((x) => x.includes(String(out.entry.tag))), false);
+});

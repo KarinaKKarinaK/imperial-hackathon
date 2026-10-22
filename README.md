@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/KarinaKKarinaK/imperial-hackathon/actions/workflows/checks.yml"><img alt="checks" src="https://img.shields.io/github/actions/workflow/status/KarinaKKarinaK/imperial-hackathon/checks.yml?branch=main&label=checks&style=flat-square&logo=github"></a>
   <a href="https://metricsfile.vercel.app"><img alt="demo" src="https://img.shields.io/website?url=https%3A%2F%2Fmetricsfile.vercel.app&label=demo&up_message=live&style=flat-square"></a>
-  <img alt="tests" src="https://img.shields.io/badge/tests-22%20web%20%2B%20pipeline-6b4cff?style=flat-square">
+  <img alt="tests" src="https://img.shields.io/badge/tests-33%20web%20%2B%20pipeline-6b4cff?style=flat-square">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-3b82f6?style=flat-square"></a>
   <img alt="model" src="https://img.shields.io/badge/model-gradient_boosting-f0a070?style=flat-square">
   <img alt="records" src="https://img.shields.io/badge/records-Ed25519%20signed-f6d85a?style=flat-square">
@@ -48,6 +48,8 @@ We are the sensor, the trigger and the data standard. We are not the insurer.
 
 ## For the judges
 
+Five minutes to verify everything yourself: [docs/JUDGES_GUIDE.md](docs/JUDGES_GUIDE.md).
+
 Imperial's suggested workflow is effectively the marking scheme. Here is where each step lives.
 
 | Step | What Imperial asked for | Where it is |
@@ -69,7 +71,7 @@ Imperial's suggested workflow is effectively the marking scheme. Here is where e
 |---|---|
 | **The promise** | The 2026 Policy Address (para 385) commits to statutory injury compensation for delivery platform workers. The July 2026 proposal makes platforms liable on a no-fault basis and splits liability when a rider works for several apps at once.[^lwb] |
 | **The gap** | No objective record exists of when, where or how a rider got hurt, or which app they were working for at that second. About a third of Hong Kong riders work for more than one platform.[^csd] |
-| **The cost of the gap** | A rider injured in a 2020 typhoon won HK$1.35m from Foodpanda only in September 2025, five years later, in the High Court.[^hro] A 2024 union survey put the share of injured riders who were compensated at 13% (original publisher being confirmed).[^union] |
+| **The cost of the gap** | A rider injured in a 2020 typhoon won HK$1.35m from Foodpanda only in September 2025, five years later, in the High Court.[^hro] In a 2021 Federation of Trade Unions survey of 168 riders, 22 had been injured on delivery and only 2 were compensated by the platform.[^union] |
 | **Who is affected** | About 12,900 delivery platform workers holding 18,100 platform jobs in Hong Kong. For 65% it is their main income.[^csd] |
 
 The legislation needs data that does not exist yet. That is the deadlock we break.
@@ -297,6 +299,21 @@ Twelve variants, same protocol, nothing chosen on test people. The experiment ro
 | same, threshold 0.2 | 0.981 | 0.915 | 4 | 19 | 0.996 | 39% |
 
 Synthetic negatives were the only change that moved bag drops. Tuning and calibration did not help. A lower threshold trades four extra false alarms for five fewer missed falls, a good trade when the rider can cancel within 30 seconds.
+
+### How real data gets in
+
+Simulated falls and our own synthetic ride are not a road. Research mode on [`/rider`](https://metricsfile.vercel.app/rider) is how that changes. It is opt-in and separate from the shift consent.
+
+```mermaid
+flowchart LR
+  P["Rider phone or helmet<br/>research mode on"] -- "60 s of riding every 10 min" --> F[("Field windows<br/>no rider id, no position")]
+  P -- "6 s behind an alarm<br/>plus the rider's label" --> F
+  F -- "ml/pull_field_data.py" --> D["ml/data/field<br/>gitignored"]
+  D -- "stream_eval.py" --> M["False alarms per<br/>real riding hour"]
+  D -- "train.py, once there is enough" --> R["Retrained detector"]
+```
+
+The counts are live on [`/labour`](https://metricsfile.vercel.app/labour). Turning research mode off deletes every window that rider sent.
 
 ## Roadmap
 
@@ -534,7 +551,7 @@ Code is released under the [MIT License](LICENSE). Datasets keep their original 
 [^csd]: Census and Statistics Department, *Thematic Household Survey Report No. 81*, March 2025 (fieldwork Dec 2023 to Mar 2024). Reported in China Daily HK: https://chinadailyhk.com/article/607159
 [^cdhk]: China Daily HK: https://chinadailyhk.com/article/607159
 [^hro]: Human Resources Online, *Hong Kong High Court finds Foodpanda liable*: https://www.humanresourcesonline.net/hong-kong-high-court-finds-foodpanda-liable-orders-hk-1-3mn-compensation-to-rider-injured-during-typhoon
-[^union]: 2024 union survey on rider compensation. The original publisher is being traced and the figure will be removed if it cannot be confirmed.
+[^union]: Hong Kong Federation of Trade Unions survey of 168 food delivery workers, July to August 2021, reported in The Standard, 24 Aug 2021: https://www.thestandard.com.hk/news/article/179283/Over-80pc-food-delivery-workers-want-more-regulation-over-food-delivery-platforms-study-shows. Self-reported, small sample. An earlier draft cited a 13% figure from a 2024 survey we could not trace, so we dropped it.
 [^osh]: Labour Department, *Occupational Safety and Health Statistics 2024*: https://www.labour.gov.hk/common/osh/pdf/OSH_Statistics_2024_en.pdf
 [^ia]: Insurance Authority press release, 25 Apr 2025: https://www.ia.org.hk/en/infocenter/press_releases/20250425.html
 [^cic]: Construction Industry Council, *Figures at a Glance 2024*: https://www.cic.hk/files/page/10499/3.%20Figures%20at%20a%20Glance%20in%202024.pdf

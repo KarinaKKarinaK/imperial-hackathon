@@ -7,7 +7,7 @@ import { Reveal } from "../Reveal";
 const STEPS = [
   ["01", "Evidence", "Ten plus peer-reviewed sources. Burden quantified."],
   ["02", "Build", "Sensor, phone client, detector, record, two dashboards."],
-  ["03", "Validate", "Drop tests, controls, confidence intervals."],
+  ["03", "Validate", "Held-out people, confidence intervals, false alarms per hour."],
   ["04", "Translate", "Sandbox pathway, two-column model, risk register."],
   ["05", "Govern", "Consent, ownership, PDPO, dual use named."],
 ];
@@ -17,13 +17,13 @@ const PILLARS = [
     key: "eng",
     name: "Engineering",
     color: "bg-violet text-white",
-    did: ["Framed it as a verification problem, not an insurance one.", "Helmet sensor, phone client, three-signal detector, open schema.", "Drop test rig, precision and recall on our own data.", "Phone-only tier first, helmet tier for crash-grade data."],
+    did: ["Framed it as a verification problem, not an insurance one.", "Helmet sensor design, phone client, gradient boosting detector, open schema.", "Drop test protocol written; the runs are next.", "Phone-only tier first, helmet tier for crash-grade data."],
   },
   {
     key: "sci",
     name: "Science",
     color: "bg-paper text-ink",
-    did: ["Quantified rider counts, compensation rate, claim volumes.", "Sensor placement, sampling rate, calibration.", "Protocol, controls, intervals. What a flat drop does not prove.", "Uncertainty carried into the financial model."],
+    did: ["Quantified rider counts, compensation rate, claim volumes.", "Sensor placement, sampling rate, calibration.", "Protocol, controls, intervals. What a flat drop does not prove.", "Basis risk from the measured false alarm and miss rates."],
   },
   {
     key: "med",

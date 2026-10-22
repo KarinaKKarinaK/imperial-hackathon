@@ -21,7 +21,7 @@ If the rider interviews land (see RIDER_INTERVIEWS.md), open instead on four sec
 | 0:00 | HONG KONG RUNS ON TWO WHEELS. | |
 | 0:02 | 12,900 riders. Zero employers. | C&SD Thematic Household Survey No. 81 |
 | 0:04 | When one goes down, the law looks away. | |
-| 0:06 | 13% compensated. | 2024 union survey |
+| 0:06 | 2 of 22 injured riders compensated. | HKFTU survey, 168 riders, 2021 |
 | 0:08 | One typhoon. One rider. Five years in court. | HK High Court, Sep 2025 |
 | 0:10 | 41,254 work injury claims a year. Riders are not in that number. | Labour Department OSH Statistics 2024 |
 | 0:13 | Now the law is changing. Platforms will pay. | 2026 Policy Address, para 385 |

@@ -18,13 +18,13 @@ Contact: imperialhackathon@imperial.ac.uk (Jake). FAQ and challenge page: https:
 
 ## Team
 
-| Name | Email | Pillar | Role |
-|---|---|---|---|
-| Karina Kalicka-Molin | karina.kalicka@gmail.com | Engineering | Team lead, ML and parameters, software |
-| Simone Copetti | Copetti.simone7@gmail.com | Engineering (computer eng.) | ML and parameters, software |
-| Hannes Ganske | ganskehannes@gmail.com | Natural sciences | Hardware: CAD, electronics, helmet sensor. Also legal research with Maalon |
-| Maalon Jochmann | Maalon.jch@gmail.com | Medicine and health | Legal and regulatory research, trauma triage angle |
-| Alysa de Haas | Dehaasalysa@gmail.com | Business | Business case, insurance mechanism, public interest |
+| Name | Pillar | Role |
+|---|---|---|
+| Karina Kalicka-Molin | Engineering | ML and parameters, software |
+| Simone Copetti | Engineering (computer eng.) | ML and parameters, software |
+| Hannes Ganske | Natural sciences | Hardware: CAD, electronics, helmet sensor |
+| Maalon Jochmann | Medicine and health | Legal and regulatory research, trauma triage angle |
+| Alysa de Haas | Business | Business case, insurance mechanism, public interest |
 
 Team of 4 to 5 is required. We have 5. All four STEMB pillars are covered (university track requires at least 3).
 
@@ -100,7 +100,7 @@ Expected pillar roles:
 - Working prototype plus drop test data. Imperial said a live demo at the Grand Final beats a described prototype.
 - Live site: the demo runs at the deployed URL so judges can open it on their own phone.
 
-### Judges (live panel, confirmed 19 Oct 2026, full notes in research/JUDGES.md)
+### Judges (live panel, confirmed 19 Oct 2026, full notes kept in the team's private notes)
 - Dr Jackie Bell, Principal Teaching Fellow in Computing, Imperial. EDI, widening participation, science communication.
 - Professor Shahid Khan, Professor of Practice (Hepatology) and Director of Admissions, Imperial. Clinical evidence, guidelines, epidemiology.
 - Dr Pamela Tin, Research Director, Chief Executive's Policy Unit, HKSAR Government. Evidence-based policy, public health, mental health.
@@ -137,13 +137,13 @@ Earlier anchor (2025 Policy Address, para 256, now superseded but useful as back
 - Delivery riders in Hong Kong (Foodpanda, Deliveroo, KeeTa) are independent contractors, so the Employees' Compensation Ordinance does not cover them. No sick leave, no guaranteed medical cover, no injury compensation.
 - Platform algorithms push for speed. Tight windows and late penalties push riders to run red lights and work through heat and storms.
 - The government has now promised statutory compensation (2026 Policy Address, para 385). Platforms will carry the liability.
-- But nobody has objective data on when and how riders get hurt. Insurers cannot price the risk. Platforms cannot verify a claim happened on a job. Riders cannot prove it. A 2024 union survey found only 13% of injured riders were compensated.
+- But nobody has objective data on when and how riders get hurt. Insurers cannot price the risk. Platforms cannot verify a claim happened on a job. Riders cannot prove it. In a 2021 union survey (HKFTU) only 2 of 22 injured riders were compensated by the platform; the earlier 13% figure was dropped as untraceable. Original note: a 2024 union survey found only 13% of injured riders were compensated.
 - Result: a deadlock. The legislation needs data that does not exist yet.
 
 ### The solution
 Low-cost telemetry (a helmet sensor plus the rider's phone) with ML that:
 1. Detects crashes with a gradient boosting model on ten window features, trained on the UMAFall public dataset and synthetic rider scenarios (ml/out/results.md). The old three-threshold rule is kept as the baseline row.
-2. Flags fatigue (erratic micro-corrections in speed and steering, long shift hours).
+2. Flags fatigue (long shift hours today; speed and steering variance planned).
 3. Scores heat risk (Hong Kong Observatory heat index plus exertion signals).
 
 What the data drives:

@@ -1,6 +1,6 @@
 const ITEMS = [
   "12,900 riders in Hong Kong",
-  "13% of injured riders compensated",
+  "2 of 22 injured riders compensated by the platform",
   "41,254 work injury claims a year",
   "One in three riders on two apps",
   "Five years for one typhoon case",

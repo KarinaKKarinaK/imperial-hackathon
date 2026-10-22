@@ -79,6 +79,19 @@ async function LabourBody() {
             </p>
             <Bars data={{ "false alarm": a.labels.false_alarm, "real fall": a.labels.real_fall, "not sure": a.labels.unsure }} total={labelTotal} className="mt-5" />
           </div>
+          <div className="tile tile-ink p-6 sm:p-8 md:col-span-2">
+            <p className="eyebrow">Real data in, research mode</p>
+            <p className="mt-2 max-w-2xl text-sm opacity-70">
+              Riders who opt in send 60 s of normal riding every 10 minutes and the 6 s behind each alarm with their own label. No location, no
+              rider id. These ride hours are what the real false alarm rate per riding hour is measured on, replacing simulated falls and our
+              synthetic ride.
+            </p>
+            <div className="mt-5 grid grid-cols-3 gap-4">
+              <div><p className="num text-4xl">{a.field.rideHours}</p><p className="mt-1 text-xs opacity-60">hours of real riding donated</p></div>
+              <div><p className="num text-4xl">{a.field.rides}</p><p className="mt-1 text-xs opacity-60">ride segments</p></div>
+              <div><p className="num text-4xl">{a.field.events}</p><p className="mt-1 text-xs opacity-60">labelled alarm windows</p></div>
+            </div>
+          </div>
         </div>
 
         <div className="tile tile-paper mt-4 p-6 sm:p-8">

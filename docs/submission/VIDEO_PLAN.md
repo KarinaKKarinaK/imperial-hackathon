@@ -10,7 +10,7 @@ One rule: every claim on screen has a source in the corner. Every number is one 
 
 | Time | Beat | On screen | Speaker |
 |---|---|---|---|
-| 0:00 to 0:25 | Hook | Rider footage in rain, heat, traffic (ours, phone shot). Cut to black. Text: "Only 13% of injured riders were compensated. 2024 union survey." | Maalon (voice) |
+| 0:00 to 0:25 | Hook | Rider footage in rain, heat, traffic (ours, phone shot). Cut to black. Text: "Only 2 of 22 injured riders were compensated by the platform. HKFTU survey, 2021." | Maalon (voice) |
 | 0:25 to 0:55 | The policy gap | Para 385 quote on screen. "Platforms will carry the liability. Nobody has the data to verify a work-time injury or price the risk." One line on why this is not Challenges 1 to 5: occupational health, not AI governance, not infrastructure. | Karina |
 | 0:55 to 1:20 | Evidence | Three numbers: rider headcount in HK, injury rate, compensation rate. Sources shown. Evidence table flashed (ten sources). | Hannes |
 | 1:20 to 2:30 | Live demo | Helmet in hand, phone mounted. Drop the helmet onto the bench. Cut to: app shows crash and 30-second cancel timer. Dispatcher page gets the pin and trauma profile. Underwriter page shows the triggered payout. One continuous take if possible, real timestamps visible. Then 10 seconds on fatigue and heat bands in the app. | Simone (voice), Hannes (hands) |
@@ -55,7 +55,7 @@ Edit
 ## Checklist before export
 - [ ] Under 5:00
 - [ ] Para 385 quoted verbatim
-- [ ] 13% stat with source
+- [x] Union stat with source (HKFTU 2021, 2 of 22)
 - [ ] Ten sources visible at least once
 - [ ] Drop test numbers with confidence interval
 - [ ] Limits stated out loud

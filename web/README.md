@@ -39,6 +39,7 @@ API
 | POST /api/rider | `{riderId, deadlineMinutes?, emergencyContact?}`. Needs the rider key |
 | POST /api/events/:id/hospital | `{hospital, admittedAt, dischargeRef}`. Tier two after a paid event. Owner's key; signed on receipt, insurer to confirm |
 | POST /api/events/:id/feedback | `{label: false_alarm or real_fall or unsure}`. The rider's weak label after a cancel or payout. Owner's key |
+| POST /api/field | Research mode. `{riderId, kind: ride or event, label, source, samples}`. Owner's key and research opt-in. Ride: 20 to 125 s of normal riding. Event: the 6 s behind an alarm with the rider's label. Stored without rider id or position in a separate Redis list; `POST /api/rider {research:false}` deletes them. Pull with `ml/pull_field_data.py` |
 | GET /api/labour | Aggregates for the Labour Department: by delivery clock, mode, hour, heat, rain, multi-app count, hazard cells with at least 3 events |
 
 ## Rider key

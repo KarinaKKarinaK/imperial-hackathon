@@ -114,6 +114,10 @@ function LangPicker({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void 
 }
 
 const WINDOW_MS = 6000;
+// About 70 s of samples at 100 Hz: enough for a 60 s research ride segment.
+const BUF_MAX = 7000;
+const RIDE_SEGMENT_MS = 60_000;
+const RIDE_EVERY_MS = 10 * 60_000;
 const recent = (buf: Sample[]) => buf.filter((s) => Date.now() - s.t < WINDOW_MS);
 
 export default function RiderPage() {
@@ -132,6 +136,8 @@ export default function RiderPage() {
   const pos = useRef<{ lat: number; lng: number; speedKmh?: number } | undefined>(undefined);
   const { snap, refresh, skewMs } = useSnapshot(riderId, 1000, riderKey);
   const { lang, setLang, t } = useLang();
+  const lastAlarm = useRef<{ samples: Sample[]; source: "phone" | "helmet" } | null>(null);
+  const [ridesSent, setRidesSent] = useState(0);
   const [tooLate, setTooLate] = useState(false);
   const headers = useCallback(() => ({ "content-type": "application/json", "x-rider-key": riderKey ?? "" }), [riderKey]);
 
@@ -161,7 +167,7 @@ export default function RiderPage() {
     if (!a || a.x === null || a.y === null || a.z === null) return;
     const s: Sample = { t: Date.now(), ax: a.x, ay: a.y, az: a.z };
     phoneBuf.current.push(s);
-    if (phoneBuf.current.length > 1200) phoneBuf.current.splice(0, phoneBuf.current.length - 1200);
+    if (phoneBuf.current.length > BUF_MAX) phoneBuf.current.splice(0, phoneBuf.current.length - BUF_MAX);
     if (helmetRef.current) return; // the trace shows the helmet while it is paired
     const g = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z) / 9.81;
     setSamplesG((prev) => {
@@ -181,7 +187,7 @@ export default function RiderPage() {
         return next;
       });
     }
-    if (helmetBuf.current.length > 1200) helmetBuf.current.splice(0, helmetBuf.current.length - 1200);
+    if (helmetBuf.current.length > BUF_MAX) helmetBuf.current.splice(0, helmetBuf.current.length - BUF_MAX);
     helmetCount.current += arr.length;
   }, []);
 
@@ -254,7 +260,10 @@ export default function RiderPage() {
             pos: pos.current,
           }),
         });
-        if (d.isCrash) refresh();
+        if (d.isCrash) {
+          lastAlarm.current = { samples: win, source: useHelmet ? "helmet" : "phone" };
+          refresh();
+        }
       } catch {}
     }, 1500);
     return () => clearInterval(id);
@@ -312,9 +321,46 @@ export default function RiderPage() {
   const sendFeedback = async (id: string, label: Feedback) => {
     try {
       await fetch(`/api/events/${id}/feedback`, { method: "POST", headers: headers(), body: JSON.stringify({ label }) });
+      // Research mode: the window behind the alarm goes to the training set
+      // with the rider's own label.
+      const a = lastAlarm.current;
+      if (snap?.rider.research && a) {
+        await fetch("/api/field", { method: "POST", headers: headers(), body: JSON.stringify({ riderId, kind: "event", label, source: a.source, samples: a.samples }) });
+        lastAlarm.current = null;
+      }
     } catch {}
     refresh();
   };
+
+  const setResearch = async (on: boolean) => {
+    await fetch("/api/rider", { method: "POST", headers: headers(), body: JSON.stringify({ riderId, research: on }) });
+    refresh();
+  };
+
+  // Research mode: every 10 minutes on shift, the last 60 s of normal riding
+  // goes to the training set as a real negative. This is how real riding
+  // hours, and a real false alarm rate, get into the evaluation.
+  const research = Boolean(snap?.rider.research);
+  const onShiftNow = Boolean(snap?.rider.onShift);
+  useEffect(() => {
+    if (!research || !onShiftNow || permission !== "granted") return;
+    const send = async () => {
+      const useHelmet = Boolean(helmetRef.current) && helmetBuf.current.length > 100;
+      const buf = useHelmet ? helmetBuf.current : phoneBuf.current;
+      const seg = buf.filter((s) => Date.now() - s.t < RIDE_SEGMENT_MS);
+      if (seg.length < 100 || seg[seg.length - 1].t - seg[0].t < 20_000) return;
+      try {
+        const r = await fetch("/api/field", { method: "POST", headers: headers(), body: JSON.stringify({ riderId, kind: "ride", label: "riding", source: useHelmet ? "helmet" : "phone", samples: seg }) });
+        if (r.ok) setRidesSent((n) => n + 1);
+      } catch {}
+    };
+    const first = setTimeout(send, RIDE_SEGMENT_MS + 5000);
+    const id = setInterval(send, RIDE_EVERY_MS);
+    return () => {
+      clearTimeout(first);
+      clearInterval(id);
+    };
+  }, [research, onShiftNow, permission, headers, riderId]);
 
   return (
     <main lang={lang} dir={isRtl(lang) ? "rtl" : "ltr"} className="mx-auto min-h-dvh max-w-md px-4 pb-10 pt-4">
@@ -427,6 +473,18 @@ export default function RiderPage() {
               dir="ltr"
               className="mt-3 w-full rounded-full border border-white/20 bg-transparent px-4 py-3 text-base outline-none focus:border-violet"
             />
+          </section>
+          <section className="tile tile-night mt-4 p-5">
+            <p className="eyebrow">{t("research.title")}</p>
+            <p className="mt-2 text-xs opacity-70">{t("research.body")}</p>
+            <button
+              onClick={() => setResearch(!research)}
+              className={`mt-3 w-full rounded-full border px-4 py-3 text-sm font-medium ${research ? "border-violet bg-violet/20" : "border-white/30"}`}
+              aria-pressed={research}
+            >
+              {research ? t("research.on") : t("research.off")}
+            </button>
+            {research && <p className="mt-2 text-xs opacity-60">{t("research.status", { n: ridesSent })}</p>}
           </section>
           <p className="mt-6 text-center text-xs opacity-50">
             {t("footer.see")}:{" "}

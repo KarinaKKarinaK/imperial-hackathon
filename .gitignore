@@ -1,2 +1,21 @@
 .vercel
 .env*
+
+# Working notes that are not part of the submission
+/HACKATHON.md
+/IDEAS.md
+/FINAL_IDEAS.md
+/PLAN.md
+/COMPETITION.md
+/FIELD_REVIEW.md
+/JUDGING_SIMULATION.md
+/JUDGE_REVIEW.md
+/SUBMISSION.md
+/CLAUDE.md
+research/private/
+competitors/
+
+# Raw media (ship compressed GIFs in docs/ instead)
+/*.mp4
+/*.mov
+/*.webm

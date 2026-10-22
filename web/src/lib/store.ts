@@ -11,7 +11,7 @@ import {
   type Detection,
 } from "./detector";
 import { ROUTE, pointAt } from "./route";
-import { loadStore, persistenceEnabled, saveStore, StoreConflict } from "./persist";
+import { deleteField, loadStore, persistenceEnabled, pushField, saveStore, StoreConflict } from "./persist";
 import demoWindows from "./ml/demo_windows.json";
 
 type DemoWindow = { samples: [number, number, number, number][]; label: number };
@@ -25,7 +25,13 @@ type Store = {
   events: EventRecord[];
   sim: SimState | null;
   hazards: Map<string, HazardCell>;
+  field: FieldStats;
 };
+
+// Counters for donated windows. The windows themselves live in a separate
+// Redis list (persist.ts); these are what /labour shows.
+export type FieldStats = { rides: number; rideSeconds: number; events: number; labels: Record<string, number> };
+const emptyField = (): FieldStats => ({ rides: 0, rideSeconds: 0, events: 0, labels: {} });
 
 type SimState = {
   riderId: string;
@@ -37,9 +43,9 @@ type SimState = {
 
 const g = globalThis as unknown as { __mf_store?: Store };
 const store: Store =
-  g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null, hazards: new Map() });
+  g.__mf_store ?? (g.__mf_store = { riders: new Map(), events: [], sim: null, hazards: new Map(), field: emptyField() });
 
-type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null; hazards?: [string, HazardCell][] };
+type Serialized = { riders: [string, RiderState][]; events: EventRecord[]; sim: SimState | null; hazards?: [string, HazardCell][]; field?: FieldStats };
 
 let version = "0";
 let dirty = false;
@@ -56,13 +62,14 @@ export async function hydrate(): Promise<void> {
   store.events = s?.events ?? [];
   store.sim = s?.sim ?? null;
   store.hazards = new Map(s?.hazards ?? []);
+  store.field = s?.field ?? emptyField();
 }
 
 export async function flush(): Promise<void> {
   if (!dirty) return;
   prune();
   version = await saveStore(
-    { riders: [...store.riders.entries()], events: store.events, sim: store.sim, hazards: [...store.hazards.entries()] } satisfies Serialized,
+    { riders: [...store.riders.entries()], events: store.events, sim: store.sim, hazards: [...store.hazards.entries()], field: store.field } satisfies Serialized,
     version,
   );
   dirty = false;
@@ -358,6 +365,69 @@ export function setFeedback(id: string, label: Feedback): EventRecord | null {
   e.feedback = label;
   persist();
   return e;
+}
+
+// ---------- research mode ----------
+export function setResearch(riderId: string, on: boolean) {
+  const r = getRider(riderId);
+  r.research = on;
+  persist();
+  return r;
+}
+
+// Deletion tag: derived from the rider's key hash, which never leaves the
+// server, so a tag cannot be traced back to a rider id.
+export function fieldTag(riderId: string): string | null {
+  const h = store.riders.get(riderId)?.keyHash;
+  return h ? createHash("sha256").update("field:" + h).digest("hex").slice(0, 16) : null;
+}
+
+export const RIDE_EVERY_MS = 4 * 60_000; // server-side floor; the phone sends one every 10 minutes
+export type FieldKind = "ride" | "event";
+export type FieldLabel = "riding" | "crash" | "false_alarm" | "real_fall" | "unsure";
+
+// Prepare one donated window: check consent and the rate floor, bump the
+// counters, and return the entry to push once the store has saved. The push
+// happens outside the save loop so a retry can never store a window twice.
+// Samples arrive in m/s^2 with ms timestamps and are kept in g with seconds
+// from the start, rounded, with no position and no rider id.
+export function prepareDonation(
+  riderId: string,
+  input: { kind: FieldKind; label: FieldLabel; source: SensorSource; samples: Sample[] },
+): { ok: true; entry: Record<string, unknown> } | { ok: false; status: number; error: string } {
+  const r = store.riders.get(riderId);
+  if (!r?.research) return { ok: false, status: 403, error: "research mode is off for this rider" };
+  if (input.kind === "ride" && r.lastRideDonationAt && Date.now() - r.lastRideDonationAt < RIDE_EVERY_MS) {
+    return { ok: false, status: 429, error: "one ride segment every few minutes" };
+  }
+  const t0 = input.samples[0].t;
+  const durationS = (input.samples[input.samples.length - 1].t - t0) / 1000;
+  const entry = {
+    id: "FLD-" + randomUUID().replace(/-/g, "").slice(0, 10).toUpperCase(),
+    tag: fieldTag(riderId)!,
+    kind: input.kind,
+    label: input.label,
+    source: input.source,
+    day: new Date(Date.now() + 8 * 3_600_000).toISOString().slice(0, 10), // HKT date only, no time
+    durationS: Number(durationS.toFixed(2)),
+    samples: input.samples.map((x) => [Number(((x.t - t0) / 1000).toFixed(3)), Number((x.ax / 9.81).toFixed(3)), Number((x.ay / 9.81).toFixed(3)), Number((x.az / 9.81).toFixed(3))]),
+  };
+  if (input.kind === "ride") {
+    r.lastRideDonationAt = Date.now();
+    store.field.rides++;
+    store.field.rideSeconds = Number((store.field.rideSeconds + durationS).toFixed(1));
+  } else store.field.events++;
+  store.field.labels[input.label] = (store.field.labels[input.label] ?? 0) + 1;
+  persist();
+  return { ok: true, entry };
+}
+
+export { pushField };
+
+export async function withdrawResearch(riderId: string): Promise<number> {
+  const tag = fieldTag(riderId);
+  setResearch(riderId, false);
+  return tag ? deleteField(tag) : 0;
 }
 
 export function eventOwner(id: string): string | null {
@@ -690,6 +760,7 @@ export function labourAggregate() {
     byRain: count(["rain", "dry"], (e) => (e.context.rain ? "rain" : "dry")),
     byHour: count(["00-06", "06-11", "11-14", "14-17", "17-21", "21-24"], (e) => band(hourHK(e))),
     hazards: publicHazards().map(({ lat, lng, bumps, brakes, passes, rate }) => ({ lat, lng, bumps, brakes, passes, rate })),
+    field: { ...store.field, rideHours: Number((store.field.rideSeconds / 3600).toFixed(2)) },
     hazardMin: HAZARD_MIN,
     hazardPrior: HAZARD_PRIOR,
     generatedAt: Date.now(),

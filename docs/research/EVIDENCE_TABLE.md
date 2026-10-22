@@ -22,6 +22,6 @@ Target: ten or more peer-reviewed sources plus the policy and statistical source
 | 16 | Labour and Welfare Bureau. Proposed work injury protection for digital platform delivery workers. July 2026, LegCo paper | Policy | No-fault regime, platform liability, multi-platform apportionment | Problem, business |
 | 17 | Chief Executive's 2026 Policy Address, para 385 | Policy | Statutory compensation commitment | Anchor |
 | 18 | High Court of Hong Kong, rider v Foodpanda, judgment Sep 2025 | Case law | HK$1.35m, five years, Typhoon Code of Practice breach | Problem |
-| 19 | 2024 union survey on rider compensation (find the original publisher and title) | Survey | 13% of injured riders compensated | Hook. Must be sourced to the original before the video is final |
+| 19 | Hong Kong Federation of Trade Unions, survey of 168 food delivery workers, Jul to Aug 2021, reported in The Standard 24 Aug 2021 (thestandard.com.hk/news/article/179283) | Survey | 22 of 168 injured on delivery, 2 compensated by the platform. Replaces an untraceable 13% figure | Hook. Sourced |
 
 Rules: every number in the video and on the site maps to a row here. Rows 5, 6, 12 and 19 need the citation verified against the original document before 24 Oct.

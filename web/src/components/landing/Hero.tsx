@@ -49,10 +49,10 @@ export function Hero() {
             <div className="plus" />
             <div>
               <p className="num text-6xl">
-                <Counter to={13} suffix="%" />
+                <Counter to={2} suffix=" of 22" />
               </p>
-              <p className="mt-3 text-[15px] opacity-80">of injured riders were compensated.</p>
-              <p className="mt-1 text-xs opacity-50">2024 union survey</p>
+              <p className="mt-3 text-[15px] opacity-80">injured riders were compensated by the platform.</p>
+              <p className="mt-1 text-xs opacity-50">HKFTU survey of 168 riders, Aug 2021</p>
             </div>
           </motion.div>
           <motion.div {...fade(0.15)} className="tile tile-ink aspect-square">

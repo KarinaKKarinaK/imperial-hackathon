@@ -4,7 +4,7 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 ## Evidence and health (Maalon, Hannes)
 
-**Where does the 13% come from?** The 2024 rider union survey, [publisher and title once sourced]. It is self-reported. We use it as the hook, not as a prevalence estimate. The official number that matters is 41,254 compensation cases a year with riders excluded by definition.
+**Where does the 2 of 22 come from?** A Hong Kong Federation of Trade Unions survey of 168 food delivery workers, July to August 2021, reported in The Standard on 24 Aug 2021. It is self-reported and small. We dropped an earlier 13% figure because we could not trace its source. We use it as the hook, not as a prevalence estimate. The official number that matters is 41,254 compensation cases a year with riders excluded by definition.
 
 **Falls on mats are not motorcycle crashes. Why should we believe the model?** You should not believe it proves road performance, and we say so on the site. UMAFall gives us 625 labelled recordings to show the method works and to beat the rule by a wide margin. The helmet drop tests will add measured impacts once the rig runs. Road trials are the next step and we have scoped them.
 
@@ -12,25 +12,25 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 **What about rotational injury?** The gyroscope is on the board and logged. We have not used it in the model yet because the public dataset has no head-mounted gyro. It is the first thing the drop test data unlocks.
 
-**Is the fatigue index validated?** No. It is shift hours and speed variance. It is an alert to the rider only, never stored, never shared. We would not claim more until it is studied.
+**Is the fatigue index validated?** No. Today it is shift hours only; the speed variance input is not wired yet. It is an alert to the rider only, never stored, never shared. We would not claim more until it is studied.
 
 ## Model and engineering (Karina, Simone)
 
-**Why gradient boosting and not deep learning?** We trained both. The 1D CNN scored similar AUROC on the test set but flagged almost every synthetic scenario as a crash, which is the domain-shift failure you would expect from a model on raw waveforms with little data. Boosting on ten physical features generalises better and runs in a few lines on the phone.
+**Why gradient boosting and not deep learning?** We trained both. The 1D CNN had lower recall (84% against 94%) and a worse Brier score on held-out people. Boosting on ten physical features is better calibrated, is a few kilobytes of JSON, and runs on the server and on the phone for the live readout.
 
-**What is the false alarm rate in practice?** On held-out subjects, 21 false alarms in 417 non-fall recordings at threshold 0.5 (precision 90%). Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published.
+**What is the false alarm rate in practice?** On held-out subjects, 21 false alarms in 417 non-fall recordings at threshold 0.5 (precision 90%). Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published. In a live loop over everyday phone handling the phone-only detector raised about 20 false alarms an hour (ml/STREAMING.md); that number, and the fix, are on the README.
 
 **Can the model be gamed by a rider?** A rider could drop the helmet on purpose. The event is a trigger for a fixed first-tier payout, hospital records unlock the second tier, and repeated events from one record id are visible to the insurer. Fraud risk is priced like any parametric product.
 
 **Why does the phone and the server run the same model?** So the number a rider sees is the number the insurer sees. The trees are exported to JSON and checked against the Python output to three decimals in the test suite.
 
-**What happens with no signal?** The phone buffers the window and the event. It is sent when connectivity returns. The timestamp is set on the device.
+**What happens with no signal?** Today the window is only checked when the phone has data. The phone already runs the same model locally for the live readout; queueing the event offline and sending it when the signal returns is the next step.
 
 ## Policy and governance (Maalon, Hannes)
 
 **Does this help or complicate the government's legislation?** It operationalises it. The July 2026 proposal splits liability between platforms when a rider is on several apps. Nobody can apply that clause without a record of which job was active at impact. That field is in our schema.
 
-**Who owns the data?** The rider. Raw motion and routes never leave the phone. The event record is the only artefact and it is the rider's. Platforms and insurers hold a licence to read the events they are liable for.
+**Who owns the data?** The rider. Raw motion is checked in 6 second windows and discarded; no route history is kept. The event record is the only artefact and it is the rider's. Platforms and insurers hold a licence to read the events they are liable for.
 
 **Could a platform use this to surveil riders?** The design makes that hard by construction: no route, no speed history, no per-rider score exists anywhere upstream. We name the dual-use risk on the site because pretending it does not exist would be dishonest.
 
