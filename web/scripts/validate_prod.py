@@ -18,7 +18,7 @@ KV = env["KV_REST_API_URL"].strip('"'); TOK = env["KV_REST_API_TOKEN"].strip('"'
 HERE = Path(__file__).resolve().parent.parent
 
 KEY = os.urandom(16).hex()  # this run's rider key
-DEMO_KEY = env.get("DEMO_KEY", "").strip('"')
+DEMO_KEY = os.environ.get("DEMO_KEY") or env.get("DEMO_KEY", "").strip('"')  # sensitive vars pull empty, so pass it in the shell
 
 def req(path, body=None, method=None, key=None):
     data = json.dumps(body).encode() if body is not None else None
