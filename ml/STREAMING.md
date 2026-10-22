@@ -52,3 +52,4 @@ Other rules, measured: 2 of 2 consecutive gives 7.0 per hour and 182 of 208 fall
 - **Falls end the recording** a median 12 s after impact, so the detection rate is a floor.
 - **Synthetic ride is our model.** Only 8 bag drops and 25 crashes, so the intervals are wide.
 - **No real rides yet.** `stream_eval.py` will report false alarms per riding hour as soon as `ml/data/field/` has ride segments.
+- **Public real rides.** On public datasets (eval only): 0.0016 per hour over 1,850 h of SimRa phone rides, but SimRa is smoothed to a 1.5 s mean, so a lower bound; 0.20 per hour [0.04, 0.57] over 15 h of raw 50 Hz motorbike IMU (TU Wien). See [PUBLIC_RIDES.md](PUBLIC_RIDES.md).

@@ -276,12 +276,15 @@ We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `p
 | Live loop on full recordings (6 s window every 1.5 s, 60 s hold), held-out people | 200 of 208 falls caught, median 2.1 s after impact |
 | False alarms per hour, phone in a pocket during daily activities | **10.5 per hour** [6.2, 16.5], down from 19.2 before hard negative mining. All that remain come from taking the phone out for a call |
 | False alarms per hour, our synthetic ride | 0.20 per hour [0.02, 0.72], all from bag drops. Potholes and hard braking never fired |
+| False alarms per hour, **real motorbike riding** (TU Wien, 15.3 h, IMU on the bike) | **0.20 per hour** [0.04, 0.57]: 3 alarms, in traffic and spirited riding, none while cruising or waiting |
+| False alarms per hour, **real cycling** (SimRa Berlin, 1,850 h of riders' phones) | 0.0016 per hour [0.0003, 0.0047], 3 alarms, all phones on the handlebar. The app smooths its data, so this is a lower bound |
 
 ### What this does not prove
 
 - UMAFall falls are simulated by volunteers, not real road crashes, and only 13 of the 19 people performed falls. Threshold detectors lose sensitivity on real-world falls.[^bagala]
 - In a live loop over everyday phone handling the phone-only detector raised about 19 false alarms an hour. Hard negative mining (retraining on the windows it wrongly flagged, from training people only) cut that to 10.5, with 200 of 208 falls still caught ([ml/STREAMING.md](ml/STREAMING.md)). The mining setting was picked from four tried after seeing held-out results, so treat the gain as indicative. 10.5 an hour is still too many for a walking rider, which is why the helmet clip and the two-sensor rule matter. UMAFall has only 1.7 hours of daily activity, and our synthetic ride is our own model, so neither is a real riding hour.
 - The MPU-6050 in the clip is set to 16 g, so harder helmet impacts are capped.
+- Public riding data has no real rider crashes. On staged e-scooter overturns with no rider (UPCT), only 9 of 37 impacts over 3 g scored above the threshold: a vehicle tipping over is not a person falling, and the model has never seen one. Details in [ml/PUBLIC_RIDES.md](ml/PUBLIC_RIDES.md).
 - The synthetic rider set is ours, so the domain shift test is a sanity check, not validation.
 - Helmet drop tests are in progress. Protocol: [validation/DROP_TEST_PROTOCOL.md](validation/DROP_TEST_PROTOCOL.md).
 - Triage bands come from head-impact literature[^rowson][^zhang] and are not clinically validated.
@@ -337,7 +340,7 @@ What is not done yet, and what is already built so each step plugs straight in.
 
 | Next step | Why it matters | Already in place |
 |---|---|---|
-| Real rider data: team and pilot riders turn on research mode | Replaces simulated falls and our synthetic ride with false alarms per real riding hour | Research mode on `/rider`, `ml/pull_field_data.py`, field path in `ml/stream_eval.py`, counts on `/labour` |
+| Real rider data: team and pilot riders turn on research mode | Public rides already give 0.2 false alarms per real motorbike hour; our own riders, phone in pocket or helmet, are the test that counts | Research mode on `/rider`, `ml/pull_field_data.py`, field path in `ml/stream_eval.py`, counts on `/labour` |
 | Retrain on real labels | The cancel taps and "what was it" labels become training data | Labels stored on every event, aggregated on `/labour` |
 | Flash the helmet clip and run the drop tests | Measured helmet impacts and a detection rate with an interval | Firmware, Bluetooth client, `validation/DROP_TEST_PROTOCOL.md`, `train.py --extra` loader |
 | 200 g sensor for the clip | No clipping at 16 g on hard head impacts | Triage bands already read peak g |

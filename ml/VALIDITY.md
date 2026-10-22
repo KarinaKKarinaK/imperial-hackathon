@@ -44,7 +44,9 @@ Measured on 23 Oct 2026 with the app's own loop (6 s window every 1.5 s, one eve
 - Confirmation rules (2 of next 3 windows, or post-impact stillness) were measured and not shipped: the first loses too many falls, the second removes nothing once mining is on.
 - The mining setting was chosen from four by looking at these held-out results.
 
-False alarms per hour on real rides are still not measured. `stream_eval.py` reports them once `ml/data/field/` has ride segments.
+- Public real rides, eval only: 0.20 false alarms per hour [0.04, 0.57] over 15 h of raw motorbike IMU (TU Wien), 0.0016 per hour over 1,850 h of heavily smoothed SimRa phone rides. Details in [PUBLIC_RIDES.md](PUBLIC_RIDES.md), reproduce with `python3 public_rides.py`.
+
+False alarms per hour on our own riders' rides are still not measured. `stream_eval.py` reports them once `ml/data/field/` has ride segments.
 
 ## Fixes
 
