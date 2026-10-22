@@ -61,6 +61,8 @@ Upstash Redis through the Vercel Marketplace (`KV_REST_API_URL` and `KV_REST_API
 
 ## Validate production
 
+Careful: `pnpm start` reads `.env.production.local`, so a local production build with that file present writes to the live Redis store. Move the file aside before testing locally.
+
 ```
 vercel env pull .env.production.local --environment production
 python3 scripts/validate_prod.py .env.production.local
