@@ -11,7 +11,7 @@
   <a href="https://metricsfile.vercel.app"><img alt="demo" src="https://img.shields.io/website?url=https%3A%2F%2Fmetricsfile.vercel.app&label=demo&up_message=live&style=flat-square"></a>
   <img alt="tests" src="https://img.shields.io/badge/tests-22%20web%20%2B%20pipeline-6b4cff?style=flat-square">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-3b82f6?style=flat-square"></a>
-  <img alt="model" src="https://img.shields.io/badge/model-gradient%20boosting-f0a070?style=flat-square">
+  <img alt="model" src="https://img.shields.io/badge/model-gradient_boosting-f0a070?style=flat-square">
   <img alt="records" src="https://img.shields.io/badge/records-Ed25519%20signed-f6d85a?style=flat-square">
   <img alt="Next.js" src="https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs">
   <img alt="ESP32" src="https://img.shields.io/badge/hardware-ESP32%20%2B%20MPU--6050-e7352c?style=flat-square&logo=espressif&logoColor=white">

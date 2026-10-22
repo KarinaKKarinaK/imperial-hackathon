@@ -21,7 +21,7 @@
       .t { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: #f3f3f0; }
       .m { font-family: "SFMono-Regular", Menlo, Consolas, monospace; fill: #8a8a85; letter-spacing: 2px; }
       .line { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 3.2s ease-out 0.3s forwards; }
-      .ping { transform-origin: 1024px 150px; animation: ping 2.4s ease-out 2.2s infinite; opacity: 0; }
+      .ping { transform-origin: 1110px 150px; animation: ping 2.4s ease-out 2.2s infinite; opacity: 0; }
       .dot { opacity: 0; animation: fade 0.4s ease-out 2.1s forwards; }
       @keyframes draw { to { stroke-dashoffset: 0; } }
       @keyframes ping { 0% { opacity: 0.9; transform: scale(0.4); } 100% { opacity: 0; transform: scale(2.6); } }
@@ -36,11 +36,11 @@
 
   <!-- sensor trace: riding noise, impact spike, stillness -->
   <path class="line" fill="none" stroke="url(#trace)" stroke-width="2.4" stroke-linejoin="round"
-        d="M560 300 L590 296 L610 304 L630 294 L650 302 L670 297 L690 305 L710 295 L730 301 L750 296 L770 304 L790 298 L810 303 L830 295 L850 301 L870 297 L890 304 L910 299 L930 302 L950 296 L970 303 L990 308 L1005 312 L1015 300 L1024 150 L1034 320 L1044 292 L1054 304 L1064 300 L1100 300 L1160 300 L1280 300"/>
-  <circle class="ping" cx="1024" cy="150" r="16" fill="none" stroke="#f6d85a" stroke-width="2"/>
-  <circle class="dot" cx="1024" cy="150" r="6" fill="#f6d85a"/>
-  <text class="m dot" x="1002" y="140" font-size="14" text-anchor="end" style="fill:#f6d85a">IMPACT 25.1 g</text>
-  <text class="m dot" x="1002" y="162" font-size="12" text-anchor="end">30 s to cancel, then dispatch</text>
+        d="M780 300 L800 296 L820 304 L840 294 L860 302 L880 297 L900 305 L920 295 L940 301 L960 296 L980 304 L1000 298 L1020 303 L1040 295 L1060 301 L1075 308 L1090 312 L1100 300 L1110 150 L1120 320 L1130 292 L1140 304 L1150 300 L1200 300 L1280 300"/>
+  <circle class="ping" cx="1110" cy="150" r="16" fill="none" stroke="#f6d85a" stroke-width="2"/>
+  <circle class="dot" cx="1110" cy="150" r="6" fill="#f6d85a"/>
+  <text class="m dot" x="1066" y="140" font-size="14" text-anchor="end" style="fill:#f6d85a">IMPACT 25.1 g</text>
+  <text class="m dot" x="1066" y="162" font-size="12" text-anchor="end">30 s to cancel, then dispatch</text>
 
   <text class="m" x="96" y="118" font-size="14">IMPERIAL GLOBAL HACKATHON HK + MACAU 2026  /  CHALLENGE 6</text>
   <text class="t" x="90" y="210" font-size="104" font-weight="700" letter-spacing="-4">Metrics</text>
