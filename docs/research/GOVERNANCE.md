@@ -27,7 +27,7 @@ Enforced in code (23 Oct 2026):
 Research mode (opt-in, separate from shift consent):
 - What is sent: 60 s of normal riding every 10 minutes on shift, and the 6 s behind an alarm once the rider labels it. Acceleration only.
 - What is not sent: position, rider id, time of day (only the date), speed.
-- Each window carries a tag derived from the rider's key hash, which never leaves the server, so the rider can delete their windows and nobody can link a window to a rider.
+- Each window carries a tag derived from the rider's key hash, which never leaves the server, so the rider can delete their windows. The data is pseudonymous, not anonymous: windows from the same phone share a tag, but the tag cannot be traced back to a rider id or a person.
 - Turning research mode off deletes every window the rider sent. The data is used only to train and evaluate the detector, never for pricing or a rider score.
 
 ## Consent

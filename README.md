@@ -306,14 +306,14 @@ Simulated falls and our own synthetic ride are not a road. Research mode on [`/r
 
 ```mermaid
 flowchart LR
-  P["Rider phone or helmet<br/>research mode on"] -- "60 s of riding every 10 min" --> F[("Field windows<br/>no rider id, no position")]
+  P["Rider phone or helmet<br/>research mode on"] -- "60 s of riding every 10 min" --> F[("Field windows<br/>pseudonymous, no position")]
   P -- "6 s behind an alarm<br/>plus the rider's label" --> F
   F -- "ml/pull_field_data.py" --> D["ml/data/field<br/>gitignored"]
   D -- "stream_eval.py" --> M["False alarms per<br/>real riding hour"]
   D -- "train.py, once there is enough" --> R["Retrained detector"]
 ```
 
-The counts are live on [`/labour`](https://metricsfile.vercel.app/labour). Turning research mode off deletes every window that rider sent.
+The windows are pseudonymous: no rider id and no position, but one random tag per phone so that turning research mode off deletes every window that rider sent. The counts are live on [`/labour`](https://metricsfile.vercel.app/labour).
 
 ## Roadmap
 

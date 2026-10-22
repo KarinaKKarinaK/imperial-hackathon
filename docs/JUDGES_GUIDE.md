@@ -15,7 +15,7 @@ Repository: https://github.com/KarinaKKarinaK/imperial-hackathon
 | Live Hong Kong Observatory reading for the heat band | The demo rider on `/demo` and its synthetic crash windows |
 | Aggregate hazard cells and the Labour Department view | Triage profiles (from head-impact literature, not clinically validated) |
 
-Not done yet: helmet drop tests, running the helmet firmware on hardware, false alarm measurement on real rides, rider interviews.
+Not done yet: helmet drop tests, running the helmet firmware on hardware, false alarm measurement on real rides, rider interviews. Research mode for collecting real riding data is built (opt-in on `/rider`, counts on `/labour`) but holds no data yet.
 
 ## Minute 1: the full pipeline on the demo
 

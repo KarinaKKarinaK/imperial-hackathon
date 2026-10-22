@@ -82,8 +82,8 @@ async function LabourBody() {
           <div className="tile tile-ink p-6 sm:p-8 md:col-span-2">
             <p className="eyebrow">Real data in, research mode</p>
             <p className="mt-2 max-w-2xl text-sm opacity-70">
-              Riders who opt in send 60 s of normal riding every 10 minutes and the 6 s behind each alarm with their own label. No location, no
-              rider id. These ride hours are what the real false alarm rate per riding hour is measured on, replacing simulated falls and our
+              Riders who opt in send 60 s of normal riding every 10 minutes and the 6 s behind each alarm with their own label. No location and no
+              rider id; windows from one phone share a random tag so the rider can delete them. These ride hours are what the real false alarm rate per riding hour is measured on, replacing simulated falls and our
               synthetic ride.
             </p>
             <div className="mt-5 grid grid-cols-3 gap-4">
