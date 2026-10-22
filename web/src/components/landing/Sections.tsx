@@ -208,7 +208,7 @@ export function Limits() {
           <h2 className="display text-4xl">What we do not claim yet.</h2>
         </Reveal>
         {[
-          ["Falls are a proxy", "The model is trained on public fall data and our drop tests. Road trials come next."],
+          ["Falls are a proxy", "The model is trained on public fall data and synthetic rider scenarios. Helmet drop tests and road trials come next."],
           ["Heuristics, not diagnoses", "Fatigue and heat are alerts for the rider, not clinical measures."],
           ["Illustrative economics", "Premiums and payouts here are placeholders until the model is sourced."],
         ].map(([t, b], i) => (

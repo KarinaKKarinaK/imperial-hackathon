@@ -154,7 +154,7 @@ export function Model() {
               </div>
               {[
                 "Falls by volunteers onto mats are a proxy for crashes on a road.",
-                "The phone was in a trouser pocket, not on a helmet. Our drop tests add the helmet column.",
+                "The phone was in a trouser pocket, not on a helmet. Helmet drop tests will add the helmet column.",
                 "The worst false alarm is a phone taken out to make a call. The 30 second cancel exists for exactly this.",
               ].map((t) => (
                 <p key={t} className="text-[15px] leading-relaxed">

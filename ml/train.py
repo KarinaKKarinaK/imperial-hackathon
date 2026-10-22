@@ -12,8 +12,10 @@ Models
 Evaluation
   Leave-subjects-out: 5-fold GroupKFold on UMAFall subjects, phone sensor.
   Metrics: precision, recall, F1, AUROC, Brier. 95% CIs by bootstrap over trials.
-  Domain shift: every model is also scored on the synthetic rider set, which it
-  never trains on.
+  Every fold trains exactly as the export does: UMAFall training subjects plus
+  the synthetic rider set (seed 7). So the table describes the shipped model.
+  Domain shift: every model is scored on a fresh synthetic draw (seed 123) that
+  no model trains on.
 
 Export
   out/model.json          scaler plus MLP weights (or logreg if it wins)
@@ -147,53 +149,61 @@ def main():
     acts = np.array([t.activity for t in trials])
     print(f"UMAFall {args.sensor}: {len(trials)} trials, {y.sum()} falls, {len(set(groups))} subjects")
 
+    # synthetic train set (seed 7) joins every training fold and the export;
+    # a fresh draw (seed 123) is the held-out domain shift test
     Xs_w, ys, s_names = synthetic_dataset(n_per=150)
     Xs = np.array([features(w) for w in Xs_w])
-    print(f"synthetic: {len(ys)} windows, {ys.sum()} crashes")
+    Xt_w, yt, t_names = synthetic_dataset(n_per=150, seed=123)
+    Xt = np.array([features(w) for w in Xt_w])
+    print(f"synthetic: {len(ys)} train windows, {len(yt)} test windows")
 
     oof = {m: np.zeros(len(y)) for m in ["rule", "logreg", "gbm", "mlp", "cnn"]}
     syn = {m: [] for m in oof}
     gkf = GroupKFold(n_splits=args.folds)
     raw = raw_tensor(windows)
     raw_s = raw_tensor(Xs_w)
+    raw_t = raw_tensor(Xt_w)
 
     for fold, (tr, te) in enumerate(gkf.split(X, y, groups)):
         sc = StandardScaler().fit(X[tr])
-        Xtr, Xte = sc.transform(X[tr]), sc.transform(X[te])
+        Xf = np.vstack([X[tr], Xs])
+        yf = np.concatenate([y[tr], ys])
+        Xfs, Xte = sc.transform(Xf), sc.transform(X[te])
 
         oof["rule"][te] = [rule_detector(f)[1] for f in X[te]]
-        syn["rule"].append([rule_detector(f)[1] for f in Xs])
+        syn["rule"].append([rule_detector(f)[1] for f in Xt])
 
-        lr = LogisticRegression(C=1.0, class_weight="balanced", max_iter=2000).fit(Xtr, y[tr])
+        lr = LogisticRegression(C=1.0, class_weight="balanced", max_iter=2000).fit(Xfs, yf)
         oof["logreg"][te] = lr.predict_proba(Xte)[:, 1]
-        syn["logreg"].append(lr.predict_proba(sc.transform(Xs))[:, 1])
+        syn["logreg"].append(lr.predict_proba(sc.transform(Xt))[:, 1])
 
-        gbm = HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0).fit(X[tr], y[tr])
+        gbm = HistGradientBoostingClassifier(max_depth=3, learning_rate=0.08, max_iter=200, class_weight="balanced", random_state=0).fit(Xf, yf)
         oof["gbm"][te] = gbm.predict_proba(X[te])[:, 1]
-        syn["gbm"].append(gbm.predict_proba(Xs)[:, 1])
+        syn["gbm"].append(gbm.predict_proba(Xt)[:, 1])
 
-        mlp = fit_torch(MLP(X.shape[1]), Xtr, y[tr])
+        mlp = fit_torch(MLP(X.shape[1]), Xfs, yf)
         oof["mlp"][te] = predict_torch(mlp, Xte)
-        syn["mlp"].append(predict_torch(mlp, sc.transform(Xs)))
+        syn["mlp"].append(predict_torch(mlp, sc.transform(Xt)))
 
         # raw-window CNN, per-channel standardisation from the training fold
-        mu = raw[tr].mean(axis=(0, 2), keepdims=True)
-        sd = raw[tr].std(axis=(0, 2), keepdims=True) + 1e-6
-        cnn = fit_torch(CNN(), (raw[tr] - mu) / sd, y[tr], epochs=120, lr=3e-3)
+        rf = np.concatenate([raw[tr], raw_s])
+        mu = rf.mean(axis=(0, 2), keepdims=True)
+        sd = rf.std(axis=(0, 2), keepdims=True) + 1e-6
+        cnn = fit_torch(CNN(), (rf - mu) / sd, yf, epochs=120, lr=3e-3)
         oof["cnn"][te] = predict_torch(cnn, (raw[te] - mu) / sd)
-        syn["cnn"].append(predict_torch(cnn, (raw_s - mu) / sd))
+        syn["cnn"].append(predict_torch(cnn, (raw_t - mu) / sd))
         print(f"fold {fold + 1}/{args.folds} done")
 
     results = {"n_trials": int(len(y)), "n_falls": int(y.sum()), "n_subjects": int(len(set(groups))), "sensor": args.sensor, "threshold": THRESHOLD, "models": {}}
     for m in oof:
         results["models"][m] = {
             "umafall": bootstrap(y, oof[m]),
-            "synthetic": metrics(ys, np.mean(syn[m], axis=0)),
+            "synthetic": metrics(yt, np.mean(syn[m], axis=0)),
             "synthetic_by_scenario": {},
         }
         ps = np.mean(syn[m], axis=0)
-        for name in sorted(set(s_names)):
-            idx = np.array([i for i, s in enumerate(s_names) if s == name])
+        for name in sorted(set(t_names)):
+            idx = np.array([i for i, s in enumerate(t_names) if s == name])
             results["models"][m]["synthetic_by_scenario"][name] = float(np.mean(ps[idx] >= THRESHOLD))
 
     # helmet drop tests, if the rig has produced any. Evaluated only, never
@@ -289,8 +299,8 @@ def main():
     # demo windows for the website replay buttons
     rng_pick = {}
     for name in ["riding", "braking", "pothole", "set_down", "bag_drop", "crash"]:
-        i = s_names.index(name)
-        w = resample(Xs_w[i])
+        i = t_names.index(name)
+        w = resample(Xt_w[i])
         rng_pick[name] = {"samples": np.round(w, 4).tolist(), "label": int(ys[i])}
     (out / "demo_windows.json").write_text(json.dumps(rng_pick))
 

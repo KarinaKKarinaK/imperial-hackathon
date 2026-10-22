@@ -119,7 +119,8 @@ export default function PosterPage() {
               </tbody>
             </table>
             <p className="mt-3 text-xs opacity-70">
-              Synthetic rider scenarios, never trained on: riding, braking, pothole and set-down flagged 0%, crash{" "}
+              Synthetic rider scenarios, never trained on: riding, braking, pothole and set-down flagged 0%, bag drop{" "}
+              {(r.models.gbm.synthetic_by_scenario.bag_drop * 100).toFixed(0)}%, crash{" "}
               {(r.models.gbm.synthetic_by_scenario.crash * 100).toFixed(0)}%. Worst false alarm on real data: a phone taken out to make a call.
             </p>
             <p className="mt-2 text-xs opacity-70">Helmet drop tests: [detection rate and interval from validation/runs, when complete].</p>

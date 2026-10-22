@@ -52,7 +52,7 @@ One shot per line. Speaker into the lens. Lower third on first appearance only. 
 |---|---|---|---|
 | 8 | Karina | So we built the black box for the human body. It starts with the phone they already carry. | Lab, phone held to the lens on /rider |
 | 9 | Hannes | On a motorbike, add a 3D-printed clip and a forty-dollar board to the helmet. On a bicycle or on foot, the phone is enough. | 3D printer, the clip coming off the bed, ESP32 board in the other hand |
-| 10 | Hannes | Impact. Fall. Stillness. Three signals. Nothing else looks like that. | Helmet dropped on the bench, slow motion |
+| 10 | Hannes | Impact. Fall. Stillness. Three signals. Few things look like that. | Helmet dropped on the bench, slow motion |
 | 11 | Maalon | Thirty seconds to say "I'm fine". Silence, and triage knows where and how hard. | Dispatcher console at metricsfile.vercel.app/dispatch on a laptop |
 | 11b | Simone | No new hardware needed to start. The phone in your pocket is already the sensor. | Holding a phone on metricsfile.vercel.app/rider, "On shift" lit. Drops it onto a cushion, cut on impact |
 | 12 | Alysa | Same second, the insurance fires. No form. No adjuster. Paid in a day. | Underwriter page, payout line turns green |
@@ -79,7 +79,7 @@ Vertical split. Left header: TODAY. Right header: WITH THE RECORD. Same rider, s
 | 2:15 | Rider at home, leg in a cast. Text: NO INCOME. | Underwriter panel on /demo: status pill flips to Paid, "Paid out HK$8,000". Phone screen shows the yellow Paid card: "Your record. You own this." Text: Paid in 24 hours. [target] | Alysa: "One event. One payout. No argument." |
 | 2:30 | Email to platform. Reply: "You were not on a job." | The rider's signed record page /r/EVT-...: "Signature verified" pill, platform, order, "1 min 34 s left on the delivery clock", verification code. Then the who-sees-what dots on /record. | Alysa: "Which app. Which order. Which second. How many seconds left on the clock. Signed. Done." |
 | 2:45 | Calendar pages flipping. Text: 5 YEARS. HK$1.35M. ONE JUDGE. | Text: DAYS. [target] | Maalon: "That is what one typhoon cost one rider." |
-| 2:55 | Insurer's screen: blank. Text: NO DATA. NO PRICE. NO COVER. | /demo: Rain toggled on, heat set to red, the premium per window ticks from HK$0.60 to HK$1.26 live. Then the model section of the landing page: the recall bars, rule at 48%, gradient boosting at 95%. Text: PRICED PER DELIVERY. VERIFIED PER CLAIM. | Karina: "Insurers get a loss history. Platforms get a fair premium. Riders get paid." |
+| 2:55 | Insurer's screen: blank. Text: NO DATA. NO PRICE. NO COVER. | /demo: Rain toggled on, heat set to red, the premium per window ticks from HK$0.60 to HK$1.26 live. Then the model section of the landing page: the recall bars, rule at 48%, gradient boosting at 94%. Text: PRICED PER DELIVERY. VERIFIED PER CLAIM. | Karina: "Insurers get a loss history. Platforms get a fair premium. Riders get paid." |
 
 Stats strip, bottom of the right side, one at a time from 2:45:
 - Drop test detection: [X]% (95% CI [a, b]) [drop test]

@@ -35,10 +35,10 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/readme/stats.svg" alt="95.2% crash recall, 93.0% precision, 0.994 AUROC, HK$110 of parts, 30 seconds from impact to dispatch" width="100%">
+  <img src="docs/assets/readme/stats.svg" alt="94.2% crash recall, 90.3% precision, 0.987 AUROC, HK$110 of parts, 30 seconds from impact to dispatch" width="100%">
 </p>
 
-<p align="center"><sub>Detector numbers: UMAFall, 625 trials, 5-fold leave-subjects-out, threshold 0.5. Full table with 95% confidence intervals in <a href="ml/out/results.md">ml/out/results.md</a>. The shipped model, which also learns from synthetic rider windows, scores 94.2% recall and 90.3% precision on the same held-out people. <a href="ml/VALIDITY.md">How we checked</a>.</sub></p>
+<p align="center"><sub>Detector numbers: UMAFall, 625 trials, 5-fold leave-subjects-out, threshold 0.5. Every number describes the model the site runs, trained on UMAFall plus synthetic rider windows. Full table with 95% confidence intervals in <a href="ml/out/results.md">ml/out/results.md</a>. <a href="ml/VALIDITY.md">How we checked</a>.</sub></p>
 
 Hong Kong is about to make delivery platforms liable for rider injuries. Nobody records the crash. **Metrics** is the missing record: a HK$110 helmet clip and the rider's own phone detect a crash, wait 30 seconds for the rider to say they are fine, then send location and a likely trauma profile to dispatch. The same event becomes a signed record that names the app active at impact, so an insurer can pay a fixed amount within a day and liability between platforms becomes a lookup, not a court case.
 
@@ -215,7 +215,7 @@ Two fields matter most for the new law. `platform` and `jobId` make multi-platfo
 
 ## The crash detector
 
-Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily activities recorded on a phone: 625 trials, 208 falls, 19 people. Every fold holds out whole people, so the model is always scored on someone it has never seen. Confidence intervals are 95% bootstrap.
+Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily activities recorded on a phone: 625 trials, 208 falls, 19 people. Every fold holds out whole people, so the model is always scored on someone it has never seen. Each fold trains exactly as the shipped model does, on the training people plus our synthetic rider windows. Confidence intervals are 95% bootstrap.
 
 <p align="center">
   <img src="docs/assets/readme/model-comparison.gif" alt="Precision, recall and F1 for five models" width="80%">
@@ -224,10 +224,10 @@ Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily 
 | Model | Precision | Recall | F1 | AUROC | Brier |
 |---|---|---|---|---|---|
 | Threshold rule | 0.934 [0.884, 0.979] | 0.476 [0.411, 0.545] | 0.631 | 0.975 | 0.095 |
-| Logistic regression | 0.835 [0.788, 0.881] | 0.976 [0.955, 0.995] | 0.900 | 0.970 | 0.056 |
-| **Gradient boosting (shipped)** | **0.930 [0.894, 0.960]** | **0.952 [0.921, 0.980]** | **0.941** | **0.994** | **0.032** |
-| MLP | 0.884 [0.841, 0.923] | 0.957 [0.926, 0.985] | 0.919 | 0.987 | 0.041 |
-| 1D CNN | 0.943 [0.910, 0.975] | 0.880 [0.833, 0.920] | 0.910 | 0.988 | 0.044 |
+| Logistic regression | 0.831 [0.778, 0.881] | 0.899 [0.855, 0.938] | 0.864 | 0.944 | 0.082 |
+| **Gradient boosting (shipped)** | **0.903 [0.864, 0.941]** | **0.942 [0.911, 0.972]** | **0.922** | **0.987** | **0.037** |
+| MLP | 0.866 [0.821, 0.908] | 0.933 [0.897, 0.966] | 0.898 | 0.981 | 0.051 |
+| 1D CNN | 0.926 [0.885, 0.961] | 0.841 [0.791, 0.887] | 0.882 | 0.969 | 0.063 |
 
 <table>
 <tr>
@@ -238,13 +238,13 @@ Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily 
 
 **Parity.** [web/src/lib/features.ts](web/src/lib/features.ts) is a line-for-line port of [ml/features.py](ml/features.py). A test checks both produce the same features and probabilities on fixed windows.
 
-**Threshold.** At 0.5: 198 crashes caught, 10 missed, 15 false alarms out of 417 non-falls. Most false alarms come from *making a phone call*, which the 30 second cancel window absorbs.
+**Threshold.** At 0.5: 196 falls caught, 12 missed, 21 false alarms out of 417 non-falls. Most false alarms come from *making a phone call*, which the 30 second cancel window absorbs.
 
 </td>
 </tr>
 </table>
 
-**Domain shift test.** We generated a synthetic rider set: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. A model trained on UMAFall alone flags 0% of riding, braking, potholes and set-downs, and 99% of crashes. It also flags 97% of bag drops. The shipped model adds synthetic windows to training. On a fresh synthetic draw it never saw, it flags 25% of bag drops and catches 88% of crashes. Bag drops are the open problem the helmet clip is meant to solve.
+**Domain shift test.** We score the model on a fresh synthetic draw it never trained on: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. It flags 0% of riding, braking, potholes and set-downs, catches 88% of crashes, and still flags 22% of bag drops. Without synthetic windows in training it flagged 97% of bag drops. Bag drops are the open problem the helmet clip is meant to solve.
 
 ### Are the numbers real?
 
@@ -252,11 +252,11 @@ We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `p
 
 | Check | Result |
 |---|---|
-| Recompute every metric from raw data and from the saved predictions | Identical to the table above |
-| Shuffle the labels and rerun the same cross-validation | AUROC 0.48 to 0.55, chance level, so no leakage |
+| Recompute every metric from raw data and from the saved predictions | Identical to the published table |
+| Shuffle the labels and rerun the same cross-validation | AUROC 0.47 to 0.54, chance level, so no leakage |
 | Could recording length give the answer away? | AUROC 0.52, no |
-| Confidence intervals resampling whole people instead of trials | Recall [0.931, 0.981], precision [0.896, 0.966] |
-| Same recipe as the shipped model, on held-out people | Recall 0.942, precision 0.903, AUROC 0.987 |
+| Confidence intervals resampling whole people instead of trials | Recall [0.898, 0.971], precision [0.864, 0.953] |
+| Worst individual people | Two of the 13 people who fell had a third of their falls missed |
 | One feature alone (tilt angle) | AUROC 0.91. Simulated falls are an easier task than road crashes |
 
 ### What this does not prove
@@ -272,11 +272,12 @@ Retrain with `python3 ml/train.py`. Details in [ml/README.md](ml/README.md).
 
 ### What we tried next
 
-Twelve variants, same protocol, nothing chosen on test people. Full write-up: [ml/experiments/RESULTS.md](ml/experiments/RESULTS.md).
+Twelve variants, same protocol, nothing chosen on test people. The experiment rows use a different synthetic seed from the shipped row, so compare them with each other. Full write-up: [ml/experiments/RESULTS.md](ml/experiments/RESULTS.md).
 
 | Variant | Recall | Precision | Missed falls | False alarms | AUROC | Synthetic bag drops flagged |
 |---|---|---|---|---|---|---|
-| UMAFall only, threshold 0.5 (headline) | 0.952 | 0.930 | 10 | 15 | 0.994 | 98% |
+| Shipped: UMAFall + synthetic, threshold 0.5 | 0.942 | 0.903 | 12 | 21 | 0.987 | 22% |
+| UMAFall only, threshold 0.5 | 0.952 | 0.930 | 10 | 15 | 0.994 | 98% |
 | + synthetic negatives + 9 new features | 0.957 | 0.930 | 9 | 15 | 0.996 | 19% |
 | same, threshold 0.2 | 0.981 | 0.915 | 4 | 19 | 0.996 | 39% |
 

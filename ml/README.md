@@ -39,7 +39,7 @@ Gradient boosting is deployed. Its trees are exported as JSON and evaluated in a
 
 ## Results
 
-See `out/results.md`. Headline on the current run: the rule catches 48% of falls, gradient boosting catches 95% at 93% precision, AUROC 0.994, leave-subjects-out. The worst false alarm for every model is a phone taken out of a pocket to make a call, which is why the 30 second cancel window exists.
+See `out/results.md`. Headline on the current run: the rule catches 48% of falls, gradient boosting catches 94% at 90% precision, AUROC 0.987, leave-subjects-out, trained exactly as shipped (UMAFall plus synthetic rider windows). The worst false alarm for every model is a phone taken out of a pocket to make a call, which is why the 30 second cancel window exists.
 
 ## Notebook
 

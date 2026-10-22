@@ -35,10 +35,12 @@ for lab in (0,1): print("3. label %d: window s median %.2f (min %.2f) | recordin
 print("   AUROC of window length alone %.3f, recording length alone %.3f" % (roc_auc_score(Y,dur), roc_auc_score(Y,rec)))
 print("4. single-feature AUROC:", {n: round(max(roc_auc_score(Y,X[:,i]),1-roc_auc_score(Y,X[:,i])),3) for i,n in enumerate(FEATURE_NAMES)})
 
+_sw, _sy, _ = dataset(n_per=150)  # seed 7, the synthetic set train.py adds to every fold
+_SX = np.array([features(w) for w in _sw])
 def cv(Xm, Ym):
     o=np.zeros(len(Ym))
     for tr,te in GroupKFold(5).split(Xm,Ym,G):
-        o[te]=HistGradientBoostingClassifier(max_depth=3,learning_rate=0.08,max_iter=200,class_weight="balanced",random_state=0).fit(Xm[tr],Ym[tr]).predict_proba(Xm[te])[:,1]
+        o[te]=HistGradientBoostingClassifier(max_depth=3,learning_rate=0.08,max_iter=200,class_weight="balanced",random_state=0).fit(np.vstack([Xm[tr],_SX]),np.concatenate([Ym[tr],_sy])).predict_proba(Xm[te])[:,1]
     return o
 o=cv(X,Y); print("5. rerun CV from raw data: auc %.3f rec %.3f prec %.3f" % (roc_auc_score(Y,o), recall_score(Y,o>=.5), precision_score(Y,o>=.5)))
 perm=[roc_auc_score(Yp:=rng.permutation(Y), cv(X,Yp)) for _ in range(5)]

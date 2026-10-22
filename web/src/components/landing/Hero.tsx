@@ -96,7 +96,7 @@ export function Hero() {
             <span className="pill pill-ink">Fall</span>
             <span className="pill pill-violet">Stillness</span>
           </div>
-          <p className="mt-6 text-[15px] leading-snug">Three signals. Nothing else looks like a crash.</p>
+          <p className="mt-6 text-[15px] leading-snug">Three signals in sequence. Few things look like a crash.</p>
         </motion.div>
       </div>
     </section>

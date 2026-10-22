@@ -6,7 +6,7 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 **Where does the 13% come from?** The 2024 rider union survey, [publisher and title once sourced]. It is self-reported. We use it as the hook, not as a prevalence estimate. The official number that matters is 41,254 compensation cases a year with riders excluded by definition.
 
-**Falls on mats are not motorcycle crashes. Why should we believe the model?** You should not believe it proves road performance, and we say so on the site. UMAFall gives us 625 labelled recordings to show the method works and to beat the rule by a wide margin. The helmet drop tests add measured impacts. Road trials are the next step and we have scoped them.
+**Falls on mats are not motorcycle crashes. Why should we believe the model?** You should not believe it proves road performance, and we say so on the site. UMAFall gives us 625 labelled recordings to show the method works and to beat the rule by a wide margin. The helmet drop tests will add measured impacts once the rig runs. Road trials are the next step and we have scoped them.
 
 **How did you set the triage bands?** Peak linear acceleration thresholds from the concussion biomechanics literature [Rowson and Duma 2013, Zhang 2004, confirm]. The output is labelled probable. It tells a dispatcher where and roughly how hard, never a diagnosis.
 
@@ -18,7 +18,7 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 **Why gradient boosting and not deep learning?** We trained both. The 1D CNN scored similar AUROC on the test set but flagged almost every synthetic scenario as a crash, which is the domain-shift failure you would expect from a model on raw waveforms with little data. Boosting on ten physical features generalises better and runs in a few lines on the phone.
 
-**What is the false alarm rate in practice?** On held-out subjects, 15 false alarms in 417 non-fall recordings at threshold 0.5. Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published.
+**What is the false alarm rate in practice?** On held-out subjects, 21 false alarms in 417 non-fall recordings at threshold 0.5 (precision 90%). Most are a phone being pulled from a pocket to make a call. Every false alarm meets the 30 second cancel. The threshold sweep is published.
 
 **Can the model be gamed by a rider?** A rider could drop the helmet on purpose. The event is a trigger for a fixed first-tier payout, hospital records unlock the second tier, and repeated events from one record id are visible to the insurer. Fraud risk is priced like any parametric product.
 
