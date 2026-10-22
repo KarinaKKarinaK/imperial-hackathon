@@ -37,7 +37,7 @@
   <img src="docs/assets/readme/stats.svg" alt="95.2% crash recall, 93.0% precision, 0.994 AUROC, HK$110 of parts, 30 seconds from impact to dispatch" width="100%">
 </p>
 
-<p align="center"><sub>Detector numbers: UMAFall, 625 trials, 5-fold leave-subjects-out, threshold 0.5. Full table with 95% confidence intervals in <a href="ml/out/results.md">ml/out/results.md</a>.</sub></p>
+<p align="center"><sub>Detector numbers: UMAFall, 625 trials, 5-fold leave-subjects-out, threshold 0.5. Full table with 95% confidence intervals in <a href="ml/out/results.md">ml/out/results.md</a>. The shipped model, which also learns from synthetic rider windows, scores 94.2% recall and 90.3% precision on the same held-out people. <a href="ml/VALIDITY.md">How we checked</a>.</sub></p>
 
 Hong Kong is about to make delivery platforms liable for rider injuries. Nobody records the crash. **Metrics** is the missing record: a HK$110 helmet clip and the rider's own phone detect a crash, wait 30 seconds for the rider to say they are fine, then send location and a likely trauma profile to dispatch. The same event becomes a signed record that names the app active at impact, so an insurer can pay a fixed amount within a day and liability between platforms becomes a lookup, not a court case.
 
@@ -243,11 +243,26 @@ Trained on **UMAFall**[^umafall], a public dataset of simulated falls and daily 
 </tr>
 </table>
 
-**Domain shift test.** We generated a synthetic rider set the model never trained on: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. Gradient boosting flags 0% of riding, braking, potholes and set-downs, and 99% of crashes. It also flags 97% of bag drops, which is the open problem the helmet clip and the drop tests are meant to solve.
+**Domain shift test.** We generated a synthetic rider set: riding, hard braking, potholes, setting the phone down, dropping a delivery bag, and crashes. A model trained on UMAFall alone flags 0% of riding, braking, potholes and set-downs, and 99% of crashes. It also flags 97% of bag drops. The shipped model adds synthetic windows to training. On a fresh synthetic draw it never saw, it flags 25% of bag drops and catches 88% of crashes. Bag drops are the open problem the helmet clip is meant to solve.
+
+### Are the numbers real?
+
+We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `python3 ml/audit.py`).
+
+| Check | Result |
+|---|---|
+| Recompute every metric from raw data and from the saved predictions | Identical to the table above |
+| Shuffle the labels and rerun the same cross-validation | AUROC 0.48 to 0.55, chance level, so no leakage |
+| Could recording length give the answer away? | AUROC 0.52, no |
+| Confidence intervals resampling whole people instead of trials | Recall [0.931, 0.981], precision [0.896, 0.966] |
+| Same recipe as the shipped model, on held-out people | Recall 0.942, precision 0.903, AUROC 0.987 |
+| One feature alone (tilt angle) | AUROC 0.91. Simulated falls are an easier task than road crashes |
 
 ### What this does not prove
 
-- UMAFall falls are simulated by volunteers, not real road crashes. Threshold detectors lose sensitivity on real-world falls.[^bagala]
+- UMAFall falls are simulated by volunteers, not real road crashes, and only 13 of the 19 people performed falls. Threshold detectors lose sensitivity on real-world falls.[^bagala]
+- Each trial is scored as one window cut around its biggest peak. That is classification, not live detection. Falls are a third of UMAFall and rare on the road, so real-world precision will be lower. False alarms per riding hour are not measured yet.
+- The MPU-6050 in the clip is set to 16 g, so harder helmet impacts are capped.
 - The synthetic rider set is ours, so the domain shift test is a sanity check, not validation.
 - Helmet drop tests are in progress. Protocol: [validation/DROP_TEST_PROTOCOL.md](validation/DROP_TEST_PROTOCOL.md).
 - Triage bands come from head-impact literature[^rowson][^zhang] and are not clinically validated.
@@ -453,9 +468,9 @@ Without environment variables the app keeps state in memory and generates a sign
 
 | | Pillar | Role |
 |---|---|---|
-| Karina Kalicka-Molin | Engineering | Team lead, ML, software |
+| Karina Kalicka-Molin | Engineering | ML, software |
 | Simone Copetti | Engineering | ML, software |
-| Hannes Ganske | Natural sciences | Hardware, CAD, electronics, legal research |
+| Hannes Ganske | Natural sciences | Hardware, CAD, electronics |
 | Maalon Jochmann | Medicine and health | Legal and regulatory research, trauma triage |
 | Alysa de Haas | Business | Business case, insurance mechanism |
 
