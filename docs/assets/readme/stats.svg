@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="250" viewBox="0 0 1280 250">
+  <defs>
+    <style>
+      .n { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 700; fill: #f3f3f0; letter-spacing: -2px; }
+      .l { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; fill: #d8d8d3; }
+      .m { font-family: "SFMono-Regular", Menlo, Consolas, monospace; fill: #8a8a85; letter-spacing: 1px; }
+      .k { font-family: "SFMono-Regular", Menlo, Consolas, monospace; fill: #8f7bff; letter-spacing: 4px; }
+      .c { opacity: 0; animation: up 0.7s ease-out forwards; }
+      .c1 { animation-delay: 0.1s; } .c2 { animation-delay: 0.3s; } .c3 { animation-delay: 0.5s; }
+      .c4 { animation-delay: 0.7s; } .c5 { animation-delay: 0.9s; }
+      .bar { animation: grow 1.2s ease-out 0.4s both; transform-origin: 48px 0; }
+      @keyframes up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+      @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    </style>
+  </defs>
+  <rect width="1280" height="250" rx="18" fill="#0f0f0f"/>
+  <line x1="40" y1="30" x2="1240" y2="30" stroke="#262626"/>
+  <g stroke="#262626">
+    <line x1="280" y1="54" x2="280" y2="224"/><line x1="520" y1="54" x2="520" y2="224"/>
+    <line x1="760" y1="54" x2="760" y2="224"/><line x1="1000" y1="54" x2="1000" y2="224"/>
+  </g>
+
+  <g class="c c1"><text class="k" x="48" y="76" font-size="15">01</text>
+    <text class="n" x="48" y="140" font-size="54" style="fill:#f6d85a">95.2%</text>
+    <rect class="bar" x="48" y="156" width="64" height="4" fill="#f6d85a"/>
+    <text class="l" x="48" y="192" font-size="18">crash recall</text>
+    <text class="m" x="48" y="216" font-size="13">vs 47.6% threshold rule</text></g>
+
+  <g class="c c2"><text class="k" x="304" y="76" font-size="15">02</text>
+    <text class="n" x="304" y="140" font-size="54">93.0%</text>
+    <text class="l" x="304" y="192" font-size="18">precision</text>
+    <text class="m" x="304" y="216" font-size="13">15 false alarms / 417</text></g>
+
+  <g class="c c3"><text class="k" x="544" y="76" font-size="15">03</text>
+    <text class="n" x="544" y="140" font-size="54">0.994</text>
+    <text class="l" x="544" y="192" font-size="18">AUROC</text>
+    <text class="m" x="544" y="216" font-size="13">19 held-out subjects</text></g>
+
+  <g class="c c4"><text class="k" x="784" y="76" font-size="15">04</text>
+    <text class="n" x="784" y="140" font-size="54">HK$110</text>
+    <text class="l" x="784" y="192" font-size="18">parts per helmet clip</text>
+    <text class="m" x="784" y="216" font-size="13">Sham Shui Po, Oct 2026</text></g>
+
+  <g class="c c5"><text class="k" x="1024" y="76" font-size="15">05</text>
+    <text class="n" x="1024" y="140" font-size="54">30 s</text>
+    <text class="l" x="1024" y="192" font-size="18">impact to dispatch</text>
+    <text class="m" x="1024" y="216" font-size="13">unless rider taps OK</text></g>
+</svg>

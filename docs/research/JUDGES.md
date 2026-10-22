@@ -1,6 +1,6 @@
 # Judges and what they will look for
 
-Source: Imperial judges page (fetched 19 Oct 2026) and the 15 Oct 2026 online briefing deck (in repo root). The earlier judge list in CONTEXT.md named Lucas Cheung; the live panel has replaced him with Helen Kwok and added Dr Pamela Tin.
+Source: Imperial judges page (fetched 19 Oct 2026) and the 15 Oct 2026 online briefing deck (docs/briefing-deck.pdf). The earlier judge list in CONTEXT.md named Lucas Cheung; the live panel has replaced him with Helen Kwok and added Dr Pamela Tin.
 
 ## The four judges
 

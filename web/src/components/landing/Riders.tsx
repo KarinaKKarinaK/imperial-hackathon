@@ -2,7 +2,7 @@ import riders from "@/lib/riders.json";
 import { Reveal } from "../Reveal";
 
 // Fill web/src/lib/riders.json after the interviews (see
-// submission/RIDER_INTERVIEWS.md). Until there is at least one quote this
+// docs/submission/RIDER_INTERVIEWS.md). Until there is at least one quote this
 // section renders nothing, so the site never shows invented voices.
 type Quote = { text: string; translation?: string; who: string; district?: string; years?: number };
 type Data = { updated: string | null; asked: number; crashStory: number; wouldWear: number; worries: string[]; quotes: Quote[] };

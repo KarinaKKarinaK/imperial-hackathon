@@ -115,17 +115,17 @@ Midterm conflicts this week: Hannes (weekend), Alysa (Friday 17th midterms done)
 ## Repo layout
 
 ```
-CONTEXT.md
-IMPLEMENTATION_PLAN.md
 web/            Next.js app, deployed at https://metricsfile.vercel.app
                 landing page, /demo (3D map, phone, sensor trace, dispatcher, underwriter),
                 /rider (real phone accelerometer client), /dispatch, /underwriter,
                 API routes and the TypeScript detector with tests
 ml/             detector training, UMAFall loader, synthetic generator, export
 firmware/       ESP32 sketch and BLE protocol
+hardware/       enclosure drawings and exploded view
 validation/     drop test CSVs, results table, protocol
-research/       evidence table, insurance model, governance, policy PDFs, judges
-submission/     poster, video plan and script, STEMB map
+docs/           CONTEXT.md, this plan, briefing deck
+  research/     evidence table, insurance model, governance, policy PDFs, judges
+  submission/   poster, video plan and script, STEMB map
 ```
 
 Status 20 Oct: records are signed with Ed25519 and verifiable at /api/verify, riders get a printable signed copy at /r/[id], the record carries the delivery countdown and travel mode, non-crash jolts aggregate into de-identified hazard cells on the map, the rider app has an order countdown, an emergency contact and one-tap 999 and SMS actions, real phones show on the demo map, a helmet Bluetooth client is ready for the clip, and GitHub runs the tests on every push.
