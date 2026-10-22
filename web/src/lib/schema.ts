@@ -39,6 +39,7 @@ export type RiderState = {
   deadlineAt: number | null; // when the current order is due, ms since epoch
   emergencyContact: string | null; // phone number held on the device, mirrored for the demo rider only
   lastSeenAt: number;
+  lastCell?: string | null; // hazard grid cell last passed, so a pass is counted once per cell
   lastWindow: WindowStats | null;
   lastDetection: LastDetection | null;
 };
@@ -97,7 +98,23 @@ export type EventRecord = {
   signature: string | null; // Ed25519 over the impact facts, base64url. Verify at /api/verify
   // Signed once the outcome is final, so status and payout cannot be edited either.
   settlement: Settlement | null;
+  // Tier two: a hospital admission the rider submits after a paid event.
+  // Signed on receipt; the insurer confirms it with the hospital.
+  hospital?: HospitalClaim | null;
+  // After a cancel the rider can say what it was. A weak label for retraining.
+  feedback?: Feedback | null;
   sample?: boolean; // a seeded example so empty screens are not blank. Never a real rider
+};
+
+export type Feedback = "false_alarm" | "real_fall" | "unsure";
+
+export type HospitalClaim = {
+  hospital: string;
+  admittedAt: number;
+  dischargeRef: string;
+  submittedAt: number;
+  status: "submitted" | "confirmed";
+  signature: string; // Ed25519 over id, hospital, admittedAt, dischargeRef, submittedAt and the facts signature
 };
 
 export type Settlement = {
@@ -117,4 +134,6 @@ export type HazardCell = {
   bumps: number;
   brakes: number;
   lastAt: number;
+  passes?: number; // rider passes through the cell, so jolts can be read as a rate
+  rate?: number; // jolts per pass, shrunk toward the city mean (empirical Bayes)
 };

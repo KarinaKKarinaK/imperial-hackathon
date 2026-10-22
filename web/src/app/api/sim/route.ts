@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DEMO_RIDER, replay, setContext, setDeadline, setSecondApp, simCrash, simOk, simReset, simStart, snapshot } from "@/lib/store";
+import { DEMO_RIDER, replay, setContext, setDeadline, setSecondApp, simCrash, simFeedback, simHospital, simOk, simReset, simStart, snapshot } from "@/lib/store";
 import { clientIp, limited, storeRoute } from "@/lib/api";
 
 // The scripted demo rider. Only ever touches rider-demo. Reset clears the
@@ -46,6 +46,13 @@ export async function POST(req: Request) {
       case "platform":
         if (value === "Platform A" || value === "Platform B") setContext(DEMO_RIDER, { platform: value });
         body = snapshot(DEMO_RIDER);
+        break;
+      case "hospital":
+        body = simHospital();
+        break;
+      case "feedback":
+        if (value !== "false_alarm" && value !== "real_fall" && value !== "unsure") return NextResponse.json({ error: "label required" }, { status: 400 });
+        body = simFeedback(value);
         break;
       case "secondApp":
         setSecondApp(DEMO_RIDER, Boolean(value));

@@ -270,11 +270,14 @@ We audited our own pipeline ([ml/VALIDITY.md](ml/VALIDITY.md), reproduce with `p
 | Confidence intervals resampling whole people instead of trials | Recall [0.898, 0.971], precision [0.864, 0.953] |
 | Worst individual people | Two of the 13 people who fell had a third of their falls missed |
 | One feature alone (tilt angle) | AUROC 0.91. Simulated falls are an easier task than road crashes |
+| Live loop on full recordings (6 s window every 1.5 s, 60 s hold), held-out people | 201 of 208 falls caught, median 0.88 s after impact |
+| False alarms per hour, phone in a pocket during daily activities | **20.3 per hour** [14.2, 28.3], half from taking the phone out for a call |
+| False alarms per hour, our synthetic ride | 0.30 per hour [0.06, 0.88], all from bag drops. Potholes and hard braking never fired |
 
 ### What this does not prove
 
 - UMAFall falls are simulated by volunteers, not real road crashes, and only 13 of the 19 people performed falls. Threshold detectors lose sensitivity on real-world falls.[^bagala]
-- Each trial is scored as one window cut around its biggest peak. That is classification, not live detection. Falls are a third of UMAFall and rare on the road, so real-world precision will be lower. False alarms per riding hour are not measured yet.
+- In a live loop over everyday phone handling the phone-only detector raises about 20 false alarms an hour ([ml/STREAMING.md](ml/STREAMING.md)). The 30 second cancel catches them, but that is too many for a walking rider, which is why the helmet clip and the two-sensor rule matter. UMAFall has only 1.7 hours of daily activity, and our synthetic ride is our own model, so neither is a real riding hour.
 - The MPU-6050 in the clip is set to 16 g, so harder helmet impacts are capped.
 - The synthetic rider set is ours, so the domain shift test is a sanity check, not validation.
 - Helmet drop tests are in progress. Protocol: [validation/DROP_TEST_PROTOCOL.md](validation/DROP_TEST_PROTOCOL.md).
@@ -304,8 +307,8 @@ From our dataset search and from fields that solved similar problems first. Deta
 | Helmet and phone must agree within a second | Earthquake early warning networks | A dropped bag moves the phone, not the head | Built |
 | Each record carries the hash of the one before | Certificate Transparency | Nobody, including us, can backdate or delete a record unseen | Built |
 | Freeze 5 s before and after impact, 200 g sensor | Car event data recorders, concussion mouthguards | Full crash context, no clipping at 16 g, clip sleeps until a hit | Next |
-| Cancel taps and hospital records become labels | Weak supervision | Real road crashes replace simulated falls over time | Next |
-| Hazard cells divided by rider traffic | Disease mapping | Busy roads stop looking dangerous just for being busy | Next |
+| Cancel taps and hospital records become labels | Weak supervision | Real road crashes replace simulated falls over time | Collecting labels; retraining next |
+| Hazard cells divided by rider traffic | Disease mapping | Busy roads stop looking dangerous just for being busy | Built |
 | Add head-worn and two-wheeler data | Erciyes head sensor, Boubezoul motorcycle falls, CYCLEGYRO helmet gyro | Moves the model from trouser pocket to helmet and road | Next |
 
 ---

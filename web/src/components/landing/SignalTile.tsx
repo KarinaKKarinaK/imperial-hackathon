@@ -8,6 +8,7 @@ export function SignalTile({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const buf = useRef<number[]>(new Array(200).fill(1));
   const crashAt = useRef<number | null>(null);
+  const readout = useRef<HTMLSpanElement>(null);
   const [state, setState] = useState<"riding" | "impact" | "fall" | "still">("riding");
 
   const drop = () => {
@@ -49,6 +50,7 @@ export function SignalTile({ className = "" }: { className?: string }) {
       }
       setState((p) => (p === s ? p : s));
       buf.current.push(next);
+      if (readout.current) readout.current.textContent = `${next.toFixed(1)} g`; // written by the draw loop, not by render
       if (buf.current.length > 200) buf.current.shift();
       t++;
       const y = (g: number) => h - 14 - (Math.min(15, g) / 15) * (h - 28);
@@ -88,7 +90,7 @@ export function SignalTile({ className = "" }: { className?: string }) {
         <span className={`h-2 w-2 rounded-full ${state === "riding" ? "bg-paper" : "bg-peach"}`} />
         <span className="opacity-80">{label}</span>
       </span>
-      <span className="mono absolute bottom-4 right-5 text-xs opacity-50">{buf.current[buf.current.length - 1].toFixed(1)} g</span>
+      <span ref={readout} className="mono absolute bottom-4 right-5 text-xs opacity-50">1.0 g</span>
     </button>
   );
 }

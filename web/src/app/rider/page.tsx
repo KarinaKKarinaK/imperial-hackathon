@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Arrow } from "@/components/Arrow";
-import { PhonePanel } from "@/components/demo/Panels";
+import { PhonePanel, type HospitalInput } from "@/components/demo/Panels";
 import { SensorTrace } from "@/components/demo/SensorTrace";
 import { detectCrash, THRESHOLDS } from "@/lib/detector";
 import { connectHelmet, helmetSupported, type HelmetHandle } from "@/lib/helmet";
 import { isRtl, LANGS, needsReview, useLang, type Lang } from "@/lib/i18n";
-import type { Sample } from "@/lib/schema";
+import type { Feedback, Sample } from "@/lib/schema";
 import { useSnapshot } from "@/lib/useSnapshot";
 
 // The phone is the sensor. DeviceMotion samples are buffered for 6 seconds
@@ -16,7 +16,43 @@ import { useSnapshot } from "@/lib/useSnapshot";
 // helmet paired, the helmet window is primary and the phone window goes along
 // so the server can check both felt the impact.
 
+// localStorage read as an external store, so the server renders the default
+// and the client picks up the saved value without a second effect pass. If
+// storage is blocked, values live in memory for this tab.
+const memo = new Map<string, string | null>();
+const localSubs = new Set<() => void>();
+function subscribeLocal(cb: () => void) {
+  localSubs.add(cb);
+  return () => {
+    localSubs.delete(cb);
+  };
+}
+function readLocal(k: string): string | null {
+  try {
+    return localStorage.getItem(k);
+  } catch {
+    return memo.get(k) ?? null;
+  }
+}
+function writeLocal(k: string, v: string | null) {
+  try {
+    if (v === null) localStorage.removeItem(k);
+    else localStorage.setItem(k, v);
+  } catch {
+    memo.set(k, v);
+  }
+  localSubs.forEach((f) => f());
+}
+
+// Made once per page load and cached, so every read returns the same value.
+let cachedId: string | null = null;
+let cachedKey: string | null = null;
+const noSubscribe = () => () => {};
+
 function riderIdFor(): string {
+  return (cachedId ??= makeRiderId());
+}
+function makeRiderId(): string {
   try {
     const k = "mf-rider-id";
     let v = localStorage.getItem(k);
@@ -33,6 +69,9 @@ function riderIdFor(): string {
 // A random key made once on this phone. The first write claims the rider id
 // with it; nobody else can write to or cancel for this rider.
 function riderKeyFor(): string {
+  return (cachedKey ??= makeRiderKey());
+}
+function makeRiderKey(): string {
   const make = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("");
   try {
     const k = "mf-rider-key";
@@ -78,15 +117,16 @@ const WINDOW_MS = 6000;
 const recent = (buf: Sample[]) => buf.filter((s) => Date.now() - s.t < WINDOW_MS);
 
 export default function RiderPage() {
-  const [riderId, setRiderId] = useState("rider-demo");
-  const [riderKey, setRiderKey] = useState<string | undefined>(undefined);
-  const [consented, setConsented] = useState(false);
+  const riderId = useSyncExternalStore(noSubscribe, riderIdFor, () => "rider-demo");
+  const riderKey = useSyncExternalStore(noSubscribe, riderKeyFor, () => undefined);
+  const consented = useSyncExternalStore(subscribeLocal, () => readLocal("mf-consent") === "1", () => false);
   const [permission, setPermission] = useState<"idle" | "granted" | "denied" | "unsupported">("idle");
   const [samplesG, setSamplesG] = useState<number[]>([]);
   const [live, setLive] = useState<{ peakG: number; status: string } | null>(null);
   const [helmet, setHelmet] = useState<HelmetHandle | null>(null);
   const [helmetHz, setHelmetHz] = useState(0);
   const helmetCount = useRef(0);
+  const helmetRef = useRef<HelmetHandle | null>(null);
   const phoneBuf = useRef<Sample[]>([]);
   const helmetBuf = useRef<Sample[]>([]);
   const pos = useRef<{ lat: number; lng: number; speedKmh?: number } | undefined>(undefined);
@@ -115,14 +155,6 @@ export default function RiderPage() {
     );
     return () => navigator.geolocation.clearWatch(id);
   }, [snap?.rider.onShift]);
-
-  useEffect(() => {
-    setRiderId(riderIdFor());
-    setRiderKey(riderKeyFor());
-    try {
-      setConsented(localStorage.getItem("mf-consent") === "1");
-    } catch {}
-  }, []);
 
   const onMotion = useCallback((e: DeviceMotionEvent) => {
     const a = e.accelerationIncludingGravity;
@@ -153,7 +185,6 @@ export default function RiderPage() {
     helmetCount.current += arr.length;
   }, []);
 
-  const helmetRef = useRef<HelmetHandle | null>(null);
   useEffect(() => {
     helmetRef.current = helmet;
     if (!helmet) return;
@@ -229,17 +260,9 @@ export default function RiderPage() {
     return () => clearInterval(id);
   }, [permission, riderId, snap?.rider.onShift, refresh, headers]);
 
-  const [contact, setContact] = useState("");
-  useEffect(() => {
-    try {
-      setContact(localStorage.getItem("mf-contact") ?? "");
-    } catch {}
-  }, []);
+  const contact = useSyncExternalStore(subscribeLocal, () => readLocal("mf-contact") ?? "", () => "");
   const saveContact = async (v: string) => {
-    setContact(v);
-    try {
-      localStorage.setItem("mf-contact", v);
-    } catch {}
+    writeLocal("mf-contact", v);
     await fetch("/api/rider", { method: "POST", headers: headers(), body: JSON.stringify({ riderId, emergencyContact: v || null }) });
   };
   const setDeadline = async (minutes: number | null) => {
@@ -270,11 +293,27 @@ export default function RiderPage() {
     refresh();
   };
 
-  const consent = () => {
+  const consent = () => writeLocal("mf-consent", "1");
+
+  // Tier two. Returns null when signed, or the reason it was refused.
+  const sendHospital = async (id: string, h: HospitalInput): Promise<string | null> => {
     try {
-      localStorage.setItem("mf-consent", "1");
+      const r = await fetch(`/api/events/${id}/hospital`, { method: "POST", headers: headers(), body: JSON.stringify(h) });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        return j.error ?? t("hosp.fail");
+      }
+      await refresh();
+      return null;
+    } catch {
+      return t("hosp.fail");
+    }
+  };
+  const sendFeedback = async (id: string, label: Feedback) => {
+    try {
+      await fetch(`/api/events/${id}/feedback`, { method: "POST", headers: headers(), body: JSON.stringify({ label }) });
     } catch {}
-    setConsented(true);
+    refresh();
   };
 
   return (
@@ -367,6 +406,8 @@ export default function RiderPage() {
               skewMs={skewMs}
               lang={lang}
               alerting
+              onHospital={sendHospital}
+              onFeedback={sendFeedback}
             />
             {tooLate && (
               <p role="alert" className="mt-3 rounded-2xl border border-peach/60 px-4 py-3 text-center text-sm text-peach">
@@ -399,10 +440,7 @@ export default function RiderPage() {
           </p>
           <button
             onClick={() => {
-              try {
-                localStorage.removeItem("mf-consent");
-              } catch {}
-              setConsented(false);
+              writeLocal("mf-consent", null);
               window.removeEventListener("devicemotion", onMotion);
               setPermission("idle");
               phoneBuf.current = [];

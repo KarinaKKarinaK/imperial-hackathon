@@ -33,7 +33,7 @@ export function Controls({
   const seg = "flex overflow-hidden rounded-full border border-white/30";
   const segBtn = "px-3 py-2 text-sm transition";
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[auto_auto_1fr] lg:gap-6">
+    <div className="grid gap-4 sm:grid-cols-2 lg:gap-x-6">
       <Group label="Shift">
         {!rider?.onShift ? (
           <button onClick={() => act("start")} className={`${btn} bg-paper text-ink hover:bg-violet hover:text-white`}>
@@ -105,7 +105,21 @@ export function Controls({
         ))}
       </Group>
 
-      <Group label="Feed the detector" className="sm:col-span-2 lg:col-span-3 lg:border-t lg:border-white/10 lg:pt-3">
+      {/* Tier two and rider labels for the demo rider's latest event. A label
+          waits until the cancel window has closed, as the server does. */}
+      <Group label="After the event">
+        <button onClick={() => act("hospital")} className={`${btn} border border-white/30 hover:bg-white/10`}>
+          Hospital record
+        </button>
+        <button onClick={() => act("feedback", "false_alarm")} disabled={hasActive} className={`${btn} border border-white/30 hover:bg-white/10`}>
+          Label: false alarm
+        </button>
+        <button onClick={() => act("feedback", "real_fall")} disabled={hasActive} className={`${btn} border border-white/30 hover:bg-white/10`}>
+          Label: real fall
+        </button>
+      </Group>
+
+      <Group label="Feed the detector" className="sm:col-span-2 lg:border-t lg:border-white/10 lg:pt-3">
         {REPLAY.map(([k, label]) => (
           <button
             key={k}

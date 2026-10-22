@@ -8,7 +8,7 @@
 // for production: records would verify only against that instance.
 
 import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, sign, verify, type KeyObject } from "node:crypto";
-import type { EventRecord, Settlement } from "./schema";
+import type { EventRecord, HospitalClaim, Settlement } from "./schema";
 
 type Keys = { priv: KeyObject; pub: KeyObject; pubPem: string; ephemeral: boolean };
 const g = globalThis as unknown as { __mf_keys?: Keys };
@@ -106,6 +106,24 @@ export function verifySettlement(e: Pick<EventRecord, "id" | "signature" | "sett
   if (!e.settlement || typeof e.settlement.signature !== "string") return false;
   try {
     return ok(settlementText(e.id, e.settlement, e.signature), e.settlement.signature, pubKey(pubPem));
+  } catch {
+    return false;
+  }
+}
+
+function hospitalText(id: string, h: Omit<HospitalClaim, "signature" | "status">, factsSignature: string | null): string {
+  return JSON.stringify(sorted({ id, hospital: h.hospital, admittedAt: h.admittedAt, dischargeRef: h.dischargeRef, submittedAt: h.submittedAt, factsSignature }));
+}
+
+export function signHospital(e: Pick<EventRecord, "id" | "signature">, h: Omit<HospitalClaim, "signature" | "status">): HospitalClaim {
+  const signature = sign(null, Buffer.from(hospitalText(e.id, h, e.signature)), keys().priv).toString("base64url");
+  return { ...h, status: "submitted", signature };
+}
+
+export function verifyHospital(e: Pick<EventRecord, "id" | "signature" | "hospital">, pubPem?: string): boolean {
+  if (!e.hospital || typeof e.hospital.signature !== "string") return false;
+  try {
+    return ok(hospitalText(e.id, e.hospital, e.signature), e.hospital.signature, pubKey(pubPem));
   } catch {
     return false;
   }

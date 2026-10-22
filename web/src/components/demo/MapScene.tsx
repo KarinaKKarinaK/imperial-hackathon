@@ -1,6 +1,6 @@
 "use client";
 
-import { Map as MlMap, Marker, setWorkerUrl } from "maplibre-gl";
+import { Map as MlMap, Marker, Popup, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import type { EventRecord, HazardCell, RiderState } from "@/lib/schema";
@@ -116,6 +116,18 @@ export function MapScene({ rider, route, events, others = [], hazards = [], clas
           "circle-stroke-opacity": 0.5,
         },
       });
+      // Tap a cell for its counts and rate.
+      m.on("click", "mf-hazards", (ev) => {
+        const p = ev.features?.[0]?.properties as { bumps: number; brakes: number; passes?: number; rate?: string } | undefined;
+        if (!p) return;
+        const rate = p.rate !== undefined ? ` Rate ${p.rate} jolts per pass, shrunk toward the city mean.` : "";
+        new Popup({ closeButton: false, className: "text-ink" })
+          .setLngLat(ev.lngLat)
+          .setText(`${p.bumps} jolts, ${p.brakes} hard brakes${p.passes !== undefined ? ` in ${p.passes} passes` : ""}.${rate}`)
+          .addTo(m);
+      });
+      m.on("mouseenter", "mf-hazards", () => (m.getCanvas().style.cursor = "pointer"));
+      m.on("mouseleave", "mf-hazards", () => (m.getCanvas().style.cursor = ""));
       ready.current = true;
 
       const rEl = document.createElement("div");
@@ -153,7 +165,7 @@ export function MapScene({ rider, route, events, others = [], hazards = [], clas
       type: "FeatureCollection",
       features: hazards.map((h) => ({
         type: "Feature",
-        properties: { n: h.bumps + h.brakes, bumps: h.bumps, brakes: h.brakes },
+        properties: { n: h.bumps + h.brakes, bumps: h.bumps, brakes: h.brakes, passes: h.passes, rate: h.rate?.toFixed(2) },
         geometry: { type: "Point", coordinates: [h.lng, h.lat] },
       })),
     });

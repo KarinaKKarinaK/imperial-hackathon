@@ -1,6 +1,6 @@
 import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
-import type { ActiveJob, EventRecord, HazardCell, Platform, RiderState, Sample, SensorSource } from "./schema";
-import { recordHash, signRecord, signSettlement } from "./sign";
+import type { ActiveJob, EventRecord, Feedback, HazardCell, Platform, RiderState, Sample, SensorSource } from "./schema";
+import { recordHash, signHospital, signRecord, signSettlement } from "./sign";
 import {
   detectCrash,
   fatigueScore,
@@ -255,12 +255,30 @@ function deadlineSecAt(r: RiderState, at: number): number | null {
 // with no rider id and the time rounded to the hour. Only cells with at least
 // HAZARD_MIN events are published, so a lone rider's path cannot be rebuilt.
 export const HAZARD_MIN = 3;
-function recordHazard(r: RiderState, isCrash: boolean, kind: "bump" | "brake") {
-  if (isCrash || !r.onShift) return;
+function cellOf(r: RiderState): HazardCell {
   const lat = Math.round(r.lat * 2000) / 2000;
   const lng = Math.round(r.lng * 2000) / 2000;
   const key = `${lat},${lng}`;
-  const c = store.hazards.get(key) ?? { cell: key, lat, lng, bumps: 0, brakes: 0, lastAt: 0 };
+  return store.hazards.get(key) ?? { cell: key, lat, lng, bumps: 0, brakes: 0, lastAt: 0, passes: 0 };
+}
+
+// A pass is counted once each time a rider enters a cell, with no rider id on
+// the cell. Busy roads get more passes, so their jolts read as a rate.
+function countPass(r: RiderState) {
+  if (!r.onShift) return;
+  const c = cellOf(r);
+  if (r.lastCell === c.cell) return;
+  r.lastCell = c.cell;
+  c.passes = (c.passes ?? 0) + 1;
+  store.hazards.set(c.cell, c);
+  if (store.hazards.size > 5000) store.hazards.delete(store.hazards.keys().next().value!);
+}
+
+function recordHazard(r: RiderState, isCrash: boolean, kind: "bump" | "brake") {
+  if (isCrash || !r.onShift) return;
+  countPass(r);
+  const c = cellOf(r);
+  const key = c.cell;
   if (kind === "bump") c.bumps++;
   else c.brakes++;
   c.lastAt = Math.floor(Date.now() / 3_600_000) * 3_600_000;
@@ -268,8 +286,22 @@ function recordHazard(r: RiderState, isCrash: boolean, kind: "bump" | "brake") {
   if (store.hazards.size > 5000) store.hazards.delete(store.hazards.keys().next().value!);
 }
 
+// Rate per pass, shrunk toward the city mean with a prior worth HAZARD_PRIOR
+// passes (Clayton and Kaldor 1987). A cell with two passes and two jolts does
+// not outrank a main road with two hundred passes and forty jolts.
+export const HAZARD_PRIOR = 20;
 function publicHazards(): HazardCell[] {
-  return [...store.hazards.values()].filter((c) => c.bumps + c.brakes >= HAZARD_MIN);
+  const cells = [...store.hazards.values()];
+  const passes = cells.reduce((a, c) => a + Math.max(c.passes ?? 0, c.bumps + c.brakes), 0);
+  const jolts = cells.reduce((a, c) => a + c.bumps + c.brakes, 0);
+  const mean = passes > 0 ? jolts / passes : 0;
+  return cells
+    .filter((c) => c.bumps + c.brakes >= HAZARD_MIN)
+    .map((c) => {
+      const n = Math.max(c.passes ?? 0, c.bumps + c.brakes);
+      return { ...c, passes: n, rate: Number(((c.bumps + c.brakes + HAZARD_PRIOR * mean) / (n + HAZARD_PRIOR)).toFixed(3)) };
+    })
+    .sort((a, b) => (b.rate ?? 0) - (a.rate ?? 0));
 }
 
 export function setContext(riderId: string, patch: Partial<Pick<RiderState, "rain" | "heat" | "platform">>) {
@@ -299,6 +331,33 @@ export function cancelEvent(id: string): CancelResult {
     return { event: e, cancelled: true };
   }
   return { event: e, cancelled: e.status === "cancelled" };
+}
+
+// Tier two. The rider submits the hospital admission after a paid event; we
+// sign it on receipt and the insurer confirms it with the hospital before the
+// statutory amounts are paid.
+export type HospitalInput = { hospital: string; admittedAt: number; dischargeRef: string };
+export function submitHospital(id: string, h: HospitalInput): { event: EventRecord | null; error?: string } {
+  tickDeadlines();
+  const e = store.events.find((x) => x.id === id);
+  if (!e) return { event: null, error: "not found" };
+  if (e.status !== "paid") return { event: e, error: "tier two needs a paid tier one event" };
+  if (e.hospital) return { event: e, error: "already submitted" };
+  if (h.admittedAt < e.ts - 3_600_000 || h.admittedAt > Date.now() + 60_000) return { event: e, error: "admission time must be after the event" };
+  e.hospital = signHospital(e, { hospital: h.hospital, admittedAt: h.admittedAt, dischargeRef: h.dischargeRef, submittedAt: Date.now() });
+  persist();
+  return { event: e };
+}
+
+// After a cancel (or a payout) the rider can say what it really was. Stored
+// on the event as a weak label, counted only in aggregate.
+export function setFeedback(id: string, label: Feedback): EventRecord | null {
+  tickDeadlines();
+  const e = store.events.find((x) => x.id === id);
+  if (!e || e.status === "detected") return null;
+  e.feedback = label;
+  persist();
+  return e;
 }
 
 export function eventOwner(id: string): string | null {
@@ -342,6 +401,7 @@ export function ingest(
     r.lat = pos.lat;
     r.lng = pos.lng;
     if (pos.speedKmh !== undefined) r.speedKmh = pos.speedKmh;
+    countPass(r);
   }
   const source = opts.source ?? "phone";
   let sources: SensorSource[] = [source];
@@ -495,6 +555,19 @@ export function simOk() {
   return snapshot(DEMO_RIDER);
 }
 
+// Demo shortcuts for the scripted rider's latest event.
+export function simHospital() {
+  const e = listEvents(DEMO_RIDER).find((x) => x.status === "paid");
+  if (e) submitHospital(e.id, { hospital: "Kwong Wah Hospital", admittedAt: Date.now(), dischargeRef: "DEMO-" + e.id.slice(4, 10) });
+  return snapshot(DEMO_RIDER);
+}
+
+export function simFeedback(label: Feedback) {
+  const e = listEvents(DEMO_RIDER).find((x) => x.status !== "detected");
+  if (e) setFeedback(e.id, label);
+  return snapshot(DEMO_RIDER);
+}
+
 export function simReset() {
   store.sim = null;
   store.riders.delete(DEMO_RIDER);
@@ -605,13 +678,20 @@ export function labourAggregate() {
     total: events.length,
     samples: events.filter((e) => e.sample).length,
     multiApp: events.filter((e) => (e.activeJobs?.length ?? 1) > 1).length,
+    tierTwo: events.filter((e) => e.hospital).length,
+    // weak labels from riders, over every event including cancelled ones
+    labels: (["false_alarm", "real_fall", "unsure"] as Feedback[]).reduce(
+      (acc, k) => ({ ...acc, [k]: store.events.filter((e) => e.feedback === k).length }),
+      {} as Record<Feedback, number>,
+    ),
     byMode: count(["motorcycle", "bicycle", "walking", "unknown"], (e) => e.mode),
     byClock: count(["already late", "under 5 min left", "5 to 15 min left", "over 15 min left", "no countdown"], clock),
     byHeat: count(["green", "amber", "red"], (e) => e.context.heat),
     byRain: count(["rain", "dry"], (e) => (e.context.rain ? "rain" : "dry")),
     byHour: count(["00-06", "06-11", "11-14", "14-17", "17-21", "21-24"], (e) => band(hourHK(e))),
-    hazards: publicHazards().map(({ lat, lng, bumps, brakes }) => ({ lat, lng, bumps, brakes })),
+    hazards: publicHazards().map(({ lat, lng, bumps, brakes, passes, rate }) => ({ lat, lng, bumps, brakes, passes, rate })),
     hazardMin: HAZARD_MIN,
+    hazardPrior: HAZARD_PRIOR,
     generatedAt: Date.now(),
   };
 }

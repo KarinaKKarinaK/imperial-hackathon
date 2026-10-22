@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 // Rider-facing strings in the four languages GOVERNANCE.md promises. The ne
 // and ur strings are first drafts and need a native speaker check before any
@@ -72,6 +72,21 @@ const en = {
   "fatigue": "Fatigue",
   "live": "Live sensor",
   "privacy": "Alerts are shown to you only. Your platform never sees heat, fatigue, route or speed.",
+  "fb.title": "What was it?",
+  "fb.false": "False alarm",
+  "fb.real": "Real fall",
+  "fb.unsure": "Not sure",
+  "fb.thanks": "Thanks. This helps the detector learn.",
+  "hosp.add": "Add hospital admission",
+  "hosp.title": "Hospital admission",
+  "hosp.name": "Hospital name",
+  "hosp.when": "Admitted at",
+  "hosp.ref": "Discharge or admission reference",
+  "hosp.send": "Submit",
+  "hosp.done": "Submitted, signed, insurer to confirm",
+  "hosp.fail": "Could not send. Try again.",
+  "sms.head": "Metrics crash alert {time} HKT. No reply in 30 s.",
+  "sms.ref": "Ref",
 };
 
 export type Key = keyof typeof en;
@@ -130,6 +145,21 @@ const zhHK: Record<Key, string> = {
   "fatigue": "疲勞",
   "live": "即時感應",
   "privacy": "提示只會俾你自己睇。平台永遠睇唔到熱度、疲勞、路線或車速。",
+  "fb.title": "係咩事？",
+  "fb.false": "誤報",
+  "fb.real": "真係跌親",
+  "fb.unsure": "唔肯定",
+  "fb.thanks": "多謝。幫偵測器學得更準。",
+  "hosp.add": "加入入院紀錄",
+  "hosp.title": "入院紀錄",
+  "hosp.name": "醫院名稱",
+  "hosp.when": "入院時間",
+  "hosp.ref": "出院或入院編號",
+  "hosp.send": "提交",
+  "hosp.done": "已提交，已簽署，等保險公司確認",
+  "hosp.fail": "傳送唔到，請再試。",
+  "sms.head": "Metrics 撞車警報 {time}。30 秒冇回應。",
+  "sms.ref": "編號",
 };
 
 const ne: Record<Key, string> = {
@@ -186,6 +216,21 @@ const ne: Record<Key, string> = {
   "fatigue": "थकान",
   "live": "लाइभ सेन्सर",
   "privacy": "सूचनाहरू तपाईंलाई मात्र देखिन्छन्। प्लेटफर्मले गर्मी, थकान, बाटो वा गति कहिल्यै देख्दैन।",
+  "fb.title": "के भएको थियो?",
+  "fb.false": "गलत अलार्म",
+  "fb.real": "साँच्चै लडेको",
+  "fb.unsure": "थाहा छैन",
+  "fb.thanks": "धन्यवाद। यसले डिटेक्टरलाई सिक्न मद्दत गर्छ।",
+  "hosp.add": "अस्पताल भर्ना थप्नुहोस्",
+  "hosp.title": "अस्पताल भर्ना",
+  "hosp.name": "अस्पतालको नाम",
+  "hosp.when": "भर्ना समय",
+  "hosp.ref": "डिस्चार्ज वा भर्ना नम्बर",
+  "hosp.send": "पठाउनुहोस्",
+  "hosp.done": "पठाइयो, हस्ताक्षर भयो, बीमाकर्ताले पुष्टि गर्नेछ",
+  "hosp.fail": "पठाउन सकिएन। फेरि प्रयास गर्नुहोस्।",
+  "sms.head": "Metrics दुर्घटना सूचना {time}। 30 सेकेन्डमा जवाफ छैन।",
+  "sms.ref": "रेफ",
 };
 
 const ur: Record<Key, string> = {
@@ -242,6 +287,21 @@ const ur: Record<Key, string> = {
   "fatigue": "تھکن",
   "live": "لائیو سینسر",
   "privacy": "الرٹ صرف آپ کو دکھائے جاتے ہیں۔ پلیٹ فارم کبھی گرمی، تھکن، راستہ یا رفتار نہیں دیکھتا۔",
+  "fb.title": "کیا ہوا تھا؟",
+  "fb.false": "غلط الارم",
+  "fb.real": "واقعی گرا",
+  "fb.unsure": "یقین نہیں",
+  "fb.thanks": "شکریہ۔ اس سے ڈیٹیکٹر سیکھتا ہے۔",
+  "hosp.add": "ہسپتال داخلہ شامل کریں",
+  "hosp.title": "ہسپتال داخلہ",
+  "hosp.name": "ہسپتال کا نام",
+  "hosp.when": "داخلے کا وقت",
+  "hosp.ref": "ڈسچارج یا داخلہ نمبر",
+  "hosp.send": "بھیجیں",
+  "hosp.done": "بھیج دیا، دستخط ہو گئے، بیمہ کمپنی تصدیق کرے گی",
+  "hosp.fail": "بھیج نہیں سکے۔ دوبارہ کوشش کریں۔",
+  "sms.head": "Metrics حادثے کا الرٹ {time}۔ 30 سیکنڈ میں جواب نہیں۔",
+  "sms.ref": "حوالہ",
 };
 
 const TABLE: Record<Lang, Record<Key, string>> = { en, "zh-HK": zhHK, ne, ur };
@@ -256,22 +316,51 @@ export function translate(lang: Lang, key: Key, vars?: Record<string, string | n
 const STORE = "mf-lang";
 const isLang = (v: unknown): v is Lang => LANGS.some((l) => l.code === v);
 
-// Starts in English so server and client render the same, then picks up the
-// saved choice.
+// The saved language lives in localStorage, read as an external store: the
+// server and the first client pass render English, then the saved choice.
+// If storage is blocked the choice is kept in memory for this tab.
+let memoLang: Lang | null = null;
+const langSubs = new Set<() => void>();
+function subscribeLang(cb: () => void) {
+  langSubs.add(cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    langSubs.delete(cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+function readLang(): Lang {
+  try {
+    const v = localStorage.getItem(STORE);
+    if (isLang(v)) return v;
+  } catch {}
+  return memoLang ?? "en";
+}
+
 export function useLang() {
-  const [lang, setLangState] = useState<Lang>("en");
-  useEffect(() => {
-    try {
-      const v = localStorage.getItem(STORE);
-      if (isLang(v)) setLangState(v);
-    } catch {}
-  }, []);
+  const lang = useSyncExternalStore(subscribeLang, readLang, () => "en" as Lang);
   const setLang = useCallback((l: Lang) => {
-    setLangState(l);
+    memoLang = l;
     try {
       localStorage.setItem(STORE, l);
     } catch {}
+    langSubs.forEach((f) => f());
   }, []);
   const t = useCallback((key: Key, vars?: Record<string, string | number>) => translate(lang, key, vars), [lang]);
   return { lang, setLang, t };
+}
+
+// Text for the emergency contact, short like an eCall minimum set: what, when,
+// where, record. One SMS is 160 characters, so the triage profile is cut to
+// fit; the map link is never cut. The profile itself stays in English.
+export const SMS_MAX = 160;
+type SmsEvent = { id: string; ts: number; lat: number; lng: number; triage: { profile: string } };
+export function alertSms(lang: Lang, e: SmsEvent): string {
+  const time = new Date(e.ts).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "Asia/Hong_Kong" });
+  const head = `${translate(lang, "sms.head", { time })} https://maps.google.com/?q=${e.lat.toFixed(5)},${e.lng.toFixed(5)}`;
+  const tail = `${translate(lang, "sms.ref")} ${e.id}`;
+  const room = SMS_MAX - head.length - tail.length - 2;
+  let profile = e.triage.profile.trim();
+  if (profile.length > room) profile = room > 8 ? profile.slice(0, room - 3).trimEnd() + "..." : "";
+  return [head, profile, tail].filter(Boolean).join(" ").slice(0, SMS_MAX);
 }

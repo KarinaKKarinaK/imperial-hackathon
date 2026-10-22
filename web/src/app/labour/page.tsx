@@ -30,6 +30,8 @@ async function LabourBody() {
   } catch {
     return <p className="mx-auto max-w-[1400px] px-4 pt-10 text-sm opacity-70 sm:px-6">Storage is busy. Reload the page in a moment.</p>;
   }
+  const hazards = a.hazards; // already ranked by rate, worst first
+  const labelTotal = a.labels.false_alarm + a.labels.real_fall + a.labels.unsure;
   const generated = new Date(a.generatedAt).toLocaleString("en-GB", { timeZone: "Asia/Hong_Kong", hour12: false });
   return (
     <section className="px-4 pt-10 sm:px-6">
@@ -46,9 +48,10 @@ async function LabourBody() {
             </p>
           </div>
           <div className="tile tile-dusk tile-grain flex flex-col justify-between p-7 md:col-span-5">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <Stat n={a.total} label="events" />
               <Stat n={a.multiApp} label="on two or more apps" />
+              <Stat n={a.tierTwo} label="with a hospital claim" />
               <Stat n={a.samples} label="of them samples" />
             </div>
             <p className="mt-8 text-xs opacity-70">Generated {generated} HKT. Updates on every load.</p>
@@ -68,38 +71,54 @@ async function LabourBody() {
           <Panel title="Hour of day, HKT" data={a.byHour} total={a.total} />
           <Panel title="Heat band" data={a.byHeat} total={a.total} />
           <Panel title="Rain" data={a.byRain} total={a.total} />
+          <div className="tile tile-night p-6 sm:p-8 md:col-span-2">
+            <p className="eyebrow">What riders said it was</p>
+            <p className="mt-2 max-w-2xl text-sm opacity-70">
+              After a cancel or a payout the rider can tap one label. These are the start of a real-world labelled dataset for retraining the
+              detector, counted over every event including cancelled ones. Weak labels: one tap, not checked.
+            </p>
+            <Bars data={{ "false alarm": a.labels.false_alarm, "real fall": a.labels.real_fall, "not sure": a.labels.unsure }} total={labelTotal} className="mt-5" />
+          </div>
         </div>
 
         <div className="tile tile-paper mt-4 p-6 sm:p-8">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="eyebrow">Published hazard cells</p>
-            <p className="text-xs opacity-60">{a.hazards.length} cell(s)</p>
+            <p className="text-xs opacity-60">{hazards.length} cell(s)</p>
           </div>
           <p className="mt-2 max-w-2xl text-sm opacity-70">
             Hard jolts and hard brakes that were not crashes, on a grid of about 50 m. A cell is published only once it holds at least {a.hazardMin}{" "}
             events, so one rider&apos;s path cannot be rebuilt from it.
           </p>
-          {a.hazards.length === 0 ? (
+          <p className="mt-2 max-w-2xl text-sm opacity-70">
+            Ranked by rate: jolts per rider pass, shrunk toward the city mean with a prior of {a.hazardPrior} passes, so a cell with few passes is
+            not ranked on luck.
+          </p>
+          {hazards.length === 0 ? (
             <p className="mt-5 text-sm opacity-50">No cell has reached {a.hazardMin} events yet.</p>
           ) : (
             <div className="mt-5 overflow-x-auto">
-              <table className="w-full min-w-[420px] text-left text-sm">
+              <table className="w-full min-w-[520px] text-left text-sm">
                 <thead className="text-[11px] uppercase tracking-wider opacity-60">
                   <tr>
                     <th className="pb-2 font-medium">Cell</th>
                     <th className="pb-2 font-medium">Jolts</th>
                     <th className="pb-2 font-medium">Hard brakes</th>
+                    <th className="pb-2 font-medium">Passes</th>
+                    <th className="pb-2 font-medium">Rate per pass</th>
                     <th className="pb-2 font-medium">Map</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {a.hazards.map((h) => (
+                  {hazards.map((h) => (
                     <tr key={`${h.lat},${h.lng}`} className="border-t border-ink/10">
                       <td className="mono py-2 pr-3 text-xs">
                         {h.lat.toFixed(4)}, {h.lng.toFixed(4)}
                       </td>
                       <td className="num py-2 pr-3">{h.bumps}</td>
                       <td className="num py-2 pr-3">{h.brakes}</td>
+                      <td className="num py-2 pr-3">{h.passes ?? "n/a"}</td>
+                      <td className="num py-2 pr-3">{h.rate === undefined ? "n/a" : h.rate.toFixed(2)}</td>
                       <td className="py-2">
                         <a href={`https://maps.google.com/?q=${h.lat},${h.lng}`} target="_blank" rel="noreferrer" className="text-xs underline underline-offset-2">
                           Open

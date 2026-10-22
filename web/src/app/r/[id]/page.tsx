@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { hydrate, listEvents } from "@/lib/store";
-import { publicKeyPem, signingIsEphemeral, verifyRecord, verifySettlement } from "@/lib/sign";
+import { publicKeyPem, signingIsEphemeral, verifyHospital, verifyRecord, verifySettlement } from "@/lib/sign";
 import { connection } from "next/server";
 import { Arrow } from "@/components/Arrow";
 
@@ -26,6 +26,9 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
   const when = new Date(e.ts).toLocaleString("en-GB", { timeZone: "Asia/Hong_Kong", hour12: false });
   const code = e.signature ? e.signature.slice(0, 8).toUpperCase() : "none";
   const settlementValid = e.settlement ? verifySettlement(e) : null;
+  const hospitalValid = e.hospital ? verifyHospital(e) : null;
+  const fmt = (ts: number) => new Date(ts).toLocaleString("en-GB", { timeZone: "Asia/Hong_Kong", hour12: false });
+  const feedbackText = { false_alarm: "False alarm", real_fall: "Real fall", unsure: "Not sure" } as const;
   const jobs = e.activeJobs?.length ? e.activeJobs : [{ platform: e.platform, jobId: e.jobId ?? "none recorded" }];
   const split = e.apportionment?.length ? e.apportionment : [{ platform: e.platform, share: 1 }];
   // The statutory claim has to be lodged within a year of the accident.
@@ -57,6 +60,9 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
             <span className={`pill ${settlementValid === null ? "pill-outline" : settlementValid ? "pill-violet" : "pill-peach"}`}>
               {settlementValid === null ? "Outcome not final yet" : settlementValid ? "Settlement verified" : "Settlement altered"}
             </span>
+            {hospitalValid !== null && (
+              <span className={`pill ${hospitalValid ? "pill-violet" : "pill-peach"}`}>{hospitalValid ? "Hospital claim verified" : "Hospital claim altered"}</span>
+            )}
           </div>
         </div>
 
@@ -78,6 +84,7 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
               ["Model probability of crash", e.confidence.toFixed(3)],
               ["Status", e.status],
               ["Exposure", `${e.context.rain ? "rain" : "dry"}, heat ${e.context.heat}`],
+              ["Rider's own label", e.feedback ? feedbackText[e.feedback] : "none given"],
             ] as [string, string][]
           ).map(([k, v]) => (
             <div key={k} className="border-t border-ink/10 pt-3">
@@ -114,7 +121,14 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
                   ? "none, you cancelled inside 30 s."
                   : "paid once the 30 s cancel window closes."}
             </li>
-            <li>If you went to hospital, send the discharge record to the insurer and quote the claim reference. This unlocks the statutory amounts. Not built yet.</li>
+            <li>
+              Hospital admission:{" "}
+              {e.hospital
+                ? `${e.hospital.hospital}, admitted ${fmt(e.hospital.admittedAt)} HKT, reference ${e.hospital.dischargeRef}. ${e.hospital.status === "confirmed" ? "Confirmed by the insurer." : "Submitted and signed, insurer to confirm with the hospital."} This unlocks the statutory amounts.`
+                : e.status === "paid"
+                  ? "if you went to hospital, add the admission from the rider app. It is signed on receipt and unlocks the statutory amounts."
+                  : "can be added once the fixed payout is made."}
+            </li>
             <li>
               Lodge the statutory claim by <span className="font-medium">{claimByText}</span>, one year from the event.
             </li>

@@ -18,6 +18,7 @@ KV = env["KV_REST_API_URL"].strip('"'); TOK = env["KV_REST_API_TOKEN"].strip('"'
 HERE = Path(__file__).resolve().parent.parent
 
 KEY = os.urandom(16).hex()  # this run's rider key
+DEMO_KEY = env.get("DEMO_KEY", "").strip('"')
 
 def req(path, body=None, method=None, key=None):
     data = json.dumps(body).encode() if body is not None else None
@@ -43,7 +44,7 @@ def check(name, cond, detail=""):
     print(("PASS " if cond else "FAIL ") + name + (f"  {detail}" if detail else ""))
 
 print("== A. persistence")
-req("/api/sim", {"action": "reset"})
+req("/api/sim", {"action": "reset", "key": DEMO_KEY})
 s, d = req("/api/sim", {"action": "start"})
 check("start shift", s == 200 and d["rider"]["onShift"])
 time.sleep(1.5)
@@ -129,6 +130,24 @@ check("sample event: facts and settlement verify", vr.get("valid") is True and v
 s, lab = req("/api/labour")
 check("labour view is aggregate only", s == 200 and lab["total"] >= 1 and "rider-" not in json.dumps(lab))
 check("rejects unknown scenario", req("/api/sim", {"action": "replay", "value": "meteor"})[0] == 400)
-req("/api/sim", {"action": "reset"})
+if DEMO_KEY:
+    check("reset refused without the demo key", req("/api/sim", {"action": "reset"})[0] == 403)
+print("== E. tier two and labels")
+req("/api/sim", {"action": "start"})
+s, d = req("/api/sim", {"action": "crash"})
+ev2 = d["events"][0]
+check("hospital claim refused before payout", req(f"/api/events/{ev2['id']}/hospital", {"hospital": "Kwong Wah Hospital", "admittedAt": now, "dischargeRef": "X1"}, key=KEY)[0] in (403, 409))
+check("feedback needs the owner's key", req(f"/api/events/{ev2['id']}/feedback", {"label": "real_fall"})[0] == 403)
+print("   waiting 32 s for the cancel window to close")
+time.sleep(32)
+s, d = req("/api/sim", {"action": "hospital"})
+mine = next((e for e in d["events"] if e["id"] == ev2["id"]), {})
+check("tier two claim submitted and signed", mine.get("status") == "paid" and (mine.get("hospital") or {}).get("status") == "submitted")
+s, vr = req("/api/verify", mine)
+check("tier two signature verifies", vr.get("valid") is True and vr.get("settlementValid") is True and vr.get("hospitalValid") is True)
+s, d = req("/api/sim", {"action": "feedback", "value": "real_fall"})
+check("rider label stored", any(e.get("feedback") == "real_fall" for e in d["events"]))
+check("labels counted in the labour view", req("/api/labour")[1]["labels"]["real_fall"] >= 1)
+req("/api/sim", {"action": "reset", "key": DEMO_KEY})
 print("\nALL PASS" if ok else "\nSOME CHECKS FAILED")
 sys.exit(0 if ok else 1)

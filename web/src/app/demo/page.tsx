@@ -86,6 +86,8 @@ export default function DemoPage() {
             <PhonePanel rider={rider} events={events} onOk={() => act("ok")} deadlineSec={snap?.deadlineSec ?? null} onDeadline={(m) => act("deadline", m)} />
           </div>
           <div className="mt-auto flex w-full items-center gap-4 rounded-2xl border border-white/15 p-3">
+            {/* a generated data-URL QR code; next/image adds nothing here */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             {qr ? <img src={qr} alt="QR code to open the rider client" className="h-20 w-20 rounded-lg" /> : <div className="h-20 w-20 rounded-lg bg-white/5" />}
             <div className="text-sm">
               <p className="font-medium">Use a real phone as the sensor</p>

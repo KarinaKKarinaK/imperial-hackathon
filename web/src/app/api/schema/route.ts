@@ -72,6 +72,12 @@ const schema = {
       description: "Signed once the outcome is final, so status and payout cannot be edited either",
       properties: { status: { enum: ["cancelled", "paid"] }, paidAt: { type: ["integer", "null"] }, payoutHkd: { type: "number" }, at: { type: "integer" }, signature: { type: "string" } },
     },
+    hospital: {
+      type: ["object", "null"],
+      description: "Tier two. Hospital admission submitted by the worker after a paid event, signed on receipt, confirmed by the insurer with the hospital",
+      properties: { hospital: { type: "string" }, admittedAt: { type: "integer" }, dischargeRef: { type: "string" }, submittedAt: { type: "integer" }, status: { enum: ["submitted", "confirmed"] }, signature: { type: "string" } },
+    },
+    feedback: { type: ["string", "null"], enum: ["false_alarm", "real_fall", "unsure", null], description: "What the worker says it was, after a cancel or payout. A weak label for retraining, counted only in aggregate" },
     sample: { type: "boolean", description: "Seeded example, never a real worker" },
   },
   "x-signing": { algorithm: "Ed25519", publicKeyPem: "{PUBKEY}", verify: "POST /api/verify with the record" },

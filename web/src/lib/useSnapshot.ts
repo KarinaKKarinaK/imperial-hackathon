@@ -40,11 +40,13 @@ export function useSnapshot(riderId = "rider-demo", intervalMs = 1000, riderKey?
   }, [riderId, riderKey]);
 
   useEffect(() => {
-    refresh();
+    // First fetch on the next tick, so no state is set inside the effect body.
+    const first = window.setTimeout(refresh, 0);
     timer.current = window.setInterval(refresh, intervalMs);
     const onVis = () => document.visibilityState === "visible" && refresh();
     document.addEventListener("visibilitychange", onVis);
     return () => {
+      window.clearTimeout(first);
       if (timer.current) window.clearInterval(timer.current);
       document.removeEventListener("visibilitychange", onVis);
     };

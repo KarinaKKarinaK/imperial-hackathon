@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { publicKeyPem, recordHash, SIGNED_FIELDS, verifyRecord, verifySettlement } from "@/lib/sign";
+import { publicKeyPem, recordHash, SIGNED_FIELDS, verifyHospital, verifyRecord, verifySettlement } from "@/lib/sign";
 import type { EventRecord } from "@/lib/schema";
 
 // Anyone can check a record: POST the record JSON and get back whether the
@@ -12,8 +12,9 @@ export async function POST(req: Request) {
   }
   const valid = verifyRecord(body, body.signature);
   const settlementValid = body.settlement ? verifySettlement(body as EventRecord) : null;
+  const hospitalValid = body.hospital ? verifyHospital(body as EventRecord) : null;
   const chainValid = body.previous && typeof body.prevHash === "string" ? recordHash(body.previous) === body.prevHash : null;
-  return NextResponse.json({ id: body.id, valid, settlementValid, chainValid, publicKey: publicKeyPem() });
+  return NextResponse.json({ id: body.id, valid, settlementValid, hospitalValid, chainValid, publicKey: publicKeyPem() });
 }
 
 export async function GET() {
@@ -22,6 +23,7 @@ export async function GET() {
     algorithm: "Ed25519",
     signed: SIGNED_FIELDS.join(", "),
     settlement: "id, status, paidAt, payoutHkd, at, facts signature",
+    hospital: "id, hospital, admittedAt, dischargeRef, submittedAt, facts signature",
     chain: "prevHash = sha256(canonical facts of the previous record + its signature)",
   });
 }

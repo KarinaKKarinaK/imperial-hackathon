@@ -233,3 +233,39 @@ test("a signed sample event fills empty screens and the labour view aggregates w
   assert.ok(agg.total >= 1);
   assert.equal(JSON.stringify(agg).includes("rider-"), false, "no rider ids in the labour view");
 });
+
+test("tier two: a hospital admission is signed and only follows a paid event", async () => {
+  const { verifyHospital } = await import("./sign");
+  const { submitHospital } = await import("./store");
+  simReset();
+  simStart();
+  const e = replay("crash")!.event!;
+  assert.equal(submitHospital(e.id, { hospital: "Kwong Wah Hospital", admittedAt: Date.now(), dischargeRef: "AB123" }).error, "tier two needs a paid tier one event");
+  e.cancelDeadline = Date.now() - 1;
+  const out = submitHospital(e.id, { hospital: "Kwong Wah Hospital", admittedAt: Date.now(), dischargeRef: "AB123" });
+  assert.equal(out.error, undefined);
+  assert.equal(out.event!.hospital!.status, "submitted");
+  assert.equal(verifyHospital(out.event!), true);
+  assert.equal(verifyHospital({ ...out.event!, hospital: { ...out.event!.hospital!, hospital: "Other" } }), false);
+  assert.equal(submitHospital(e.id, { hospital: "X", admittedAt: Date.now(), dischargeRef: "Y" }).error, "already submitted");
+});
+
+test("rider feedback is a weak label counted only in aggregate", async () => {
+  const { setFeedback } = await import("./store");
+  simReset();
+  simStart();
+  const e = replay("crash")!.event!;
+  assert.equal(setFeedback(e.id, "false_alarm"), null, "not while the window is open");
+  cancelEvent(e.id);
+  assert.equal(setFeedback(e.id, "false_alarm")!.feedback, "false_alarm");
+  assert.ok(labourAggregate().labels.false_alarm >= 1);
+});
+
+test("hazard cells carry passes and a shrunk rate", () => {
+  simReset();
+  simStart();
+  for (let i = 0; i < HAZARD_MIN; i++) replay("pothole");
+  const cell = snapshot(DEMO_RIDER).hazards[0];
+  assert.ok((cell.passes ?? 0) >= cell.bumps + cell.brakes);
+  assert.ok(typeof cell.rate === "number" && cell.rate > 0 && cell.rate <= 1);
+});

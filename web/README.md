@@ -37,6 +37,8 @@ API
 | GET /api/verify, POST /api/verify | Public key, and verification of a posted record |
 | GET /api/events/:id | Rider export: record, signature, public key |
 | POST /api/rider | `{riderId, deadlineMinutes?, emergencyContact?}`. Needs the rider key |
+| POST /api/events/:id/hospital | `{hospital, admittedAt, dischargeRef}`. Tier two after a paid event. Owner's key; signed on receipt, insurer to confirm |
+| POST /api/events/:id/feedback | `{label: false_alarm or real_fall or unsure}`. The rider's weak label after a cancel or payout. Owner's key |
 | GET /api/labour | Aggregates for the Labour Department: by delivery clock, mode, hour, heat, rain, multi-app count, hazard cells with at least 3 events |
 
 ## Rider key

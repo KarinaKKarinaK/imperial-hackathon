@@ -1,23 +1,26 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { isRtl, translate, type Key, type Lang } from "@/lib/i18n";
-import type { EventRecord, RiderState } from "@/lib/schema";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { alertSms, isRtl, translate, type Key, type Lang } from "@/lib/i18n";
+import type { EventRecord, Feedback, RiderState } from "@/lib/schema";
 import results from "@/lib/ml/results.json";
 
 function timeHK(ts: number) {
   return new Date(ts).toLocaleTimeString("en-GB", { hour12: false, timeZone: "Asia/Hong_Kong" });
 }
 
+// The clock as an external store, stepped to the tick so React sees a stable
+// value between ticks. The server renders 0.
 export function useNow(ms = 250) {
-  const [now, setNow] = useState(0);
-  useEffect(() => {
-    setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), ms);
-    return () => clearInterval(id);
-  }, [ms]);
-  return now;
+  const subscribe = useCallback(
+    (cb: () => void) => {
+      const id = setInterval(cb, ms);
+      return () => clearInterval(id);
+    },
+    [ms],
+  );
+  return useSyncExternalStore(subscribe, () => Math.floor(Date.now() / ms) * ms, () => 0);
 }
 
 export function StatusPill({ s }: { s: EventRecord["status"] }) {
@@ -37,10 +40,8 @@ export function StatusPill({ s }: { s: EventRecord["status"] }) {
 }
 
 /* Rider phone */
-function emergencyLinks(e: EventRecord, contact?: string) {
-  const body = encodeURIComponent(
-    `Metrics crash alert. ${e.triage.profile} ${e.triage.mechanism}. Location https://maps.google.com/?q=${e.lat.toFixed(5)},${e.lng.toFixed(5)} Record ${e.id}.`,
-  );
+function emergencyLinks(e: EventRecord, lang: Lang, contact?: string) {
+  const body = encodeURIComponent(alertSms(lang, e));
   return {
     sms: contact ? `sms:${contact}?&body=${body}` : null,
     call: "tel:999",
@@ -109,6 +110,106 @@ function startAlarm(lang: Lang): () => void {
 
 const HOLD_MS = 600;
 
+type T = (key: Key, vars?: Record<string, string | number>) => string;
+export type HospitalInput = { hospital: string; admittedAt: number; dischargeRef: string };
+
+// One tap after a cancel or a payout: what was it really. Shown once per
+// event; after the tap it says thanks and the server keeps the label.
+function FeedbackPrompt({ event, t, onSend }: { event: EventRecord; t: T; onSend: (id: string, label: Feedback) => Promise<void> }) {
+  const [sent, setSent] = useState(false);
+  if (sent) return <p className="mt-3 text-xs opacity-70">{t("fb.thanks")}</p>;
+  if (event.feedback) return null;
+  const opts: [Feedback, Key][] = [
+    ["false_alarm", "fb.false"],
+    ["real_fall", "fb.real"],
+    ["unsure", "fb.unsure"],
+  ];
+  return (
+    <div className="mt-3">
+      <p className="text-[11px] opacity-60">{t("fb.title")}</p>
+      <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+        {opts.map(([label, key]) => (
+          <button
+            key={label}
+            onClick={() => {
+              setSent(true);
+              onSend(event.id, label);
+            }}
+            className="rounded-full border border-white/30 px-1 py-2 text-[11px] leading-tight"
+          >
+            {t(key)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Datetime-local wants local wall time without a zone.
+function localInput(ts: number) {
+  return new Date(ts - new Date(ts).getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+}
+
+// Tier two: the rider adds the hospital admission to a paid event. The server
+// signs it on receipt; the insurer confirms it with the hospital.
+function HospitalForm({ event, t, onSubmit }: { event: EventRecord; t: T; onSubmit?: (id: string, h: HospitalInput) => Promise<string | null> }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [when, setWhen] = useState(() => localInput(event.ts));
+  const [ref, setRef] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  if (event.hospital) {
+    return (
+      <div className="mt-3 rounded-2xl border border-white/15 p-3">
+        <p className="text-[11px] opacity-60">{t("hosp.title")}</p>
+        <p className="mt-1 text-sm font-medium">{event.hospital.hospital}</p>
+        <p className="mt-1 text-xs text-lemon">{t("hosp.done")}</p>
+      </div>
+    );
+  }
+  if (!onSubmit) return null;
+  if (!open) {
+    return (
+      <button onClick={() => setOpen(true)} className="mt-3 w-full rounded-full border border-white/40 py-2.5 text-center text-sm">
+        {t("hosp.add")}
+      </button>
+    );
+  }
+  const input = "mt-1 w-full rounded-xl border border-white/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet";
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setBusy(true);
+    setError(await onSubmit(event.id, { hospital: name.trim(), admittedAt: new Date(when).getTime(), dischargeRef: ref.trim() }));
+    setBusy(false);
+  };
+  return (
+    <form onSubmit={submit} className="mt-3 space-y-2 rounded-2xl border border-white/15 p-3">
+      <p className="text-[11px] opacity-60">{t("hosp.title")}</p>
+      <label className="block text-[11px] opacity-80">
+        {t("hosp.name")}
+        <input value={name} onChange={(e) => setName(e.target.value)} required minLength={2} maxLength={80} className={input} />
+      </label>
+      <label className="block text-[11px] opacity-80">
+        {t("hosp.when")}
+        <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} required dir="ltr" className={`${input} [color-scheme:dark]`} />
+      </label>
+      <label className="block text-[11px] opacity-80">
+        {t("hosp.ref")}
+        <input value={ref} onChange={(e) => setRef(e.target.value)} required minLength={2} maxLength={40} dir="ltr" className={`${input} mono`} />
+      </label>
+      <button type="submit" disabled={busy} className="w-full rounded-full bg-paper py-2.5 text-sm font-medium text-ink disabled:opacity-50">
+        {t("hosp.send")}
+      </button>
+      {error && (
+        <p role="alert" className="text-xs text-peach">
+          {error}
+        </p>
+      )}
+    </form>
+  );
+}
+
 export function PhonePanel({
   rider,
   events,
@@ -121,6 +222,8 @@ export function PhonePanel({
   skewMs = 0,
   lang = "en",
   alerting = false,
+  onHospital,
+  onFeedback,
 }: {
   rider: RiderState | null;
   events: EventRecord[];
@@ -133,13 +236,18 @@ export function PhonePanel({
   skewMs?: number;
   lang?: Lang;
   alerting?: boolean;
+  // Only the real rider app passes these; they post with the rider key.
+  onHospital?: (id: string, h: HospitalInput) => Promise<string | null>;
+  onFeedback?: (id: string, label: Feedback) => Promise<void>;
 }) {
-  const t = (key: Key, vars?: Record<string, string | number>) => translate(lang, key, vars);
+  const t: T = (key, vars) => translate(lang, key, vars);
   const now = useNow() + skewMs;
   const active = events.find((e) => e.status === "detected" && e.cancelDeadline > now);
   const paid = events.find((e) => e.status === "paid");
   const secs = active ? Math.max(0, Math.ceil((active.cancelDeadline - now) / 1000)) : 0;
-  const links = (active ?? paid) ? emergencyLinks((active ?? paid)!, emergencyContact) : null;
+  const links = (active ?? paid) ? emergencyLinks((active ?? paid)!, lang, emergencyContact) : null;
+  // The latest event, if the rider cancelled it, gets the one-tap label prompt.
+  const cancelled = events[0]?.status === "cancelled" ? events[0] : null;
 
   // Alarm runs from the start of a countdown until OK or the window closes.
   // The language is read once at the start; changing it mid countdown does
@@ -230,8 +338,8 @@ export function PhonePanel({
                   </button>
                 </motion.div>
               ) : paid ? (
-                <motion.div key="paid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-1 flex-col justify-center">
-                  <span className="pill pill-lemon self-start">{t("paid.pill")}</span>
+                <motion.div key="paid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="scroll-thin flex min-h-0 flex-1 flex-col overflow-y-auto">
+                  <span className="pill pill-lemon mt-auto self-start">{t("paid.pill")}</span>
                   <p className="num mt-6 text-5xl" dir="ltr">HK${paid.insurance.payoutHkd.toLocaleString()}</p>
                   <p className="mt-3 text-sm opacity-80">
                     {t("paid.verified", { id: paid.id, time: paid.insurance.paidAt ? timeHK(paid.insurance.paidAt) : "" })}
@@ -250,9 +358,12 @@ export function PhonePanel({
                       </a>
                     )}
                   </div>
+                  <HospitalForm key={paid.id} event={paid} t={t} onSubmit={onHospital} />
+                  <div className="mb-auto">{onFeedback && <FeedbackPrompt key={paid.id} event={paid} t={t} onSend={onFeedback} />}</div>
                 </motion.div>
               ) : (
                 <motion.div key="shift" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-1 flex-col">
+                  {cancelled && onFeedback && <FeedbackPrompt key={cancelled.id} event={cancelled} t={t} onSend={onFeedback} />}
                   <div className="mt-6">
                     <p className="eyebrow">{t("shift.label")}</p>
                     <button
@@ -447,12 +558,14 @@ export function DispatcherPanel({ events }: { events: EventRecord[] }) {
 // Basis risk from the shipped model at the 0.5 threshold, read from results.json.
 const SWEEP_AT_HALF = results.threshold_sweep_gbm.find((r) => r.threshold === 0.5)!;
 
-// Settlement signatures are checked server side; the client asks /api/verify
-// once per settled event.
-function useSettlementChecks(events: EventRecord[]) {
-  const [checks, setChecks] = useState<Record<string, boolean | null>>({});
-  const todo = events.filter((e) => e.settlement && e.signature && !(e.id in checks));
-  const key = todo.map((e) => e.id).join(",");
+// Settlement and hospital signatures are checked server side; the client asks
+// /api/verify once per settled event, and again once a hospital claim lands.
+type Check = { settlementValid: boolean | null; hospitalValid: boolean | null };
+const checkKey = (e: EventRecord) => (e.hospital ? `${e.id}:h` : e.id);
+function useSignatureChecks(events: EventRecord[]) {
+  const [checks, setChecks] = useState<Record<string, Check | null>>({});
+  const todo = events.filter((e) => e.settlement && e.signature && !(checkKey(e) in checks));
+  const key = todo.map(checkKey).join(",");
   useEffect(() => {
     if (!key) return;
     let live = true;
@@ -460,8 +573,8 @@ function useSettlementChecks(events: EventRecord[]) {
       todo.map((e) =>
         fetch("/api/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(e) })
           .then((r) => r.json())
-          .then((j: { settlementValid: boolean | null }) => [e.id, j.settlementValid] as const)
-          .catch(() => [e.id, null] as const),
+          .then((j: Check) => [checkKey(e), { settlementValid: j.settlementValid, hospitalValid: j.hospitalValid }] as const)
+          .catch(() => [checkKey(e), null] as const),
       ),
     ).then((pairs) => live && setChecks((c) => ({ ...c, ...Object.fromEntries(pairs) })));
     return () => {
@@ -482,11 +595,14 @@ export function UnderwriterPanel({
   premium: number;
 }) {
   const now = useNow(1000);
-  const checks = useSettlementChecks(events);
+  const raw = useSignatureChecks(events);
+  const checks = Object.fromEntries(events.map((e) => [e.id, raw[checkKey(e)] ?? null]));
   const paidTotal = events.filter((e) => e.status === "paid").reduce((s, e) => s + e.insurance.payoutHkd, 0);
   const tierOne = events.find((e) => e.insurance.payoutHkd > 0)?.insurance.payoutHkd ?? null;
   const settled = events.filter((e) => e.settlement);
-  const verified = settled.filter((e) => checks[e.id] === true).length;
+  const verified = settled.filter((e) => checks[e.id]?.settlementValid === true).length;
+  const claims = events.filter((e) => e.hospital);
+  const claimsVerified = claims.filter((e) => checks[e.id]?.hospitalValid === true).length;
   const { fp, tn, fn, tp } = SWEEP_AT_HALF;
   return (
     <div className="flex h-full flex-col">
@@ -521,23 +637,27 @@ export function UnderwriterPanel({
             Paid when the 30 s cancel window closes. The outcome is signed. {verified} of {settled.length} settlement signatures verified.
           </p>
         </div>
-        <div className="rounded-2xl border border-white/20 p-3">
+        <div className="rounded-2xl bg-black/25 p-3">
           <div className="flex items-center justify-between gap-2">
             <p className="text-[11px] opacity-70">Tier two, statutory amounts</p>
-            <span className="pill pill-outline !py-0.5 !text-[10px]">Not built</span>
+            <span className="pill pill-lemon !py-0.5 !text-[10px]">Live</span>
           </div>
-          <p className="mt-1 text-sm font-medium">Unlocked by a hospital discharge record.</p>
-          <p className="mt-1 text-xs opacity-70">Sick leave, medical costs and incapacity under the proposed regime. Not built yet.</p>
+          <p className="num mt-1 text-2xl">{claims.length === 0 ? "No claim yet" : `${claims.length} hospital claim${claims.length > 1 ? "s" : ""}`}</p>
+          <p className="mt-1 text-xs opacity-70">
+            The rider submits the hospital admission on a paid event. It is signed on receipt and the insurer confirms it with the hospital. {claimsVerified} of{" "}
+            {claims.length} claim signatures verified. Sick leave, medical costs and incapacity amounts are a placeholder.
+          </p>
         </div>
       </div>
       <div className="scroll-thin mt-4 flex-1 overflow-auto">
-        <table className="w-full min-w-[480px] text-left text-sm">
+        <table className="w-full min-w-[580px] text-left text-sm">
           <thead className="text-[11px] uppercase tracking-wider opacity-60">
             <tr>
               <th className="pb-2 font-medium">Event</th>
               <th className="pb-2 font-medium">Liable, share of tier one</th>
               <th className="pb-2 font-medium">Sensors</th>
               <th className="pb-2 font-medium">Conf.</th>
+              <th className="pb-2 font-medium">Tier two</th>
               <th className="pb-2 font-medium text-right">Status</th>
             </tr>
           </thead>
@@ -545,7 +665,7 @@ export function UnderwriterPanel({
             <AnimatePresence initial={false}>
               {events.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-3 opacity-50">
+                  <td colSpan={6} className="py-3 opacity-50">
                     No events. Premium is accruing per window.
                   </td>
                 </tr>
@@ -573,12 +693,25 @@ export function UnderwriterPanel({
                   </td>
                   <td className="py-3 pr-2 text-xs capitalize">{(e.sources ?? []).join(" + ") || "none"}</td>
                   <td className="py-3 pr-2 mono text-xs">{Math.round(e.confidence * 100)}%</td>
+                  <td className="py-3 pr-2 text-xs">
+                    {e.hospital ? (
+                      <>
+                        <p className="font-medium">{e.hospital.hospital}</p>
+                        <p className="opacity-70">{e.hospital.status === "confirmed" ? "Confirmed" : "Submitted, insurer to confirm"}</p>
+                        <p className="text-[11px] opacity-70">
+                          {checks[e.id]?.hospitalValid === true ? "Signature verified" : checks[e.id]?.hospitalValid === false ? "Signature altered" : "Checking"}
+                        </p>
+                      </>
+                    ) : (
+                      <span className="opacity-50">No claim</span>
+                    )}
+                  </td>
                   <td className="py-3 text-right">
                     <StatusPill s={e.status} />
                     {e.status === "paid" && <p className="mt-1 text-xs opacity-60">HK${e.insurance.payoutHkd.toLocaleString()}</p>}
                     {e.settlement && (
                       <p className="mt-1 text-[11px] opacity-70">
-                        {checks[e.id] === true ? "Settlement verified" : checks[e.id] === false ? "Settlement altered" : "Checking"}
+                        {checks[e.id]?.settlementValid === true ? "Settlement verified" : checks[e.id]?.settlementValid === false ? "Settlement altered" : "Checking"}
                       </p>
                     )}
                   </td>

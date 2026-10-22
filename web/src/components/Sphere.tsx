@@ -19,7 +19,7 @@ function Dots({ count = 2600, color = "#f3f3f0", band = true }: { count?: number
       pos[i * 3] = Math.cos(theta) * r;
       pos[i * 3 + 1] = y;
       pos[i * 3 + 2] = Math.sin(theta) * r;
-      ph[i] = Math.random();
+      ph[i] = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1; // fixed pseudo-random phase, same on every render
     }
     return { positions: pos, phases: ph };
   }, [count]);
@@ -69,12 +69,15 @@ function Dots({ count = 2600, color = "#f3f3f0", band = true }: { count?: number
     [color, band],
   );
 
+  // three.js frame loop: mutating the scene graph per frame is the intended use
+  /* eslint-disable react-hooks/immutability */
   useFrame((state, dt) => {
     if (!ref.current) return;
     ref.current.rotation.y += dt * 0.18;
     ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.2;
     mat.uniforms.uTime.value = state.clock.elapsedTime;
   });
+  /* eslint-enable react-hooks/immutability */
 
   return <points ref={ref} geometry={geom} material={mat} />;
 }
