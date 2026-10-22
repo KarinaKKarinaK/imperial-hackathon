@@ -6,6 +6,8 @@ const LINES = [
   ['"id"', '"EVT-7K2M"'],
   ['"platform"', '"Platform A"'],
   ['"job"', '"ORD-4471"'],
+  ['"active_jobs"', '["A", "B"]'],
+  ['"apportionment"', '"A 0.5, B 0.5"'],
   ['"ts"', '"14:32:07 HKT"'],
   ['"peak_g"', "14.2"],
   ['"tilt_deg"', "82"],

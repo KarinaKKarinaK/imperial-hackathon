@@ -11,6 +11,9 @@ const links = [
   { href: "/#hardware", label: "Hardware" },
   { href: "/record", label: "The record" },
   { href: "/demo", label: "Live demo" },
+  { href: "/dispatch", label: "Dispatch" },
+  { href: "/underwriter", label: "Insurer" },
+  { href: "/labour", label: "Labour" },
 ];
 
 export function Nav() {
@@ -25,7 +28,7 @@ export function Nav() {
           </span>
           <span className="text-sm font-medium tracking-tight">Metrics</span>
         </Link>
-        <ul className="hidden items-center gap-8 text-[15px] md:flex">
+        <ul className="hidden items-center gap-6 text-[15px] lg:flex xl:gap-8">
           {links.map((l) => (
             <li key={l.href}>
               <Link href={l.href} className="opacity-85 transition hover:opacity-100">
@@ -43,7 +46,7 @@ export function Nav() {
           </Link>
           <button
             onClick={() => setOpen((o) => !o)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/30 lg:hidden"
             aria-label="Menu"
             aria-expanded={open}
           >
@@ -56,7 +59,7 @@ export function Nav() {
         </div>
       </nav>
       {open && (
-        <div className="mx-auto mt-2 max-w-[1400px] rounded-2xl border border-white/20 bg-ink/95 p-4 backdrop-blur-md md:hidden">
+        <div className="mx-auto mt-2 max-w-[1400px] rounded-2xl border border-white/20 bg-ink/95 p-4 backdrop-blur-md lg:hidden">
           <ul className="flex flex-col gap-3 text-lg">
             {links.map((l) => (
               <li key={l.href}>

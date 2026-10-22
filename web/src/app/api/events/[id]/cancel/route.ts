@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
-import { cancelEvent, hydrate, flush } from "@/lib/store";
+import { cancelEvent, DEMO_RIDER, eventOwner, keyMatches, SAMPLE_RIDER } from "@/lib/store";
+import { forbidden, riderKey, storeRoute } from "@/lib/api";
 
-
-export async function POST(_req: Request, ctx: { params: Promise<{ id: string }> }) {
-  await hydrate();
+// Only the rider who owns the event can cancel it, with the key their phone
+// holds. The scripted demo rider cancels through /api/sim.
+export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  const e = cancelEvent(id);
-  if (!e) return NextResponse.json({ error: "not found" }, { status: 404 });
-  await flush();
-  return NextResponse.json(e);
+  return storeRoute(() => {
+    const owner = eventOwner(id);
+    if (!owner) return NextResponse.json({ error: "not found" }, { status: 404 });
+    if (owner === DEMO_RIDER || owner === SAMPLE_RIDER || !keyMatches(owner, riderKey(req))) return forbidden();
+    const { event, cancelled } = cancelEvent(id);
+    if (!cancelled) return NextResponse.json({ error: "too late to cancel", event }, { status: 409 });
+    return NextResponse.json(event);
+  });
 }

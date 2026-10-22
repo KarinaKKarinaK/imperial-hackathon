@@ -15,21 +15,29 @@ export type Snapshot = {
   serverTime: number;
 };
 
-export function useSnapshot(riderId = "rider-demo", intervalMs = 1000) {
+// riderKey: the rider's own device key. With it the server returns the
+// rider's emergency contact; without it, a redacted view.
+export function useSnapshot(riderId = "rider-demo", intervalMs = 1000, riderKey?: string) {
   const [snap, setSnap] = useState<Snapshot | null>(null);
+  const [skewMs, setSkewMs] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<number | null>(null);
 
   const refresh = useCallback(async () => {
     try {
-      const r = await fetch(`/api/state?riderId=${encodeURIComponent(riderId)}`, { cache: "no-store" });
+      const r = await fetch(`/api/state?riderId=${encodeURIComponent(riderId)}`, {
+        cache: "no-store",
+        headers: riderKey ? { "x-rider-key": riderKey } : undefined,
+      });
       if (!r.ok) throw new Error(String(r.status));
-      setSnap((await r.json()) as Snapshot);
+      const s = (await r.json()) as Snapshot;
+      setSkewMs(s.serverTime - Date.now()); // countdowns follow the server clock, not a phone that runs fast
+      setSnap(s);
       setError(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "fetch failed");
     }
-  }, [riderId]);
+  }, [riderId, riderKey]);
 
   useEffect(() => {
     refresh();
@@ -44,15 +52,17 @@ export function useSnapshot(riderId = "rider-demo", intervalMs = 1000) {
 
   const act = useCallback(
     async (action: string, value?: unknown) => {
+      // A presenter can open /demo?key=... so Reset works when DEMO_KEY is set.
+      const key = new URLSearchParams(window.location.search).get("key") ?? undefined;
       const r = await fetch("/api/sim", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ action, value }),
+        body: JSON.stringify({ action, value, key }),
       });
       if (r.ok) setSnap((await r.json()) as Snapshot);
     },
     [],
   );
 
-  return { snap, error, refresh, act };
+  return { snap, error, refresh, act, skewMs };
 }

@@ -14,7 +14,14 @@ One page. Answers Imperial's fourth feedback point and Dr Tin's likely questions
 | Hazard cells: jolts and hard brakes that were not crashes, counted per 50 m grid cell, no rider id | Server | Transport Department and platforms for road and route safety. Public in aggregate |
 | Delivery countdown at impact (`deadlineSec`) | In the event record only | Rider, insurer, court. Across many events: the Tripartite Committee, as the first dataset linking time pressure to injury |
 
-The rider owns the raw data and the event record. Platforms and insurers hold a licence to read events for the job they are liable for. No per-rider risk score exists anywhere in the system.
+The rider owns the raw data and the event record. Platforms and insurers hold a licence to read events for the job they are liable for. No per-rider risk score exists anywhere in the system. Event data never sets an individual rider's premium. GM and OnStar sold driving data that raised drivers' premiums and the US FTC banned the practice for five years; we will not repeat that.
+
+Enforced in code (23 Oct 2026):
+- Each phone holds a random key. Only that phone can write for its rider id, cancel its events or read its emergency contact.
+- Other riders on shared screens appear with a short id and a position rounded to about 100 m. No contact, no sensor window, no speed.
+- Nothing is stored off shift, not even position.
+- Hazard cells are published only with at least 3 events, with the time rounded to the hour.
+- The Labour Department view (`/labour`) is aggregate only.
 
 ## Consent
 

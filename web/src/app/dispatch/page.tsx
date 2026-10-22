@@ -24,6 +24,9 @@ export default function DispatchPage() {
         <Link href="/" className="text-sm opacity-70">Metrics</Link>
         <span className="eyebrow">Dispatcher console</span>
       </div>
+      <p className="mt-3 max-w-2xl text-sm opacity-70">
+        For platform safety operations. When a rider does not answer the phone check, the alert lands here and you call 999 for them.
+      </p>
       <div className="mt-4"><PipelineStatus events={events} rider={snap?.rider ?? null} /></div>
       <section className="tile tile-paper mt-4 min-h-[70vh] p-6">
         <DispatcherPanel events={events} />

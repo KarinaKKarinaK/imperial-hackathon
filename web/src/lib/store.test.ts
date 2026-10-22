@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { cancelEvent, DEMO_RIDER, getRider, ingest, listEvents, replay, REPLAY_SCENARIOS, setContext, setShift, simReset, simStart, snapshot } from "./store";
+import { agree, allSnapshot, apportion, authorizeRider, cancelEvent, DEMO_RIDER, getRider, HAZARD_MIN, ingest, keyMatches, labourAggregate, listEvents, replay, REPLAY_SCENARIOS, setContext, setEmergencyContact, setSecondApp, setShift, simReset, simStart, snapshot } from "./store";
 import type { Sample } from "./schema";
 
 const G = 9.81;
@@ -61,8 +61,10 @@ test("the rider can cancel inside 30 seconds and the payout never fires", () => 
   simReset();
   simStart();
   const e = replay("crash")!.event!;
-  const c = cancelEvent(e.id)!;
-  assert.equal(c.status, "cancelled");
+  const c = cancelEvent(e.id);
+  assert.equal(c.cancelled, true);
+  assert.equal(c.event!.status, "cancelled");
+  assert.equal(c.event!.settlement?.status, "cancelled", "the outcome is signed");
   assert.equal(snapshot(DEMO_RIDER).events[0].status, "cancelled");
 });
 
@@ -73,8 +75,12 @@ test("silence past the deadline marks the event paid", () => {
   e.cancelDeadline = Date.now() - 1; // time travel instead of waiting 30 s
   const after = listEvents(DEMO_RIDER)[0];
   assert.equal(after.status, "paid");
-  assert.ok(after.insurance.paidAt);
-  assert.equal(cancelEvent(e.id)!.status, "paid", "too late to cancel");
+  assert.equal(after.insurance.paidAt, e.cancelDeadline, "paid at the deadline");
+  const again = listEvents(DEMO_RIDER)[0];
+  assert.equal(again.insurance.paidAt, after.insurance.paidAt, "the payment time does not move on reload");
+  const late = cancelEvent(e.id);
+  assert.equal(late.cancelled, false, "too late to cancel");
+  assert.equal(late.event!.status, "paid");
 });
 
 test("exposure changes the premium", () => {
@@ -123,14 +129,107 @@ test("every event is signed and verifies, and tampering breaks it", async () => 
   assert.ok(["motorcycle", "bicycle", "walking", "unknown"].includes(e.mode));
 });
 
-test("jolts that are not crashes become de-identified hazard cells", () => {
+test("jolts that are not crashes become de-identified hazard cells, published from the minimum count", () => {
   simReset();
   simStart();
   replay("pothole");
-  replay("braking");
+  assert.equal(snapshot(DEMO_RIDER).hazards.length, 0, "one jolt is not published");
+  for (let i = 1; i < HAZARD_MIN; i++) replay("braking");
   const snap = snapshot(DEMO_RIDER);
   assert.ok(snap.hazards.length >= 1);
   const cell = snap.hazards[0];
-  assert.ok(cell.bumps + cell.brakes >= 2);
+  assert.ok(cell.bumps + cell.brakes >= HAZARD_MIN);
+  assert.equal(cell.lastAt % 3_600_000, 0, "time rounded to the hour");
   assert.equal("riderId" in cell, false, "no rider id on a hazard cell");
+});
+
+const KEY = "k".repeat(32);
+
+test("a rider key claims the id and other keys are refused", () => {
+  const id = "rider-key-test";
+  assert.equal(authorizeRider(id, KEY), true, "first key claims");
+  assert.equal(authorizeRider(id, KEY), true, "same key again");
+  assert.equal(authorizeRider(id, "x".repeat(32)), false, "other key refused");
+  assert.equal(authorizeRider(id, null), false);
+  assert.equal(authorizeRider(DEMO_RIDER, KEY), false, "nobody can claim the demo rider");
+  assert.equal(keyMatches(id, KEY), true);
+});
+
+test("the emergency contact and key hash never leak to other viewers", () => {
+  const id = "rider-leak-test";
+  authorizeRider(id, KEY);
+  setShift(id, true, "Platform A");
+  setEmergencyContact(id, "+852 9123 4567");
+  ingest(id, ride(300), { lat: 22.312345, lng: 114.171234 });
+  assert.equal(snapshot(id, false).rider.emergencyContact, null);
+  assert.equal(snapshot(id, true).rider.emergencyContact, "+85291234567");
+  assert.equal("keyHash" in snapshot(id, true).rider && snapshot(id, true).rider.keyHash !== undefined, false);
+  const other = snapshot(DEMO_RIDER).others.find((o) => id.startsWith(o.riderId));
+  assert.ok(other, "shown on the shared map");
+  assert.equal(other!.emergencyContact, null);
+  assert.equal(other!.lastWindow, null);
+  assert.equal(other!.lat, 22.312, "position rounded");
+  for (const r of allSnapshot().riders) assert.equal(r.emergencyContact, null);
+  setShift(id, false);
+});
+
+test("off shift, telemetry stores nothing", () => {
+  const id = "rider-offshift-test";
+  const before = getRider(id).lat;
+  const out = ingest(id, ride(300), { lat: 1, lng: 1 });
+  assert.equal(out.event, null);
+  assert.equal(getRider(id).lat, before, "position not stored off shift");
+  assert.equal(getRider(id).lastWindow, null);
+});
+
+test("helmet and phone must agree within a second", () => {
+  const t0 = Date.now() - 6000;
+  const quiet = ride(300, t0);
+  const spike = (at: number) => ride(300, t0).map((s) => (s.t === at ? { ...s, ax: 8 * G } : s));
+  const helmet = spike(t0 + 2500);
+  assert.equal(agree(helmet, spike(t0 + 2800)), true, "phone jolt 0.3 s later agrees");
+  assert.equal(agree(helmet, spike(t0 + 4500)), false, "2 s later does not");
+  assert.equal(agree(helmet, quiet), false, "a still phone does not");
+});
+
+test("two apps open at impact are both in the record and split the liability", () => {
+  simReset();
+  simStart();
+  setSecondApp(DEMO_RIDER, true);
+  const e = replay("crash")!.event!;
+  assert.equal(e.activeJobs.length, 2);
+  assert.deepEqual(new Set(e.activeJobs.map((j) => j.platform)), new Set(["Platform A", "Platform B"]));
+  assert.equal(e.apportionment.reduce((a, b) => a + b.share, 0), 1);
+  assert.deepEqual(apportion([], "Platform A"), [{ platform: "Platform A", share: 1 }]);
+});
+
+test("records chain, settlements are signed, and editing the payout breaks verification", async () => {
+  const { recordHash, verifyRecord, verifySettlement } = await import("./sign");
+  simReset();
+  simStart();
+  const first = replay("crash")!.event!;
+  first.cancelDeadline = Date.now() - 1;
+  const paid = listEvents(DEMO_RIDER)[0];
+  assert.equal(verifySettlement(paid), true);
+  assert.equal(verifySettlement({ ...paid, settlement: { ...paid.settlement!, payoutHkd: 80000 } }), false);
+  assert.equal(verifySettlement({ ...paid, settlement: { ...paid.settlement!, status: "cancelled" } }), false);
+  const reordered = JSON.parse(JSON.stringify({ ...paid, context: { fatigue: paid.context.fatigue, heat: paid.context.heat, rain: paid.context.rain } }));
+  assert.equal(verifyRecord(reordered, paid.signature!), true, "key order does not matter");
+  // a second event links to the first
+  const r = getRider(DEMO_RIDER);
+  r.onShift = true;
+  const events = listEvents(DEMO_RIDER);
+  events.forEach((e) => (e.ts = Date.now() - 120_000));
+  const second = replay("crash")!.event!;
+  assert.equal(second.prevHash, recordHash(paid));
+});
+
+test("a signed sample event fills empty screens and the labour view aggregates without ids", () => {
+  const snap = snapshot(DEMO_RIDER);
+  const sample = snap.allEvents.find((e) => e.sample);
+  assert.ok(sample, "sample present");
+  assert.equal(sample!.activeJobs.length, 2);
+  const agg = labourAggregate();
+  assert.ok(agg.total >= 1);
+  assert.equal(JSON.stringify(agg).includes("rider-"), false, "no rider ids in the labour view");
 });

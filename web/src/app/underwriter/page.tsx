@@ -28,7 +28,7 @@ export default function UnderwriterPage() {
       <section className="tile tile-dusk tile-grain mt-4 min-h-[70vh] p-6">
         <UnderwriterPanel rider={snap?.rider ?? null} events={events} premium={snap?.premiumWindowHkd ?? 0} />
       </section>
-      <p className="mt-4 text-xs opacity-50">Premium and payout figures are illustrative until the financial model supplies sourced ones.</p>
+      <p className="mt-4 text-xs opacity-50">All money on this screen is an illustrative placeholder until the financial model supplies sourced figures. The licensed insurer carries the risk, not Metrics.</p>
     </main>
   );
 }

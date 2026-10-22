@@ -17,9 +17,14 @@ env = dict(l.strip().split("=", 1) for l in open(ENV_FILE) if "=" in l and not l
 KV = env["KV_REST_API_URL"].strip('"'); TOK = env["KV_REST_API_TOKEN"].strip('"')
 HERE = Path(__file__).resolve().parent.parent
 
-def req(path, body=None, method=None):
+KEY = os.urandom(16).hex()  # this run's rider key
+
+def req(path, body=None, method=None, key=None):
     data = json.dumps(body).encode() if body is not None else None
-    r = urllib.request.Request(B + path, data=data, method=method or ("POST" if data else "GET"), headers={"content-type": "application/json"})
+    headers = {"content-type": "application/json"}
+    if key:
+        headers["x-rider-key"] = key
+    r = urllib.request.Request(B + path, data=data, method=method or ("POST" if data else "GET"), headers=headers)
     try:
         with urllib.request.urlopen(r, timeout=30, context=CTX) as resp:
             return resp.status, json.loads(resp.read() or b"{}")
@@ -76,24 +81,29 @@ check("a tampered record fails verification", s == 200 and vr.get("valid") is Fa
 s, ex = req(f"/api/events/{ev['id']}")
 check("rider export has record, key and verify URL", s == 200 and "publicKey" in ex and ex["record"]["id"] == ev["id"])
 check("rider record page renders", urllib.request.urlopen(urllib.request.Request(B + f"/r/{ev['id']}"), context=CTX).status == 200)
-req("/api/sim", {"action": "replay", "value": "pothole"}); req("/api/sim", {"action": "replay", "value": "braking"})
+for sc in ["pothole", "braking", "braking"]:
+    req("/api/sim", {"action": "replay", "value": sc})
 s, d = req("/api/state")
 check("jolts become de-identified hazard cells", len(d.get("hazards", [])) >= 1 and all("riderId" not in h for h in d["hazards"]))
-s, d = req(f"/api/events/{ev['id']}/cancel", {}, "POST")
-check("rider cancel inside the window", s == 200 and d["status"] == "cancelled")
+check("a stranger cannot cancel the event", req(f"/api/events/{ev['id']}/cancel", {}, "POST")[0] == 403)
+s, d = req("/api/sim", {"action": "ok"})
+mine = next((e for e in d["events"] if e["id"] == ev["id"]), {})
+check("rider cancel inside the window, outcome signed", s == 200 and mine.get("status") == "cancelled" and mine.get("settlement", {}).get("status") == "cancelled")
 time.sleep(1.5)
-st = json.loads(kv_get("metrics:store:v1"))
+st = json.loads(kv_get("metrics:store:v2"))
 check("cancel persisted to Redis", any(e["id"] == ev["id"] and e["status"] == "cancelled" for e in st["events"]))
 
 print("== C. parity: production model vs Python model on the same windows")
 par = json.load(open(HERE / "src/lib/ml/parity.json"))
 rid = "rider-parity"
-req("/api/shift", {"riderId": rid, "onShift": False})
+rid = "rider-parity-" + KEY[:6]
+req("/api/shift", {"riderId": rid, "onShift": False}, key=KEY)
 worst = 0
 for v in par:
     base = int(time.time() * 1000) - 7000
     samples = [{"t": base + int(t * 1000), "ax": ax * 9.81, "ay": ay * 9.81, "az": az * 9.81} for t, ax, ay, az in v["samples"]]
-    s, d = req("/api/telemetry", {"riderId": rid, "samples": samples})
+    s, d = req("/api/telemetry", {"riderId": rid, "samples": samples}, key=KEY)
+    time.sleep(0.6)  # stay under the per-rider rate limit
     p = d["detection"]["confidence"]
     diff = abs(p - v["p"]); worst = max(worst, diff)
     check(f"{v['source']:24s} py={v['p']:.3f} prod={p:.3f}", s == 200 and diff < 0.01)
@@ -105,6 +115,19 @@ check("Hong Kong Observatory reading", s == 200 and d["source"] == "Hong Kong Ob
 check("rejects bad telemetry", req("/api/telemetry", {"riderId": "x", "samples": "no"})[0] == 400)
 check("rejects oversize rider id", req("/api/telemetry", {"riderId": "x" * 200, "samples": [{"t": 1, "ax": 0, "ay": 0, "az": 9.81}]})[0] == 400)
 check("rejects unknown sim action", req("/api/sim", {"action": "nope"})[0] == 400)
+now = int(time.time() * 1000)
+check("rejects a window spanning years", req("/api/telemetry", {"riderId": rid, "samples": [{"t": 0, "ax": 0, "ay": 0, "az": 9.81}, {"t": now, "ax": 0, "ay": 0, "az": 9.81}]}, key=KEY)[0] == 400)
+check("refuses telemetry without the rider key", req("/api/telemetry", {"riderId": rid, "samples": [{"t": now - 1000, "ax": 0, "ay": 0, "az": 9.81}, {"t": now, "ax": 0, "ay": 0, "az": 9.81}]})[0] == 403)
+req("/api/rider", {"riderId": rid, "emergencyContact": "+85291234567"}, key=KEY)
+check("contact hidden without the key", req(f"/api/state?riderId={rid}")[1]["rider"]["emergencyContact"] is None)
+check("contact shown with the key", req(f"/api/state?riderId={rid}", key=KEY)[1]["rider"]["emergencyContact"] == "+85291234567")
+s, d = req("/api/state")
+check("no other rider's contact on the shared map", all(o.get("emergencyContact") is None and o.get("lastWindow") is None for o in d["others"]))
+sample = next((e for e in d["allEvents"] if e.get("sample")), None)
+s, vr = req("/api/verify", sample) if sample else (0, {})
+check("sample event: facts and settlement verify", vr.get("valid") is True and vr.get("settlementValid") is True)
+s, lab = req("/api/labour")
+check("labour view is aggregate only", s == 200 and lab["total"] >= 1 and "rider-" not in json.dumps(lab))
 check("rejects unknown scenario", req("/api/sim", {"action": "replay", "value": "meteor"})[0] == 400)
 req("/api/sim", {"action": "reset"})
 print("\nALL PASS" if ok else "\nSOME CHECKS FAILED")

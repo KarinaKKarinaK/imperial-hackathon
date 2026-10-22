@@ -16,11 +16,19 @@ export type Sample = {
 
 export type HeatBand = "green" | "amber" | "red";
 
+// An order the rider has accepted and not yet delivered. A third of Hong Kong
+// riders run more than one app, so several can be open at the moment of impact.
+export type ActiveJob = { platform: Platform; jobId: string; acceptedAt: number };
+
+export type SensorSource = "phone" | "helmet";
+
 export type RiderState = {
   riderId: string;
   onShift: boolean;
   platform: Platform;
   jobId: string | null;
+  jobs: ActiveJob[]; // every open order across apps; platform and jobId mirror the most recent
+  keyHash?: string | null; // sha256 of the rider's device key, never sent to a client
   lat: number;
   lng: number;
   speedKmh: number;
@@ -55,8 +63,12 @@ export type EventStatus = "detected" | "cancelled" | "confirmed" | "paid";
 export type EventRecord = {
   id: string;
   riderId: string;
-  platform: Platform;
+  platform: Platform; // the app whose order was accepted most recently
   jobId: string | null;
+  activeJobs: ActiveJob[]; // every app with an open order at impact
+  apportionment: { platform: Platform; share: number }[]; // liability split, shares sum to 1
+  sources: SensorSource[]; // which sensors agreed on the impact
+  prevHash: string | null; // sha256 of this rider's previous record, so a deleted record leaves a gap
   ts: number;
   deadlineSec: number | null; // seconds left on the delivery countdown at impact, negative if already late
   mode: "motorcycle" | "bicycle" | "walking" | "unknown";
@@ -83,6 +95,17 @@ export type EventRecord = {
     fatigue: number;
   };
   signature: string | null; // Ed25519 over the impact facts, base64url. Verify at /api/verify
+  // Signed once the outcome is final, so status and payout cannot be edited either.
+  settlement: Settlement | null;
+  sample?: boolean; // a seeded example so empty screens are not blank. Never a real rider
+};
+
+export type Settlement = {
+  status: "cancelled" | "paid";
+  paidAt: number | null;
+  payoutHkd: number;
+  at: number;
+  signature: string; // Ed25519 over id, status, paidAt, payoutHkd, at and the facts signature
 };
 
 // De-identified hazard cell: non-crash impacts and hard brakes aggregated to

@@ -48,6 +48,7 @@ Lesson from Apple crash detection: a wave of false emergency calls from ski slop
 
 ## Known gaps in the current code
 
-- `/api/telemetry` accepts samples for any rider id, so a signature proves our server wrote the record, not that a device measured it.
-- The MPU-6050 is set to 16 g, so helmet impacts above that are capped.
-- Helmet and phone signals are never compared with each other.
+- Fixed 23 Oct: telemetry, shift, settings and cancel now need the rider's device key, so nobody can write for or cancel another rider. The record is still signed by our server, not by the device; clip-side signing is next.
+- Fixed 23 Oct: with the helmet paired, a crash needs the helmet and the phone to agree within one second (`agree()` in `web/src/lib/store.ts`).
+- Fixed 23 Oct: records carry `prevHash` and a signed `settlement`.
+- Open: the MPU-6050 is set to 16 g, so helmet impacts above that are capped.

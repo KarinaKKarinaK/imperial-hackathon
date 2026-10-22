@@ -66,6 +66,7 @@ void setup() {
   mpu.setFilterBandwidth(MPU6050_BAND_94_HZ);
 
   BLEDevice::init("Metrics Helmet");
+  BLEDevice::setMTU(185); // one notify carries all five 16-byte frames; the default 23-byte MTU would cut it to one
   BLEServer *server = BLEDevice::createServer();
   server->setCallbacks(new ServerCb());
   BLEService *svc = server->createService(SERVICE_UUID);
@@ -85,7 +86,8 @@ void setup() {
 void loop() {
   uint32_t now = micros();
   if (now - lastSample < SAMPLE_US) return;
-  lastSample = now;
+  // advance by the period so the rate does not drift; resync after a long stall
+  lastSample = (now - lastSample > 10 * SAMPLE_US) ? now : lastSample + SAMPLE_US;
 
   sensors_event_t a, g, t;
   mpu.getEvent(&a, &g, &t);
@@ -100,10 +102,14 @@ void loop() {
   f.gz = (int16_t)(g.gyro.z * 57.2958f * 10.0f);
 
   float r = sqrtf(a.acceleration.x * a.acceleration.x + a.acceleration.y * a.acceleration.y + a.acceleration.z * a.acceleration.z) / 9.81f;
-  if (r > IMPACT_G && !impactFlag) {
-    impactFlag = 1;
-    impact->setValue(&impactFlag, 1);
-    if (connected) impact->notify();
+  static uint32_t impactAt = 0;
+  if (r > IMPACT_G) {
+    impactAt = millis(); // a second hit inside the window keeps the flag up for another 10 s
+    if (!impactFlag) {
+      impactFlag = 1;
+      impact->setValue(&impactFlag, 1);
+      if (connected) impact->notify();
+    }
     Serial.printf("impact %.1f g\n", r);
   }
 
@@ -115,12 +121,10 @@ void loop() {
     filled = 0;
   }
 
-  // Clear the impact flag after the phone has had 10 s to read it.
-  static uint32_t impactAt = 0;
-  if (impactFlag && !impactAt) impactAt = millis();
+  // Clear the impact flag 10 s after the last hit, once the phone has had time to read it.
   if (impactFlag && millis() - impactAt > 10000) {
     impactFlag = 0;
-    impactAt = 0;
     impact->setValue(&impactFlag, 1);
+    if (connected) impact->notify();
   }
 }

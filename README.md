@@ -167,8 +167,12 @@ classDiagram
   class EventRecord {
     id
     riderId  random, on device
-    platform  active app at impact
+    platform  most recent app
     jobId
+    activeJobs  every app with an open order
+    apportionment  liability split
+    sources  phone / helmet
+    prevHash  hash of previous record
     ts
     deadlineSec  delivery clock at impact
     mode  motorcycle / bicycle / walking
@@ -176,6 +180,12 @@ classDiagram
     peakG, tiltDeg, stillSec
     confidence
     status
+    signature  Ed25519
+  }
+  class Settlement {
+    status  paid / cancelled
+    paidAt
+    payoutHkd
     signature  Ed25519
   }
   class Triage {
@@ -195,9 +205,10 @@ classDiagram
   EventRecord *-- Triage
   EventRecord *-- Insurance
   EventRecord *-- Context
+  EventRecord *-- Settlement
 ```
 
-Two fields matter most for the new law. `platform` and `jobId` make multi-platform apportionment a lookup. `deadlineSec`, the seconds left on the delivery clock at impact, is the first dataset that links time pressure to injury.
+Two fields matter most for the new law. `activeJobs` lists every app with an open order at impact and `apportionment` splits the liability between them, so multi-platform apportionment is a lookup. `deadlineSec`, the seconds left on the delivery clock at impact, is the first dataset that links time pressure to injury.
 
 ### Live pages
 
@@ -209,6 +220,7 @@ Two fields matter most for the new law. `platform` and `jobId` make multi-platfo
 | [`/dispatch`](https://metricsfile.vercel.app/dispatch) | Dispatcher view only |
 | [`/underwriter`](https://metricsfile.vercel.app/underwriter) | Insurer view only |
 | [`/record`](https://metricsfile.vercel.app/record) | The event record, field by field |
+| [`/labour`](https://metricsfile.vercel.app/labour) | Labour Department view: injuries by time left on the delivery clock, mode, hour, heat. Aggregates only |
 | [`/poster`](https://metricsfile.vercel.app/poster) | Printable A0 poster with the STEMB map |
 
 ---
@@ -287,14 +299,14 @@ Synthetic negatives were the only change that moved bag drops. Tuning and calibr
 
 From our dataset search and from fields that solved similar problems first. Details and sources: [docs/research/ROADMAP.md](docs/research/ROADMAP.md).
 
-| Next step | Borrowed from | Why |
-|---|---|---|
-| Helmet and phone must agree within a second | Earthquake early warning networks | A dropped bag moves the phone, not the head |
-| Each record carries the hash of the one before | Certificate Transparency | Nobody, including us, can backdate or delete a record unseen |
-| Freeze 5 s before and after impact, 200 g sensor | Car event data recorders, concussion mouthguards | Full crash context, no clipping at 16 g, clip sleeps until a hit |
-| Cancel taps and hospital records become labels | Weak supervision | Real road crashes replace simulated falls over time |
-| Hazard cells divided by rider traffic | Disease mapping | Busy roads stop looking dangerous just for being busy |
-| Add head-worn and two-wheeler data | Erciyes head sensor, Boubezoul motorcycle falls, CYCLEGYRO helmet gyro | Moves the model from trouser pocket to helmet and road |
+| Next step | Borrowed from | Why | Status |
+|---|---|---|---|
+| Helmet and phone must agree within a second | Earthquake early warning networks | A dropped bag moves the phone, not the head | Built |
+| Each record carries the hash of the one before | Certificate Transparency | Nobody, including us, can backdate or delete a record unseen | Built |
+| Freeze 5 s before and after impact, 200 g sensor | Car event data recorders, concussion mouthguards | Full crash context, no clipping at 16 g, clip sleeps until a hit | Next |
+| Cancel taps and hospital records become labels | Weak supervision | Real road crashes replace simulated falls over time | Next |
+| Hazard cells divided by rider traffic | Disease mapping | Busy roads stop looking dangerous just for being busy | Next |
+| Add head-worn and two-wheeler data | Erciyes head sensor, Boubezoul motorcycle falls, CYCLEGYRO helmet gyro | Moves the model from trouser pocket to helmet and road | Next |
 
 ---
 

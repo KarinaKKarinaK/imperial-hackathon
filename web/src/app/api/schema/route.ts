@@ -8,15 +8,27 @@ const schema = {
   $id: "https://metricsfile.vercel.app/api/schema",
   title: "Metrics work-injury event record",
   description:
-    "One verified work-time impact for a platform worker. Everything upstream of this record stays on the worker's device. Version 1.",
+    "One verified work-time impact for a platform worker. Everything upstream of this record stays on the worker's device. Version 2.",
   type: "object",
-  required: ["id", "riderId", "platform", "ts", "deadlineSec", "mode", "lat", "lng", "peakG", "tiltDeg", "stillSec", "confidence", "status", "cancelDeadline", "triage", "insurance", "context", "signature"],
+  required: ["id", "riderId", "platform", "activeJobs", "apportionment", "sources", "prevHash", "ts", "deadlineSec", "mode", "lat", "lng", "peakG", "tiltDeg", "stillSec", "confidence", "status", "cancelDeadline", "triage", "insurance", "context", "signature", "settlement"],
   additionalProperties: false,
   properties: {
-    id: { type: "string", pattern: "^EVT-[A-Z0-9]+$", description: "Unique, time-ordered event id" },
+    id: { type: "string", pattern: "^EVT-[A-Z0-9]+$", description: "Unique random event id" },
     riderId: { type: "string", maxLength: 64, description: "Pseudonymous worker id held on the device" },
     platform: { type: "string", description: "The platform the worker was on at the moment of impact. Basis for apportionment" },
     jobId: { type: ["string", "null"], description: "The platform's order or trip id active at impact" },
+    activeJobs: {
+      type: "array",
+      description: "Every app with an open order at impact. One third of Hong Kong riders run more than one app",
+      items: { type: "object", required: ["platform", "jobId", "acceptedAt"], properties: { platform: { type: "string" }, jobId: { type: "string" }, acceptedAt: { type: "integer" } } },
+    },
+    apportionment: {
+      type: "array",
+      description: "Liability split across platforms, shares sum to 1. Placeholder rule: equal shares until the regime fixes one",
+      items: { type: "object", required: ["platform", "share"], properties: { platform: { type: "string" }, share: { type: "number", minimum: 0, maximum: 1 } } },
+    },
+    sources: { type: "array", items: { type: "string", enum: ["phone", "helmet"] }, description: "Sensors that agreed on the impact. helmet plus phone means both felt it within one second" },
+    prevHash: { type: ["string", "null"], description: "sha256 of this worker's previous record and its signature. A deleted or edited record breaks the chain" },
     ts: { type: "integer", description: "Impact time, milliseconds since epoch, device clock, confirmed on receipt" },
     deadlineSec: { type: ["integer", "null"], description: "Seconds left on the delivery countdown at impact, negative if already late. The field that links time pressure to injury" },
     mode: { type: "string", enum: ["motorcycle", "bicycle", "walking", "unknown"], description: "Travel mode inferred from speed at impact. Phone-only riders are covered on every mode" },
@@ -55,6 +67,12 @@ const schema = {
       },
     },
     signature: { type: ["string", "null"], description: "Ed25519 signature over the impact facts, base64url. Check at /api/verify" },
+    settlement: {
+      type: ["object", "null"],
+      description: "Signed once the outcome is final, so status and payout cannot be edited either",
+      properties: { status: { enum: ["cancelled", "paid"] }, paidAt: { type: ["integer", "null"] }, payoutHkd: { type: "number" }, at: { type: "integer" }, signature: { type: "string" } },
+    },
+    sample: { type: "boolean", description: "Seeded example, never a real worker" },
   },
   "x-signing": { algorithm: "Ed25519", publicKeyPem: "{PUBKEY}", verify: "POST /api/verify with the record" },
   "x-governance": {

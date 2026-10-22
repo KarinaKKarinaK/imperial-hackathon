@@ -86,6 +86,15 @@ export function Controls({
             </button>
           ))}
         </div>
+        {/* A second app's order open at once: the case apportionment has to split. */}
+        <button
+          onClick={() => act("secondApp", !((rider?.jobs?.length ?? 0) > 1))}
+          disabled={!rider?.onShift}
+          className={`${btn} border ${(rider?.jobs?.length ?? 0) > 1 ? "border-violet bg-violet/30" : "border-white/30"}`}
+          aria-pressed={(rider?.jobs?.length ?? 0) > 1}
+        >
+          Second app {(rider?.jobs?.length ?? 0) > 1 ? "open" : "off"}
+        </button>
       </Group>
 
       <Group label="Order countdown">

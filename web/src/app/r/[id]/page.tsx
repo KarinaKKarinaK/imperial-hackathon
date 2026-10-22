@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { hydrate, listEvents } from "@/lib/store";
-import { publicKeyPem, signingIsEphemeral, verifyRecord } from "@/lib/sign";
+import { publicKeyPem, signingIsEphemeral, verifyRecord, verifySettlement } from "@/lib/sign";
 import { connection } from "next/server";
 import { Arrow } from "@/components/Arrow";
 
@@ -25,6 +25,13 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
   const valid = e.signature ? verifyRecord(e, e.signature) : false;
   const when = new Date(e.ts).toLocaleString("en-GB", { timeZone: "Asia/Hong_Kong", hour12: false });
   const code = e.signature ? e.signature.slice(0, 8).toUpperCase() : "none";
+  const settlementValid = e.settlement ? verifySettlement(e) : null;
+  const jobs = e.activeJobs?.length ? e.activeJobs : [{ platform: e.platform, jobId: e.jobId ?? "none recorded" }];
+  const split = e.apportionment?.length ? e.apportionment : [{ platform: e.platform, share: 1 }];
+  // The statutory claim has to be lodged within a year of the accident.
+  const claimBy = new Date(e.ts);
+  claimBy.setFullYear(claimBy.getFullYear() + 1);
+  const claimByText = claimBy.toLocaleDateString("en-GB", { timeZone: "Asia/Hong_Kong", day: "numeric", month: "long", year: "numeric" });
 
   return (
     <main className="mx-auto min-h-dvh max-w-3xl px-4 py-8 print:max-w-none print:p-0">
@@ -42,9 +49,15 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="eyebrow">Work-injury event record</p>
+            {e.sample && <span className="pill pill-peach mt-2">Sample record, not a real rider</span>}
             <h1 className="display mt-2 text-4xl sm:text-5xl">{e.id}</h1>
           </div>
-          <span className={`pill ${valid ? "pill-violet" : "pill-peach"}`}>{valid ? "Signature verified" : "Unsigned or altered"}</span>
+          <div className="flex flex-col items-end gap-2">
+            <span className={`pill ${valid ? "pill-violet" : "pill-peach"}`}>{valid ? "Signature verified" : "Unsigned or altered"}</span>
+            <span className={`pill ${settlementValid === null ? "pill-outline" : settlementValid ? "pill-violet" : "pill-peach"}`}>
+              {settlementValid === null ? "Outcome not final yet" : settlementValid ? "Settlement verified" : "Settlement altered"}
+            </span>
+          </div>
         </div>
 
         <dl className="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
@@ -54,6 +67,9 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
               ["Where", `${e.lat.toFixed(5)}, ${e.lng.toFixed(5)}`],
               ["Platform at impact", e.platform],
               ["Job at impact", e.jobId ?? "none recorded"],
+              ["Open orders at impact", jobs.map((j) => `${j.platform}, ${j.jobId}`).join("; ")],
+              ["Liability split", split.map((a) => `${a.platform} ${Math.round(a.share * 100)}%`).join(", ")],
+              ["Sensors", e.sources?.length ? (e.sources.length > 1 ? `${e.sources.join(" and ")} agreed` : `${e.sources[0]} only`) : "not recorded"],
               ["Delivery countdown at impact", e.deadlineSec === null ? "not set" : e.deadlineSec >= 0 ? `${Math.floor(e.deadlineSec / 60)} min ${e.deadlineSec % 60} s left` : `${Math.abs(e.deadlineSec)} s late`],
               ["Travel mode", e.mode],
               ["Peak acceleration", `${e.peakG} g`],
@@ -75,6 +91,35 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
           <p className="eyebrow">Triage note sent to dispatch</p>
           <p className="mt-2 text-lg font-medium">{e.triage.profile}</p>
           <p className="text-sm opacity-70">{e.triage.mechanism}. Probable, never a diagnosis.</p>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-ink/15 p-5">
+          <p className="eyebrow">Your claim</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-xs uppercase tracking-wider opacity-60">Claim reference</p>
+              <p className="mono mt-1 text-lg">{e.id}</p>
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-wider opacity-60">Insurer</p>
+              <p className="mt-1 text-lg font-medium">Licensed insurer (placeholder)</p>
+            </div>
+          </div>
+          <ol className="mt-4 list-decimal space-y-1 pl-5 text-sm opacity-85">
+            <li>
+              Fixed payout:{" "}
+              {e.status === "paid"
+                ? `HK$${e.insurance.payoutHkd.toLocaleString()} paid${e.insurance.paidAt ? ` at ${new Date(e.insurance.paidAt).toLocaleTimeString("en-GB", { timeZone: "Asia/Hong_Kong", hour12: false })} HKT` : ""}.`
+                : e.status === "cancelled"
+                  ? "none, you cancelled inside 30 s."
+                  : "paid once the 30 s cancel window closes."}
+            </li>
+            <li>If you went to hospital, send the discharge record to the insurer and quote the claim reference. This unlocks the statutory amounts. Not built yet.</li>
+            <li>
+              Lodge the statutory claim by <span className="font-medium">{claimByText}</span>, one year from the event.
+            </li>
+          </ol>
+          <p className="mt-3 text-xs opacity-60">Money shown is an illustrative placeholder. Split shares are a placeholder rule: equal across open apps.</p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">

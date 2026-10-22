@@ -26,6 +26,8 @@ const GROUPS: Group[] = [
       { key: "riderId", type: "string", example: "rider-4f2a", meaning: "Random id on the device. Only the rider can map it to a person.", sees: ["rider", "insurer", "court"] },
       { key: "platform", type: "string", example: "Platform A", meaning: "The app the rider was working for at the moment of impact. Makes apportionment a lookup.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
       { key: "jobId", type: "string", example: "ORD-4471", meaning: "The order the platform issued. Both sides can verify it.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "activeJobs", type: "array", example: "A ORD-2417, B ORD-5083", meaning: "Every app with an open order at impact. A rider on two apps shows both, so neither platform can say the rider was working for the other. Signed.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
+      { key: "apportionment", type: "array", example: "A 0.5, B 0.5", meaning: "Each platform's share of liability. Shares add up to 1. Placeholder rule until the regime fixes one: equal split across open apps. Signed.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
     ],
   },
   {
@@ -39,6 +41,7 @@ const GROUPS: Group[] = [
       { key: "peakG", type: "number", example: "14.2", meaning: "Peak resultant acceleration in g, helmet or phone.", sees: ["rider", "insurer", "court"] },
       { key: "tiltDeg", type: "number", example: "82", meaning: "Change in gravity direction across the impact. A fall swings it past 60.", sees: ["rider", "insurer", "court"] },
       { key: "stillSec", type: "number", example: "8.0", meaning: "Longest run of near-zero motion after impact. Separates a crash from a pothole.", sees: ["rider", "insurer", "court"] },
+      { key: "sources", type: "array", example: "helmet, phone", meaning: "Which sensors saw the impact. Both listed means helmet and phone agreed within one second. Signed.", sees: ["rider", "insurer", "court"] },
       { key: "confidence", type: "number", example: "0.97", meaning: "Crash probability from the gradient boosting model. A model output, not a rule.", sees: ["rider", "platform", "insurer", "court"] },
     ],
   },
@@ -54,8 +57,12 @@ const GROUPS: Group[] = [
   },
   {
     title: "Integrity",
-    note: "The impact facts are signed when the record is created. Anyone can verify a copy without asking us.",
-    fields: [{ key: "signature", type: "string", example: "Ed25519, base64url", meaning: "Signature over id, rider, platform, job, time, deadline, mode, location, impact numbers and context. Status and payment are not signed because they change.", sees: ["rider", "platform", "insurer", "court"] }],
+    note: "The impact facts, including the apps, the split, the sensors and the chain link, are signed when the record is created. The outcome is signed once final. Anyone can verify a copy without asking us.",
+    fields: [
+      { key: "signature", type: "string", example: "Ed25519, base64url", meaning: "Signature over id, rider, platform, open orders, split, sensors, previous hash, time, deadline, mode, location, impact numbers and context.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "prevHash", type: "string", example: "sha256, hex", meaning: "Hash of this rider's previous record. Records form a chain, so a deleted record leaves a visible gap. Signed.", sees: ["rider", "insurer", "court"] },
+      { key: "settlement", type: "object", example: "paid, HK$8,000", meaning: "The final outcome: status, when it was paid and the payout. Signed once final, together with the facts signature, so status and payout cannot be edited either.", sees: ["rider", "platform", "insurer", "court"] },
+    ],
   },
   {
     title: "Context",
@@ -86,7 +93,7 @@ export default function RecordPage() {
           <div className="grid gap-4 md:grid-cols-12">
             <div className="tile tile-paper p-7 md:col-span-7 sm:p-10">
               <span className="pill pill-ink">The standard</span>
-              <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. Eighteen fields.</h1>
+              <h1 className="display mt-6 text-5xl sm:text-6xl lg:text-7xl">One record. {total} fields.</h1>
               <p className="mt-6 max-w-xl text-lg opacity-75">
                 Everything a rider, a platform, an insurer and a court need to agree on what happened. Nothing they do not.
               </p>
