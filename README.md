@@ -26,6 +26,7 @@
   <a href="#how-it-works">How it works</a> ·
   <a href="#the-crash-detector">Detector</a> ·
   <a href="#roadmap">Roadmap</a> ·
+  <a href="#next-steps">Next steps</a> ·
   <a href="#hardware">Hardware</a> ·
   <a href="#market-research">Market</a> ·
   <a href="#business-model">Business</a> ·
@@ -329,6 +330,23 @@ From our dataset search and from fields that solved similar problems first. Deta
 | Add head-worn and two-wheeler data | Erciyes head sensor, Boubezoul motorcycle falls, CYCLEGYRO helmet gyro | Moves the model from trouser pocket to helmet and road | Next |
 
 ---
+
+## Next steps
+
+What is not done yet, and what is already built so each step plugs straight in.
+
+| Next step | Why it matters | Already in place |
+|---|---|---|
+| Real rider data: team and pilot riders turn on research mode | Replaces simulated falls and our synthetic ride with false alarms per real riding hour | Research mode on `/rider`, `ml/pull_field_data.py`, field path in `ml/stream_eval.py`, counts on `/labour` |
+| Retrain on real labels | The cancel taps and "what was it" labels become training data | Labels stored on every event, aggregated on `/labour` |
+| Flash the helmet clip and run the drop tests | Measured helmet impacts and a detection rate with an interval | Firmware, Bluetooth client, `validation/DROP_TEST_PROTOCOL.md`, `train.py --extra` loader |
+| 200 g sensor for the clip | No clipping at 16 g on hard head impacts | Triage bands already read peak g |
+| Rider interviews | The human story, consent design checked by riders | Interview plan in `docs/submission/RIDER_INTERVIEWS.md` |
+| One insurer, union or clinician on record | An outside voice on the trigger and the triage note | Insurer and Labour Department views live |
+| Financial model with a sensitivity range | Premium and fee figures replace the placeholders | Tier one and two, apportionment and basis risk on `/underwriter` |
+| Native speaker check of Nepali and Urdu | Consent a rider can actually read | All rider screens translated and marked pending review |
+| Retention limit and an access log per reading party | Two privacy principles that are planned, not built | Rider keys, pseudonymous research data, aggregate-only labour view |
+| The clip signs its own data | Proves a device measured the crash, not only that our server wrote it | Ed25519 signing, hash chain and signed settlements on the server |
 
 ## Hardware
 
