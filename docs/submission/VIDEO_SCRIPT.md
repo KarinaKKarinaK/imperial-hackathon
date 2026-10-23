@@ -2,7 +2,7 @@
 
 Target 4:15. Ceiling 5:00. Four speakers on camera: Karina, Hannes, Maalon, Alysa. Simone takes any engineering line or runs the demo hands in part 3.
 
-Four parts:
+Five parts:
 1. Cold open, 0:00 to 0:20. No faces. Big type, hard cuts, a beat under it.
 2. Relay, 0:20 to 1:30. One person, one line, one location. Cut on every line. No line over four seconds.
 3. Split screen, 1:30 to 3:10. Left: today. Right: with the record. Same rider, same crash, two endings.
