@@ -2,7 +2,7 @@
 
 Metrics, Team Metrics. Imperial Global Hackathon Hong Kong and Macau 2026, Challenge 6.
 
-Hard limit 4:30. Target 4:27. If the cut runs long, shorten line 10 or 13 first. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
+Hard limit 4:30. Target 3:53. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
 
 ## Structure
 
@@ -13,13 +13,13 @@ Hard limit 4:30. Target 4:27. If the cut runs long, shorten line 10 or 13 first.
 | 3. The market | 1:20 to 1:50 | Who pays, why now, how big | Feasibility, translation, impact |
 | 4. Screen recording | 1:50 to 2:40 | Karina walks through the live app, face in the corner | Design and build, innovation, validation, ethics |
 | 5. Split screen | 2:40 to 3:05 | Same crash, today versus with the record | Impact, social return |
-| 6. Limits, risks and next steps | 3:05 to 4:19 | Team relay: limits, top three barriers, ethics, insurer pathway, answers to Imperial feedback | Validation, risk register, ethics, translation, research integrity |
-| 7. End card | 4:19 to 4:27 | Team, quote, live URL | Teamwork |
+| 6. Answering Imperial's feedback | 3:05 to 3:45 | Four lines: validation, drop tests, data privacy, insurance mechanism | Validation, ethics, translation, research integrity |
+| 7. End card | 3:45 to 3:53 | Team, quote, live URL | Teamwork |
 
 Rules for the edit:
 - Every number on screen has a source line in the corner. Anything modelled or targeted says so on screen.
 - Synthetic data is captioned "synthetic" wherever it appears.
-- No line longer than nine seconds in the relays, except lines 14 and 15 in Part 6. Cut on every line.
+- No line longer than nine seconds in the relays, except line 13 in Part 6. Cut on every line.
 - No music swell over the problem lines. No smiling on the problem lines.
 
 ## Part 1. Intro clips (0:00 to 0:20)
@@ -125,23 +125,20 @@ Vertical split. Left header TODAY, grey and silent. Right header WITH THE RECORD
 
 About 40 words, 25 seconds.
 
-## Part 6. Limits, risks and what comes next (3:05 to 4:19)
+## Part 6. Answering Imperial's feedback (3:05 to 3:45)
 
-Relay, one line each, each person on their own field. A single card behind each line. This part answers, before anyone asks: what the evidence does not prove, the top three barriers (accuracy, rider trust, insurer and regulator), the dual use risk, and each point in Imperial's feedback on our problem statement.
+Four lines, one for each point Imperial raised on our problem statement: validation, the prototype and drop tests, data privacy and consent, and the insurance mechanism. Each person speaks on their own field. A single card behind each line.
 
 | # | Speaker | Line | Card behind | Answers |
 |---|---|---|---|---|
-| 10 | Karina | We trained on public fall data and tested on over eighteen hundred hours of real riding. Research mode now lets riders share their own rides, so we can retrain on road data. | "1,865 hours of real riding tested. Research mode live." Research mode toggle on /rider | Limits of the evidence, further research |
-| 11 | Simone | Retraining nearly halved our false alarms. On real motorbike rides it is one every five hours, and any alarm can be cancelled within thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
-| 12 | Hannes | Following Imperial's feedback, the drop test protocol and data pipeline are ready, and helmet results will be in for the final, next to a live demo. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
-| 13 | Maalon | Privacy is built in, not added on. Riders opt in each shift and own a signed copy of every record. No route history, no risk score. It supports triage; it never diagnoses. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
-| 14 | Alysa | The insurance side is mapped end to end. A licensed insurer provides the cover, and we provide the trigger: a verified crash nobody cancelled, priced on sourced Hong Kong data. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
-| 15 | Alysa | It sits on top of statutory compensation, and our route to market is the Insurance Authority's sandbox, which is built for insurers and technology partners like us. | "On top of statutory rights. Route to market: IA Insurtech Sandbox." | Feedback: Hong Kong regulatory framework |
-| 16 | Maalon | And the same record extends to outdoor workers in the heat, and to the schemes in mainland China and Singapore. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
+| 10 | Simone | We tested on over eighteen hundred hours of real riding, and retraining nearly halved our false alarms. Any alarm can be cancelled within thirty seconds. | "1,865 h of real riding tested. False alarms 19.2 to 10.5 an hour." Sources: ml/PUBLIC_RIDES.md; ml/STREAMING.md | Validation, accuracy barrier |
+| 11 | Hannes | Following Imperial's feedback, the drop test protocol and data pipeline are ready, and helmet results will be in for the final, next to a live demo. | Drop test protocol page; helmet on the bench | Prototype and drop test validation |
+| 12 | Maalon | Privacy is built in, not added on. Riders opt in each shift and own a signed copy of every record. No route history, no risk score. | Consent screen, then the who-sees-what matrix | Consent, data ownership, not used against workers |
+| 13 | Alysa | A licensed insurer provides the cover; we provide the trigger, a verified crash nobody cancelled. It adds to statutory compensation, and our route to market is the Insurance Authority's sandbox. | Diagram: rider, Metrics trigger, licensed insurer, platform. "On top of statutory rights. Route: IA Insurtech Sandbox." | Insurance mechanism and Hong Kong regulation |
 
-About 190 words, 74 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
+About 105 words, 40 seconds. Line 13 runs about 11 seconds; that is fine here.
 
-## Part 7. End card (4:19 to 4:27)
+## Part 7. End card (3:45 to 3:53)
 
 Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 - Metrics. Proof for the people who keep this city moving.
@@ -160,20 +157,20 @@ Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 | The specific gap and why it persisted | Lines 1 to 3 |
 | Evidence base | Source corners on every number; the full evidence table is one click from the repo on the end card |
 | Research-grade prototype others can replicate | Part 4, the live app on a real phone and laptop; open repo on the end card |
-| Failure modes and limits | Lines 10 and 11 |
+| Failure modes and limits | Line 10; limits section in the README and Q&A notes |
 | Imperial feedback: STEMB composition | Line 9, end card with each name and pillar |
-| Imperial feedback: prototype and drop test validation | Part 4 live app; line 12 (drop tests before the final, live demo) |
-| Imperial feedback: insurance mechanism and regulation | Part 3; lines 14 and 15 (trigger, licensed insurer, on top of statutory rights, sandbox pilot) |
-| Imperial feedback: consent, ownership, not used against workers | Part 4 consent screen and labour view; line 13 |
-| Validation with uncertainty | Part 4 (held-out people, 95% CIs, real riding hours); line 11 |
-| Regulatory pathway | Part 3 (Labour and Welfare Bureau regime); lines 14 and 15 (licensed insurer, statutory rights kept, Insurance Authority sandbox) |
+| Imperial feedback: prototype and drop test validation | Part 4 live app; line 11 (drop tests before the final, live demo) |
+| Imperial feedback: insurance mechanism and regulation | Part 3; line 13 (trigger, licensed insurer, on top of statutory rights, sandbox) |
+| Imperial feedback: consent, ownership, not used against workers | Part 4 consent screen and labour view; line 12 |
+| Validation with uncertainty | Part 4 (held-out people, 95% CIs, real riding hours); line 10 |
+| Regulatory pathway | Part 3 (Labour and Welfare Bureau regime); line 13 (licensed insurer, statutory rights kept, Insurance Authority sandbox) |
 | Financial model | Part 3 revenue card, labelled modelled |
 | Stakeholders: government, industry, civil society | Parts 3 and 4: platforms, insurers, dispatch, Labour Department; riders and unions in lines 1 and 13 |
-| Risk register, top three barriers | Line 11 (accuracy), line 13 (rider trust), lines 14 and 15 (insurer and regulator) |
-| Ethics and dual use | Line 13 and Part 4 labour view: no route history, no risk score, no platform surveillance |
+| Risk register, top three barriers | Line 10 (accuracy), line 12 (rider trust), line 13 (insurer and regulator) |
+| Ethics and dual use | Line 12 and Part 4 labour view: no route history, no risk score, no platform surveillance |
 | Conflicts of interest | Part 3: "We are not the insurer" |
 | STEMB integration and teamwork | Line 9; every member speaks at least twice; end card |
-| Vision | Line 16 |
+| Vision | Part 3: the mainland and Singapore schemes |
 
 ## Speaking count
 
@@ -181,11 +178,11 @@ Each person speaks only on their own field.
 
 | Speaker | Field | Lines |
 |---|---|---|
-| Alysa | Business: law, market, money, insurance | 2, 8, Part 3, Part 5 (twice), 14, 15 |
-| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 5, 13, 16 |
-| Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 12 |
-| Karina | ML and software: the model, the data | 6, Part 4 (all of it, on camera in the corner), Part 5, 10 |
-| Simone | ML and software: the app and the backend | 4, 11 |
+| Alysa | Business: law, market, money, insurance | 2, 8, Part 3, Part 5 (twice), 13 |
+| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 5, 12 |
+| Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 11 |
+| Karina | ML and software: the model, the data | 6, Part 4 (all of it, on camera in the corner), Part 5 |
+| Simone | ML and software: the app and the backend | 4, 10 |
 
 ## Capture list
 
@@ -195,7 +192,7 @@ Each person speaks only on their own field.
 | C2 | Karina's phone, /rider | Consent, On shift, drop onto a cushion, countdown | 4 |
 | C3 | Laptop screen | /demo, the terminal verify shot, /labour, the README results section, recorded with the face camera running | 4 |
 | C4 | Face camera | Karina narrating Part 4, recorded at the same time as C2 and C3 | 4 |
-| C5 | Relay locations | Lines 1 to 16, each shot twice | 2, 6 |
+| C5 | Relay locations | Lines 1 to 13, each shot twice | 2, 6 |
 | C6 | Split screen | Rider and road footage for the left side | 5 |
 
 Put files in footage/clips/part1 to part7, named in order. footage/ is never committed.
