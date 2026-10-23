@@ -2,7 +2,7 @@
 
 Metrics, Team Metrics. Imperial Global Hackathon Hong Kong and Macau 2026, Challenge 6.
 
-Hard limit 4:30. Target 3:58. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
+Hard limit 4:30. Target 4:20. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
 
 ## Structure
 
@@ -13,13 +13,13 @@ Hard limit 4:30. Target 3:58. English. Burned-in subtitles on every spoken line.
 | 3. The market | 1:20 to 1:50 | Who pays, why now, how big | Feasibility, translation, impact |
 | 4. Screen recording | 1:50 to 2:40 | Karina walks through the live app, face in the corner | Design and build, innovation, validation, ethics |
 | 5. Split screen | 2:40 to 3:05 | Same crash, today versus with the record | Impact, social return |
-| 6. Risks and next steps | 3:05 to 3:50 | Team relay: limits, top three risks and fixes, ethics, what comes next | Validation, risk register, ethics, research integrity |
-| 7. End card | 3:50 to 3:58 | Team, quote, live URL | Teamwork |
+| 6. Limits, risks and next steps | 3:05 to 4:12 | Team relay: limits, top three barriers, ethics, insurer pathway, answers to Imperial feedback | Validation, risk register, ethics, translation, research integrity |
+| 7. End card | 4:12 to 4:20 | Team, quote, live URL | Teamwork |
 
 Rules for the edit:
 - Every number on screen has a source line in the corner. Anything modelled or targeted says so on screen.
 - Synthetic data is captioned "synthetic" wherever it appears.
-- No line longer than nine seconds in the relays. Cut on every line.
+- No line longer than nine seconds in the relays, except lines 14 and 15 in Part 6. Cut on every line.
 - No music swell over the problem lines. No smiling on the problem lines.
 
 ## Part 1. Intro clips (0:00 to 0:20)
@@ -125,23 +125,23 @@ Vertical split. Left header TODAY, grey and silent. Right header WITH THE RECORD
 
 About 40 words, 25 seconds.
 
-## Part 6. Risks and next steps (3:05 to 3:50)
+## Part 6. Limits, risks and what comes next (3:05 to 4:12)
 
-Relay again, one line each, a single card behind each line. This is where we answer the hardest questions before anyone asks.
+Relay, one line each, each person on their own field. A single card behind each line. This part answers, before anyone asks: what the evidence does not prove, the top three barriers (accuracy, rider trust, insurer and regulator), the dual use risk, and each point in Imperial's feedback on our problem statement.
 
-| # | Speaker | Line | Card behind |
-|---|---|---|---|
-| 10 | Karina | Our limit: we trained on volunteers falling onto mats, not road crashes. We say so everywhere. | "Simulated falls. Limits listed on the site and in the repo." |
-| 11 | Simone | Risk one, false alarms. About ten an hour of phone handling, one every five hours on real motorbike rides. All can be cancelled. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset |
-| 12 | Alysa | Risk two, platforms resisting. They are liable either way, and the record settles who pays. | "Liable either way. Apportionment by lookup." |
-| 13 | Maalon | Risk three, surveillance. No route history, no risk score, and research data deleted on request. | Consent screen, then the who-sees-what matrix |
-| 14 | Hannes | Next on the hardware: helmet drop tests on a rig, and a stronger sensor so hard impacts do not clip. | Drop test protocol page; helmet on the bench |
-| 15 | Karina | Next on the model: real rides from riders who opt in, and retraining on their own labels. | Research mode toggle on /rider |
-| 16 | Alysa | Then outdoor workers in the heat, and the mainland and Singapore schemes. One record for all of them. | Map card: Hong Kong, Shenzhen, Singapore |
+| # | Speaker | Line | Card behind | Answers |
+|---|---|---|---|---|
+| 10 | Karina | Our biggest limit: we trained on volunteers falling onto mats, not road crashes. So riders who opt in can now donate real rides for us to retrain on. | "Simulated falls. Real rides next." Research mode toggle on /rider | Limits of the evidence, further research |
+| 11 | Simone | Will it cry wolf? About ten false alarms an hour of phone handling, one every five hours of real riding. Every alarm cancels in thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
+| 12 | Hannes | Imperial asked us for drop test evidence. The protocol is written; we run it before the final and demo it live. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
+| 13 | Maalon | It never diagnoses, and it can't be turned against riders: they opt in each shift and own their record. No routes, no risk score. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
+| 14 | Alysa | We are not an insurer, and no insurer has signed with us yet. A licensed insurer writes the cover; we supply the trigger: a verified crash that nobody cancelled. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
+| 15 | Alysa | It adds to statutory compensation, never replaces it. Next, a licensed insurer takes us into the Insurance Authority's sandbox as its technology partner. | "Tier one on top of statutory rights. Next: Insurtech Sandbox pilot." | Feedback: Hong Kong regulatory framework |
+| 16 | Maalon | Then outdoor workers in the heat, and the mainland and Singapore schemes. One record for all of them. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
 
-About 115 words, 45 seconds.
+About 170 words, 67 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
 
-## Part 7. End card (3:50 to 3:58)
+## Part 7. End card (4:12 to 4:20)
 
 Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 - Metrics. Proof for the people who keep this city moving.
@@ -161,15 +161,19 @@ Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 | Evidence base | Source corners on every number; the full evidence table is one click from the repo on the end card |
 | Research-grade prototype others can replicate | Part 4, the live app on a real phone and laptop; open repo on the end card |
 | Failure modes and limits | Lines 10 and 11 |
+| Imperial feedback: STEMB composition | Line 9, end card with each name and pillar |
+| Imperial feedback: prototype and drop test validation | Part 4 live app; line 12 (drop tests before the final, live demo) |
+| Imperial feedback: insurance mechanism and regulation | Part 3; lines 14 and 15 (trigger, licensed insurer, on top of statutory rights, sandbox pilot) |
+| Imperial feedback: consent, ownership, not used against workers | Part 4 consent screen and labour view; line 13 |
 | Validation with uncertainty | Part 4 (held-out people, 95% CIs, real riding hours); line 11 |
-| Regulatory pathway | Part 3 (Labour and Welfare Bureau regime) and line 12; Insurance Authority sandbox and PDPO mapping in the Q&A notes |
+| Regulatory pathway | Part 3 (Labour and Welfare Bureau regime); lines 14 and 15 (licensed insurer, statutory rights kept, Insurance Authority sandbox) |
 | Financial model | Part 3 revenue card, labelled modelled |
 | Stakeholders: government, industry, civil society | Parts 3 and 4: platforms, insurers, dispatch, Labour Department; riders and unions in lines 1 and 13 |
-| Risk register, top three barriers | Lines 11, 12, 13 |
+| Risk register, top three barriers | Line 11 (accuracy), line 13 (rider trust), lines 14 and 15 (insurer and regulator) |
 | Ethics and dual use | Line 13 and Part 4 labour view: no route history, no risk score, no platform surveillance |
 | Conflicts of interest | Part 3: "We are not the insurer" |
 | STEMB integration and teamwork | Line 9; every member speaks at least twice; end card |
-| Vision | Lines 14 to 16 |
+| Vision | Line 16 |
 
 ## Speaking count
 
@@ -177,10 +181,10 @@ Each person speaks only on their own field.
 
 | Speaker | Field | Lines |
 |---|---|---|
-| Alysa | Business: law, market, money | 2, 8, Part 3, Part 5 (twice), 12, 16 |
-| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 5, 13 |
-| Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 14 |
-| Karina | ML and software: the model, the data | 6, Part 4 (all of it, on camera in the corner), Part 5, 10, 15 |
+| Alysa | Business: law, market, money, insurance | 2, 8, Part 3, Part 5 (twice), 14, 15 |
+| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 5, 13, 16 |
+| Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 12 |
+| Karina | ML and software: the model, the data | 6, Part 4 (all of it, on camera in the corner), Part 5, 10 |
 | Simone | ML and software: the app and the backend | 4, 11 |
 
 ## Capture list
@@ -195,6 +199,27 @@ Each person speaks only on their own field.
 | C6 | Split screen | Rider and road footage for the left side | 5 |
 
 Put files in footage/clips/part1 to part7, named in order. footage/ is never committed.
+
+## Q&A: what the judges are likely to poke at
+
+Not read in the video. One short answer each, owner in brackets.
+
+| They ask | We answer |
+|---|---|
+| Do you work with an insurer? (Alysa) | Not yet, and we say so. We are the trigger and the evidence, not the risk carrier. Next step: a licensed general insurer writing accident (Class 1) and liability (Class 13) cover enters the Insurance Authority's Insurtech Sandbox with us as its technology partner; the sandbox is open to authorised insurers working with technology companies. Precedents for no-claim-form parametric cover in Hong Kong exist, such as typhoon signal cover. |
+| Do you need an insurance licence? (Alysa) | No, as long as we bear no risk, never call ourselves an insurer (Cap 41 s2(3)) and never invite riders to claim (s64G). We provide the verified record as clerical support for the insurer (s123(2)). We will get a legal opinion before the pilot. |
+| How does the data become a payout? (Alysa) | Parametric conditions: rider on shift, model probability at or above 0.5, no cancel within 30 seconds, signed record. Tier one is a fixed amount paid at the deadline. Tier two follows a hospital record. Statutory compensation is untouched. |
+| Are the money figures real? (Alysa) | Payout and premium are derived from sourced inputs (rider earnings, injury rates, statutory amounts) with a low, central and high range in docs/research/INSURANCE_MODEL.md. Our own fee is a pricing choice and labelled as such. |
+| Where are the drop tests? (Hannes) | Protocol written, rig being built, results before the Grand Final. Meanwhile: held-out people, 1,865 hours of public real riding, and the live demo. |
+| Your data is simulated falls. Why believe it? (Karina) | You should not believe it proves road performance, and we say so. It proves the method works on people it never saw. Real rides come from research mode. |
+| What about false alarms? (Simone) | 10.5 an hour of everyday phone handling, 0.2 an hour on real motorbike riding, 30 second cancel, helmet and phone must agree. |
+| Could a platform use this to watch riders? (Maalon) | No route history, no risk score, opt-in per shift, platforms see events only, government sees totals only, event data never sets an individual premium. |
+| Could a platform use "no record" to deny a claim? (Alysa) | No record never means no claim. The statutory route stays open; the record only adds proof. |
+| Is the triage note medical advice? (Maalon) | No. It is a probable injury pattern from head impact research, worded as probable, and a person still calls 999. |
+| Fraud? (Simone) | Device keys, one event per rider per minute, signed and chained records, small fixed tier one, tier two needs a hospital record. |
+| Why only phones and a HK$110 clip? (Hannes) | Phone first so no rider pays for hardware; the clip adds crash-grade data for motorbike riders; a 200 g sensor is next. |
+| Hong Kong is small. Why here? (Alysa) | The first no-fault platform regime with multi-app apportionment is being written here. The market is the mainland scheme and Singapore's. |
+| Your earlier statement cited 13%. Where did it go? (Karina) | We could not trace its original source, so we replaced it with a sourced figure: 2 of 22 injured riders compensated, HKFTU survey of 168 riders, 2021. |
 
 ## Before export
 
