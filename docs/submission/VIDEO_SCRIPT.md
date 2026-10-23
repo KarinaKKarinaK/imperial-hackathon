@@ -1,12 +1,13 @@
 # Video script
 
-Target 3:35. Ceiling 5:00. Four speakers on camera: Karina, Hannes, Maalon, Alysa. Simone takes any engineering line or runs the demo hands in part 3.
+Target 4:15. Ceiling 5:00. Four speakers on camera: Karina, Hannes, Maalon, Alysa. Simone takes any engineering line or runs the demo hands in part 3.
 
 Four parts:
 1. Cold open, 0:00 to 0:20. No faces. Big type, hard cuts, a beat under it.
 2. Relay, 0:20 to 1:30. One person, one line, one location. Cut on every line. No line over four seconds.
 3. Split screen, 1:30 to 3:10. Left: today. Right: with the record. Same rider, same crash, two endings.
-4. Close, 3:10 to 3:30.
+4. Proof, risks and market, 3:10 to 3:55. Why we believe it works, what could go wrong and what we did about it, who pays.
+5. Close, 3:55 to 4:15.
 
 Rules. Every number on screen has a source line in the corner. Anything marked [target] or [drop test] is not measured yet and gets filled or cut before export. No em dashes anywhere. Speakers do not smile on the problem lines.
 
@@ -74,7 +75,7 @@ Vertical split. Left header: TODAY. Right header: WITH THE RECORD. Same rider, s
 | Time | Left: today | Right: with the record | Narration |
 |---|---|---|---|
 | 1:30 | Rider in rain, next order buzzing. | Same rider. Helmet LED on. App: "On shift: Platform A". | Maalon: "Same rider. Same rain. Same order." |
-| 1:45 | Crash. Black frame. Text: NO RECORD. | Screen recording of /demo: "Crash" pressed under Feed the detector. Helmet sensor panel spikes past the 6 g line, readout shows p = 0.99 crash, old rule: no. Text: Impact 14g. Tilt 82 degrees. Still 8 seconds. [replace with drop test values] | Hannes: "Impact. Fall. Stillness. The model sees it in under a second. The old rule would have missed it." |
+| 1:45 | Crash. Black frame. Text: NO RECORD. | Screen recording of /demo: "Crash" pressed under Feed the detector. Helmet sensor panel spikes past the 6 g line, readout shows p = 0.99 crash, old rule: no. Text: Impact, tilt and stillness values as the readout shows them. Caption: "Synthetic crash window" until drop test values exist. | Hannes: "Impact. Fall. Stillness. The model sees it in under a second. The old rule would have missed it." |
 | 2:00 | Rider on the ground, phoning a friend. Text: WHO DO I CALL? | Phone screen (/rider): orange 30, 29, 28 countdown, "I'm OK" button untouched. Cut to /demo map: orange pulse drops on Mong Kok, dispatcher card slides in: "Probable blunt force trauma. Peak 14.2 g, tilt 82 deg, still 8 s." | Maalon: "No answer. Triage already knows where, and how hard." |
 | 2:15 | Rider at home, leg in a cast. Text: NO INCOME. | Underwriter panel on /demo: status pill flips to Paid, "Paid out HK$8,000". Phone screen shows the yellow Paid card: "Your record. You own this." Text: Paid in 24 hours. [target] | Alysa: "One event. One payout. No argument." |
 | 2:30 | Email to platform. Reply: "You were not on a job." | The rider's signed record page /r/EVT-...: "Signature verified" pill, platform, order, "1 min 34 s left on the delivery clock", verification code. Then the who-sees-what dots on /record. | Alysa: "Which app. Which order. Which second. How many seconds left on the clock. Signed. Done." |
@@ -82,8 +83,8 @@ Vertical split. Left header: TODAY. Right header: WITH THE RECORD. Same rider, s
 | 2:55 | Insurer's screen: blank. Text: NO DATA. NO PRICE. NO COVER. | /demo: Rain toggled on, heat set to red, the premium per window ticks from HK$0.60 to HK$1.26 live. Then the model section of the landing page: the recall bars, rule at 48%, gradient boosting at 93%. Text: PRICED PER DELIVERY. VERIFIED PER CLAIM. | Karina: "Insurers get a loss history. Platforms get a fair premium. Riders get paid." |
 
 Stats strip, bottom of the right side, one at a time from 2:45:
-- Drop test detection: [X]% (95% CI [a, b]) [drop test]
-- False alarms in controls: [n] of [m] [drop test]
+- Falls caught on people it never saw: 93%, at 93% precision. Source corner: UMAFall, leave-subjects-out, ml/out/results.md
+- False alarms on real motorbike riding: 0.2 per hour over 15.3 h. Source corner: TU Wien motorcyclist IMU dataset, ml/PUBLIC_RIDES.md
 - Settlement: 24 hours [target] vs months today
 - Hong Kong pilot: 15,000 riders. Mainland scheme next door: 84 million workers, 14 platforms.
 
@@ -97,7 +98,7 @@ All from the live site, so the video and the judges' own browser match. Record a
 |---|---|---|---|
 | D1 | metricsfile.vercel.app/demo | Reset. Start shift. Let the rider move 5 s on the 3D map. | Part 3, 1:30 |
 | D2 | /demo | Press Pothole, then Set down, then Bag drop under Feed the detector. Hold on each readout: p = 0.00, 0.00, 0.20, no event. | Part 3, 1:45 (short insert before the crash) |
-| D3 | /demo | Press Crash. Capture the sensor spike, the p = 0.99 readout with "old rule: no", the orange pulse on the map, the dispatcher card, the countdown on the phone panel. | Part 3, 1:45 and 2:00 |
+| D3 | /demo | Press Crash. Capture the sensor spike, the probability readout with "old rule: no", the orange pulse on the map, the dispatcher card, the countdown on the phone panel. | Part 3, 1:45 and 2:00 |
 | D4 | /demo | Let the 30 s run out. Capture the status pill flipping to Paid and HK$8,000 on the underwriter panel and the phone panel. | Part 3, 2:15 |
 | D5 | /record | Slow scroll from the top tile to the Platform at impact row, then the who-sees-what matrix. | Part 3, 2:30 |
 | D6 | /demo | Toggle Rain on, Heat to red. Capture the premium per window changing. | Part 3, 2:55 |
@@ -110,7 +111,23 @@ All from the live site, so the video and the judges' own browser match. Record a
 
 The site uses placeholder money figures and a synthetic crash window. Say "synthetic" in the caption on D3 if the drop test numbers are not in by the shoot.
 
-## Part 4. Close (3:10 to 3:30)
+## Part 4. Proof, risks and market (3:10 to 3:55)
+
+Why judges should believe it, what could break it, and who pays. Faces again, one line each, cut on every line. Behind each line a single card on the dusk gradient. Source corner on every number.
+
+| # | Speaker | Line | Card behind |
+|---|---|---|---|
+| 20 | Alysa | Is there a market? The law creates the buyer. Platforms carry the liability, and insurers need data to price it. | "Platforms liable, no-fault, apportioned across apps." Source: LWB proposal, Jul 2026 |
+| 21 | Alysa | Hong Kong is where we prove it. Next door, 12.3 million riders already sit in a national injury scheme with flat premiums and manual claims. | Bar chart: 12,900 HK riders, 12.3M mainland covered, 84M new-forms workers. Sources: C&SD No. 81; Asia Insurance Review; CGTN |
+| 22 | Karina | Does it work? On people it has never seen, it catches 93 percent of falls at 93 percent precision. On fifteen hours of real motorbike riding, one false alarm every five hours. | Two numbers, big. Sources: ml/out/results.md; TU Wien dataset |
+| 23 | Hannes | We know where it breaks: a phone pulled out for a call. So the rider gets thirty seconds to cancel, and with the helmet on, both sensors must agree. | "10.5 false alarms per hour of phone handling. Cancelled in 30 s." Source: ml/STREAMING.md |
+| 24 | Maalon | Riders keep it because they own it. No route. No score. Delete it any time. | Consent screen, then the who-sees-what matrix |
+| 25 | Simone | Every record is signed. Change one number and it fails verification. | /api/verify returning valid, then invalid after one edit |
+| 26 | Karina | Our biggest risks, and what we did about each one, are written down in the repo. Not hidden. | Risk matrix card: five dots, each with a one-word mitigation (see presenter notes) |
+
+7 lines, about 140 words, 45 seconds. If it runs long, cut 25 first, then 24.
+
+## Part 5. Close (3:55 to 4:15)
 
 Full screen. Whole team, one shot, rooftop.
 
@@ -130,8 +147,9 @@ Captions: burn in English subtitles for every spoken line (CAPTIONS.srt is the s
 - Part 1: 20 seconds, no speech.
 - Part 2: 75 seconds, about 245 words.
 - Part 3: 100 seconds, about 110 words of narration. Let the visuals breathe.
-- Part 4: 20 seconds, 30 words.
-- Total about 385 words, 3:35.
+- Part 4: 45 seconds, about 140 words.
+- Part 5: 20 seconds, 30 words.
+- Total about 525 words, 4:15. Under the 5:00 ceiling with 45 seconds to spare.
 
 ## Shot list by location
 - HKUST entrance and road crossing: 1, 2
@@ -144,10 +162,11 @@ Captions: burn in English subtitles for every spoken line (CAPTIONS.srt is the s
 - Whiteboard: 14
 - Outdoors in sun: 15
 - Corridor: 17
-- Rooftop: 18, Part 4
+- Rooftop: 18, Part 5
+- Part 4 faces: any clean wall, same framing as the relay; cards added in the edit
 
 ## Before export
-- [ ] Every [target] and [drop test] filled or cut
+- [ ] Every [target] filled, labelled on screen or cut
 - [ ] Source line on every stat
 - [ ] Para 385 quoted verbatim on the final card
 - [ ] One caption that a flat drop is not a collision
@@ -157,3 +176,50 @@ Captions: burn in English subtitles for every spoken line (CAPTIONS.srt is the s
 - [ ] Live URL on the final card
 - [ ] Every member speaks at least twice
 - [ ] Synthetic data labelled as synthetic wherever it is on screen
+
+## Presenter notes: risks, mitigations, evidence, market
+
+For the Q&A and the Grand Final slides. Not read out in the video. Likelihood and impact are the team's own assessment. Every number has its source in docs/research/EVIDENCE_TABLE.md, the README or ml/.
+
+### Risk register
+
+| # | Risk | Likelihood | Impact | Mitigation already in place | Next mitigation | Owner |
+|---|---|---|---|---|---|---|
+| 1 | Platforms refuse a record that proves riders got hurt | Medium | High | They are liable either way under the July 2026 proposal. The record settles multi-app apportionment (activeJobs, apportionment) and defends against misattributed claims | Pilot with the platform that gains most from a lower premium | Alysa |
+| 2 | Riders do not trust it or switch it off | Medium | High | Opt-in per shift, rider device keys, no route history, no risk score, pseudonymous research data deleted on request, PDPO mapping in GOVERNANCE.md | Rider interviews, native speaker check of Nepali and Urdu | Maalon |
+| 3 | False alarms erode trust and cost money | Medium | Medium | 30 s cancel. Hard negative mining cut everyday false alarms from 19.2 to 10.5 per hour. 0.2 per hour on real motorbike riding. Helmet and phone must agree within 1 s. Basis risk shown on /underwriter | Real ride data from research mode, retrain on rider labels | Karina, Simone |
+| 4 | A real crash is missed | Low to medium | High | 200 of 208 falls caught in the live loop on unseen people. Tier two hospital claim path still exists for anything tier one misses. The statutory route is never replaced | Drop tests, 200 g sensor so hard impacts do not clip | Hannes |
+| 5 | Fraud: staged or spoofed crashes | Medium | Medium | Rider keys on every write, Ed25519 signatures, hash chain, signed settlements, one event per rider per minute | The clip signs its own data so a record proves a device measured it | Simone |
+| 6 | Regulation lands differently from the proposal | Medium | Medium | We are not the insurer, so no licence risk. The schema already holds every field the proposal names (platform, order, apportionment) | Insurance Authority sandbox conversation | Alysa, Maalon |
+| 7 | Hong Kong alone is too small | High | Medium | Hong Kong is the proving ground, not the market. The same record fits the mainland national scheme and Singapore's rule | One insurer or reinsurer that works across the border | Alysa |
+| 8 | Evidence is simulated falls, not road crashes | High | Medium | Stated openly. Held-out people, shuffled-label test, public real riding data, limits section on the site | Research mode riding hours, drop tests, pilot data | Karina |
+
+Risk matrix card for line 26: plot 1, 2, 3, 5, 7 on likelihood against impact, each dot labelled with one word: "liable", "owned", "cancel", "signed", "travels".
+
+### Why we believe this works
+
+- The buyer is created by law. The July 2026 proposal makes platforms liable on a no-fault basis and splits liability across apps. Three jurisdictions moved in 18 months (Singapore from 1 Jan 2025, the mainland nationwide from Jul 2026, Hong Kong proposed Jul 2026). None has event-level verification.
+- The cost of no record is on file. One typhoon injury took five years and the High Court to settle (HK$1.35m, Sep 2025). In a union survey only 2 of 22 injured riders were compensated by the platform (HKFTU, 2021).
+- The detector holds up where we could test it honestly: 93% recall and 93% precision on people it never saw, AUROC 0.992, chance-level when the labels are shuffled, 0.2 false alarms per hour on 15.3 h of real motorbike riding.
+- The trust layer is real, not a slide: signatures, hash chain, signed settlements and rider keys, all checked by an automated production test that passes.
+- It is cheap to start. The phone is the sensor. The helmet clip is HK$110 of retail parts for riders who want crash-grade data.
+
+### Market, bottom up
+
+| Layer | Who | Size | Source |
+|---|---|---|---|
+| Proving ground | Hong Kong delivery platform workers | about 12,900, two platforms after Deliveroo left | C&SD Thematic Household Survey No. 81 |
+| Adjacent in Hong Kong | Employees' compensation system | 41,254 cases a year; HK$12.1bn general liability premiums | Labour Department 2024; Insurance Authority |
+| First real market | Mainland platform occupational injury scheme | 12.3m riders covered by Jul 2025, nationwide across 14 platforms from Jul 2026; Meituan alone paid over 3bn yuan in four years | Asia Insurance Review; Insurance Business; China Daily |
+| Wider pool | New-forms-of-employment workers in the mainland | 84 million | ACFTU via CGTN |
+| Ceiling | Motorcyclists in Asia | over 400 million | Insurance Business Asia |
+| Category | Parametric insurance | USD 3.5bn to 21bn in 2025, 12 to 14% a year | GMI, Mordor |
+
+Revenue model: platforms and insurers pay a monthly fee per insured rider plus a fee per verified event. Riders never pay. Hong Kong pilot revenue is low single-digit HK$ millions a year [modelled]; one large platform at 10 million riders is the business case [modelled, figures pending the financial model]. Say "modelled" whenever a revenue number is spoken.
+
+### Questions this section should answer before anyone asks
+
+- "What if it is wrong?" Risk 3 and 4 rows, the 30 s cancel, tier two backstop.
+- "Why would a platform pay for this?" Risk 1 row and the apportionment lookup.
+- "Is the market real or a slide?" The mainland row: premiums are already being paid today.
+- "Why trust a student prototype?" The verification demo in line 25 and the production test.
