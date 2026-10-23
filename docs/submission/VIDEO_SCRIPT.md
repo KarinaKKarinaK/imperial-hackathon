@@ -77,19 +77,20 @@ About 80 words, 30 seconds.
 
 | Seconds | Video time | Screen | Karina says | Caption or source corner |
 |---|---|---|---|---|
-| 0 to 3 | 1:50 | Face camera grows to fill the centre. Karina lifts her phone to the lens, screen facing the camera, /rider on shift with the live trace moving | "This is the live app, running on my phone." | |
-| 3 to 7 | 1:53 | Cut to the phone screen recording, full screen: On shift, trace moving. Face shrinks to the circle bottom right | "My phone is the sensor. It streams motion to our server, only while I'm on shift." | |
-| 7 to 10 | 1:57 | Face camera: she drops the phone onto a cushion in frame. No words, keep the thud | (silent) | |
-| 10 to 14 | 2:00 | Phone screen recording: the 30 second countdown and the big I'm OK button | "A fall. Thirty seconds to cancel." | |
-| 14 to 19 | 2:04 | Laptop /demo, Second app already on: press Crash, the sensor panel spikes, the probability reads high | "Our model catches 93 percent of falls on people it never saw, at 93 percent precision." | UMAFall, leave-subjects-out, 95% CIs. Demo rider, synthetic crash window |
-| 19 to 25 | 2:09 | Dispatcher card slides in. Hover Copy for 999 | "No tap, and dispatch gets the location and the likely injury." | |
-| 25 to 31 | 2:15 | Underwriter panel: Paid, split 50 and 50 between Platform A and B, Settlement verified | "The record names both apps, so tier one pays and splits between them." | Placeholder amounts |
-| 31 to 37 | 2:21 | Terminal beside the browser: verify returns valid. Change payoutHkd to 80000, run again, returns invalid | "Every record is signed and hash-chained. Edit one number and verification fails." | |
-| 37 to 42 | 2:27 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | "The Labour Department sees totals only. No rider ids, no routes." | |
-| 42 to 48 | 2:32 | README, "Are the numbers real?": the results table, then the real riding rows | "On fifteen hours of real motorbike riding, one false alarm every five hours." | TU Wien motorcyclist IMU dataset |
-| 48 to 50 | 2:38 | Face circle grows back. Karina holds the phone up again, showing the Paid card | "Try it yourself: metricsfile dot vercel dot app." | metricsfile.vercel.app |
+| 0 to 3 | 1:50 | Face camera grows to fill the centre. Karina lifts her phone to the lens, screen facing the camera, /rider on shift with the live trace moving | "This is the live app, running on my phone." |  |
+| 3 to 6 | 1:53 | Cut to the phone screen recording, full screen: On shift, trace moving. Face shrinks to the circle bottom right | "My phone is the sensor, only while I'm on shift." |  |
+| 6 to 9 | 1:56 | Face camera: she drops the phone onto a cushion in frame. No words, keep the thud | (silent) |  |
+| 9 to 12 | 1:59 | Phone screen recording: the 30 second countdown and the big I'm OK button | "A fall. Thirty seconds to cancel." |  |
+| 12 to 19 | 2:02 | README, How it works: the system architecture diagram. Slow pan left to right: rider device, Metrics API, who reads the record | "Under the hood: phone or helmet, our model, a thirty second cancel, then one signed record everyone reads." | README, How it works |
+| 19 to 24 | 2:09 | Laptop /demo, Second app already on: press Crash, the sensor panel spikes, the probability reads high | "Our model catches 93 percent of falls on people it never saw, at 93 percent precision." | UMAFall, leave-subjects-out, 95% CIs. Demo rider, synthetic crash window |
+| 24 to 28 | 2:14 | Dispatcher card slides in. Hover Copy for 999 | "No tap, and dispatch gets the location and likely injury." |  |
+| 28 to 33 | 2:18 | Underwriter panel: Paid, split 50 and 50 between Platform A and B, Settlement verified | "The record names both apps, so tier one pays and splits between them." | Placeholder amounts |
+| 33 to 37 | 2:23 | Terminal beside the browser: verify returns valid. Change payoutHkd to 80000, run again, returns invalid | "Every record is signed. Edit one number and verification fails." |  |
+| 37 to 41 | 2:27 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | "The Labour Department sees totals only. No names, no routes." |  |
+| 41 to 46 | 2:31 | README, "Are the numbers real?": the real riding rows | "On fifteen hours of real motorbike riding, one false alarm every five hours." | TU Wien motorcyclist IMU dataset |
+| 46 to 50 | 2:36 | Face circle grows back. Karina holds the phone up again, showing the Paid card | "Try it yourself: metricsfile dot vercel dot app." | metricsfile.vercel.app |
 
-About 105 words, about 45 seconds spoken plus a 3 second silent drop.
+About 120 words at a brisk pace, about 46 seconds, plus a 3 second silent drop.
 
 What each beat shows the judges:
 
@@ -97,6 +98,7 @@ What each beat shows the judges:
 |---|---|
 | Phone held up to the camera, then the phone as sensor | Design and build: a working prototype on a real phone, not a mock-up |
 | 93% at 93% on unseen people | Validation: held-out people, confidence intervals |
+| How it works over the architecture diagram | Replicable design: the whole system in one picture |
 | Dispatch and the record naming both apps | Problem fit: triage, and multi-app apportionment from the July 2026 proposal |
 | Tier one, split, signed and chained | Innovation and translation: the parametric trigger and the data standard |
 | Verification fails on one edit | Trust: tamper evidence anyone can check |
