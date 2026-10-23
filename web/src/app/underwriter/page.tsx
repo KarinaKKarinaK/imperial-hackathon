@@ -28,7 +28,7 @@ export default function UnderwriterPage() {
       <section className="tile tile-dusk tile-grain mt-4 min-h-[70vh] p-6">
         <UnderwriterPanel rider={snap?.rider ?? null} events={events} premium={snap?.premiumWindowHkd ?? 0} />
       </section>
-      <p className="mt-4 text-xs opacity-50">All money on this screen is an illustrative placeholder until the financial model supplies sourced figures. The licensed insurer carries the risk, not Metrics.</p>
+      <p className="mt-4 text-xs opacity-50">Money on this screen is the central case of our model: tier one is half a month of average rider income (HK$10,900, Labour Department survey), the premium comes from injury rates and statutory amounts. Range and sources: docs/research/INSURANCE_MODEL.md. No insurer has signed yet; a licensed insurer would carry the risk, not Metrics.</p>
     </main>
   );
 }

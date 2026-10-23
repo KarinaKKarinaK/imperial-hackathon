@@ -60,7 +60,7 @@ const STEPS = [
     time: "t + 1 day",
     title: "No form. No adjuster. Paid.",
     body: "A verified event is the trigger. A fixed amount reaches the rider inside a day.",
-    stat: "HK$8,000",
+    stat: "HK$5,450",
     statLabel: "fixed first-tier payout, target",
     tone: "dusk",
   },

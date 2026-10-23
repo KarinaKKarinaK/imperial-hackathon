@@ -23,7 +23,7 @@ Not done yet, and listed as next steps in the README: helmet drop tests, running
 2. Under **Shift**, put the rider on shift.
 3. Under **Feed the detector**, press **Pothole**, **Set down** and **Bag drop**. Each window goes through the real model. Note the probability shown: these should not create an event (bag drop sometimes does; that is a known limit).
 4. Press **Crash**. An event opens with a 30 second cancel countdown. The dispatcher and underwriter panels update.
-5. Wait 30 seconds. The status changes to paid. The payout is a placeholder figure.
+5. Wait 30 seconds. The status changes to paid. The payout is the central case of our model, HK$5,450 (see `docs/research/INSURANCE_MODEL.md`).
 
 ## Minute 2: your own phone
 

@@ -166,7 +166,7 @@ Why the business case got stronger this week, not weaker:
 What the revenue model looks like:
 - Who pays: platforms (liability holders) and insurers (pricing and claims). Riders never pay.
 - Unit: a monthly fee per active insured rider, plus a per-event verification fee on claims.
-- Hong Kong pilot at 15,000 riders is worth low single-digit millions of HK dollars a year. That funds a pilot and a sandbox licence, nothing more. Say so on the poster.
+- Hong Kong pilot (12,900 riders) is worth about HK$0.66m a year in the central case of our sourced model (HK$0.08m to HK$10.1m, docs/research/INSURANCE_MODEL.md); an earlier estimate of low single-digit millions only holds in the high case. That funds a pilot and a sandbox licence, nothing more. Say so on the poster.
 - Mainland or Southeast Asia at one platform with 10 million riders is the real number. One slide, with the assumptions shown.
 - Hardware: the helmet clip is a cost line, not a revenue line. Phone-only tier first, helmet tier for platforms that want crash-grade data.
 

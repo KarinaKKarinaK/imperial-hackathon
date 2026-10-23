@@ -210,7 +210,7 @@ export function Limits() {
         {[
           ["Falls are a proxy", "The model is trained on public fall data and synthetic rider scenarios. Helmet drop tests and road trials come next."],
           ["Heuristics, not diagnoses", "Fatigue and heat are alerts for the rider, not clinical measures."],
-          ["Illustrative economics", "Premiums and payouts here are placeholders until the model is sourced."],
+          ["Modelled economics", "Payout and premium come from sourced inputs with a low to high range. No insurer has signed yet."],
         ].map(([t, b], i) => (
           <Reveal key={t} delay={i * 0.05} className="tile tile-night tile-lift p-6">
             <h3 className="text-lg font-medium">{t}</h3>

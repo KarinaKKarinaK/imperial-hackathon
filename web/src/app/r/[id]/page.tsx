@@ -109,7 +109,7 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider opacity-60">Insurer</p>
-              <p className="mt-1 text-lg font-medium">Licensed insurer (placeholder)</p>
+              <p className="mt-1 text-lg font-medium">Licensed insurer (to be appointed)</p>
             </div>
           </div>
           <ol className="mt-4 list-decimal space-y-1 pl-5 text-sm opacity-85">
@@ -133,7 +133,7 @@ async function RecordBody({ params }: { params: Promise<{ id: string }> }) {
               Lodge the statutory claim by <span className="font-medium">{claimByText}</span>, one year from the event.
             </li>
           </ol>
-          <p className="mt-3 text-xs opacity-60">Money shown is an illustrative placeholder. Split shares are a placeholder rule: equal across open apps.</p>
+          <p className="mt-3 text-xs opacity-60">Payout and premium are the central case of our model, built from sourced inputs. No insurer has signed yet. The split uses an equal-share default until the regime sets a rule.</p>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2">

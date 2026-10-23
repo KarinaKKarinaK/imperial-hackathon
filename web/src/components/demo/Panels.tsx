@@ -645,7 +645,7 @@ export function UnderwriterPanel({
           <p className="num mt-1 text-2xl">{claims.length === 0 ? "No claim yet" : `${claims.length} hospital claim${claims.length > 1 ? "s" : ""}`}</p>
           <p className="mt-1 text-xs opacity-70">
             The rider submits the hospital admission on a paid event. It is signed on receipt and the insurer confirms it with the hospital. {claimsVerified} of{" "}
-            {claims.length} claim signatures verified. Sick leave, medical costs and incapacity amounts are a placeholder.
+            {claims.length} claim signatures verified. Sick leave, medical costs and incapacity follow the Employees&apos; Compensation Ordinance rules the July 2026 proposal applies to platform workers.
           </p>
         </div>
       </div>
@@ -728,7 +728,7 @@ export function UnderwriterPanel({
           rider does not cancel pays {tierOne === null ? "the tier one amount" : `HK$${tierOne.toLocaleString()}`} that should not be paid. Each
           miss is a payout that never happens.
         </p>
-        <p className="mt-2 opacity-60">Split rule is a placeholder: equal shares across every app with an open order. All money is an illustrative placeholder.</p>
+        <p className="mt-2 opacity-60">Split: equal shares across every app with an open order, a default until the regime sets a rule. Money is the central case of our sourced model.</p>
       </div>
     </div>
   );

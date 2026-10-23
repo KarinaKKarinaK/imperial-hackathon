@@ -188,7 +188,7 @@ A verified, signed work-injury event record for every delivery worker, on foot, 
 1. The Jul 2026 Hong Kong proposal makes platforms liable on a no-fault basis. They will insure it. Insurers must price a risk with no history.
 2. The same proposal apportions liability between platforms when a rider is on several apps at the moment of injury. One third of HK riders are. Nobody can settle that split without a record of which job was active at impact. Lead the pitch with this.
 3. Who pays: platforms and insurers, never riders. Monthly fee per insured rider plus a per-claim verification fee.
-4. Hong Kong pilot is worth low single-digit millions of HK dollars a year. Say so. The scale column is one large platform on the mainland or in Southeast Asia.
+4. Hong Kong pilot is worth about HK$0.66m a year in the central case of our sourced model (HK$0.08m to HK$10.1m, docs/research/INSURANCE_MODEL.md). Say so. The scale column is one large platform on the mainland or in Southeast Asia.
 
 ### Judge questions and answers
 - "Hong Kong is tiny." Yes. It is the first common-law jurisdiction legislating a no-fault platform worker regime with multi-platform apportionment. Right place to set the standard, not to make money.

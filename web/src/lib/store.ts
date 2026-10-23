@@ -247,7 +247,7 @@ export function setSecondApp(riderId: string, on: boolean) {
   return r;
 }
 
-// Placeholder rule until the regime fixes one: equal shares across every app
+// Default rule until the regime sets one: equal shares across every app
 // with an open order at impact.
 export function apportion(jobs: ActiveJob[], fallback: Platform): { platform: Platform; share: number }[] {
   const platforms = [...new Set(jobs.map((j) => j.platform))];

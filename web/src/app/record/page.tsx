@@ -27,7 +27,7 @@ const GROUPS: Group[] = [
       { key: "platform", type: "string", example: "Platform A", meaning: "The app the rider was working for at the moment of impact. Makes apportionment a lookup.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
       { key: "jobId", type: "string", example: "ORD-4471", meaning: "The order the platform issued. Both sides can verify it.", sees: ["rider", "platform", "insurer", "court"] },
       { key: "activeJobs", type: "array", example: "A ORD-2417, B ORD-5083", meaning: "Every app with an open order at impact. A rider on two apps shows both, so neither platform can say the rider was working for the other. Signed.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
-      { key: "apportionment", type: "array", example: "A 0.5, B 0.5", meaning: "Each platform's share of liability. Shares add up to 1. Placeholder rule until the regime fixes one: equal split across open apps. Signed.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
+      { key: "apportionment", type: "array", example: "A 0.5, B 0.5", meaning: "Each platform's share of liability. Shares add up to 1. Default rule until the regime sets one: equal split across open apps. Signed.", sees: ["rider", "platform", "insurer", "court"], highlight: true },
     ],
   },
   {
@@ -52,7 +52,7 @@ const GROUPS: Group[] = [
       { key: "status", type: "enum", example: "paid", meaning: "detected, cancelled by the rider inside 30 s, confirmed, or paid.", sees: ["rider", "platform", "insurer", "court"] },
       { key: "cancelDeadline", type: "datetime", example: "ts + 30 s", meaning: "One tap before this and nothing leaves the phone.", sees: ["rider", "insurer"] },
       { key: "triage", type: "object", example: "Probable blunt trauma", meaning: "Mechanism and probable profile for dispatch. Probable, never a diagnosis.", sees: ["rider", "court"] },
-      { key: "insurance", type: "object", example: "HK$8,000 paid", meaning: "Premium for the window, the fixed payout, and when it was paid.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "insurance", type: "object", example: "HK$5,450 paid", meaning: "Premium for the window, the fixed payout, and when it was paid.", sees: ["rider", "platform", "insurer", "court"] },
     ],
   },
   {
@@ -61,7 +61,7 @@ const GROUPS: Group[] = [
     fields: [
       { key: "signature", type: "string", example: "Ed25519, base64url", meaning: "Signature over id, rider, platform, open orders, split, sensors, previous hash, time, deadline, mode, location, impact numbers and context.", sees: ["rider", "platform", "insurer", "court"] },
       { key: "prevHash", type: "string", example: "sha256, hex", meaning: "Hash of this rider's previous record. Records form a chain, so a deleted record leaves a visible gap. Signed.", sees: ["rider", "insurer", "court"] },
-      { key: "settlement", type: "object", example: "paid, HK$8,000", meaning: "The final outcome: status, when it was paid and the payout. Signed once final, together with the facts signature, so status and payout cannot be edited either.", sees: ["rider", "platform", "insurer", "court"] },
+      { key: "settlement", type: "object", example: "paid, HK$5,450", meaning: "The final outcome: status, when it was paid and the payout. Signed once final, together with the facts signature, so status and payout cannot be edited either.", sees: ["rider", "platform", "insurer", "court"] },
     ],
   },
   {

@@ -66,8 +66,8 @@ Alysa to camera, intercut with full-screen cards. Source corner on every card.
 |---|---|---|
 | 1:20 | "The law creates the buyer: platforms carry the liability, and insurers need data to price it." | "No-fault. Platforms liable. Split across apps." Source: Labour and Welfare Bureau proposal, Jul 2026 |
 | 1:28 | "Hong Kong is the proving ground: thirteen thousand riders and a law being written now." | "HK: 12,900 riders. 41,254 work injury claims a year." Sources: C&SD No. 81; Labour Department 2024 |
-| 1:35 | "The market is next door. China's scheme already covers twelve million riders, with flat premiums and claims checked by hand. Singapore made cover compulsory in 2025." | Bar chart: 12.3M mainland riders covered, 14 platforms, Meituan over 3bn yuan paid in. Sources: Asia Insurance Review; China Daily; Singapore MOM |
-| 1:44 | "Platforms and insurers pay per rider and per verified event. Riders never pay. We are not the insurer. We are the evidence." | "Revenue: per rider per month plus per verified event. Hong Kong pilot: low single-digit HK$ millions a year [modelled]." |
+| 1:35 | "The market is next door. China's scheme already insures thirty-seven million platform workers, at a flat rate per order, with claims checked by hand. Singapore made cover compulsory in 2025." | Bar chart: 37.27M insured, 108.7bn orders, 0.07 yuan per delivery order. Sources: SCIO briefing via Xinhua Finance, Oct 2026; MOHRSS 2025 No. 24; Singapore MOM |
+| 1:44 | "Platforms and insurers pay per rider and per verified event. Riders never pay. We are not the insurer. We are the evidence." | "Premium about HK$85 a rider a month. Our revenue: a share of it. Hong Kong pilot about HK$0.66m a year, range 0.08m to 10.1m [modelled from sourced inputs]." Source: docs/research/INSURANCE_MODEL.md |
 
 About 80 words, 30 seconds.
 
@@ -84,7 +84,7 @@ About 80 words, 30 seconds.
 | 12 to 19 | 2:02 | README, How it works: the system architecture diagram. Slow pan left to right: rider device, Metrics API, who reads the record | "Under the hood: phone or helmet, our model, a thirty second cancel, then one signed record everyone reads." | README, How it works |
 | 19 to 24 | 2:09 | Laptop /demo, Second app already on: press Crash, the sensor panel spikes, the probability reads high | "Our model catches 93 percent of falls on people it never saw, at 93 percent precision." | UMAFall, leave-subjects-out, 95% CIs. Demo rider, synthetic crash window |
 | 24 to 28 | 2:14 | Dispatcher card slides in. Hover Copy for 999 | "No tap, and dispatch gets the location and likely injury." |  |
-| 28 to 33 | 2:18 | Underwriter panel: Paid, split 50 and 50 between Platform A and B, Settlement verified | "The record names both apps, so tier one pays and splits between them." | Placeholder amounts |
+| 28 to 33 | 2:18 | Underwriter panel: Paid, split 50 and 50 between Platform A and B, Settlement verified | "The record names both apps, so tier one pays and splits between them." | Modelled amounts: HK$5,450 tier one, half a month of average rider income |
 | 33 to 37 | 2:23 | Terminal beside the browser: verify returns valid. Change payoutHkd to 80000, run again, returns invalid | "Every record is signed. Edit one number and verification fails." |  |
 | 37 to 41 | 2:27 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | "The Labour Department sees totals only. No names, no routes." |  |
 | 41 to 46 | 2:31 | README, "Are the numbers real?": the real riding rows | "On fifteen hours of real motorbike riding, one false alarm every five hours." | TU Wien motorcyclist IMU dataset |
@@ -209,7 +209,7 @@ Not read in the video. One short answer each, owner in brackets.
 | Do you work with an insurer? (Alysa) | Not yet, and we say so. We are the trigger and the evidence, not the risk carrier. Next step: a licensed general insurer writing accident (Class 1) and liability (Class 13) cover enters the Insurance Authority's Insurtech Sandbox with us as its technology partner; the sandbox is open to authorised insurers working with technology companies. Precedents for no-claim-form parametric cover in Hong Kong exist, such as typhoon signal cover. |
 | Do you need an insurance licence? (Alysa) | No, as long as we bear no risk, never call ourselves an insurer (Cap 41 s2(3)) and never invite riders to claim (s64G). We provide the verified record as clerical support for the insurer (s123(2)). We will get a legal opinion before the pilot. |
 | How does the data become a payout? (Alysa) | Parametric conditions: rider on shift, model probability at or above 0.5, no cancel within 30 seconds, signed record. Tier one is a fixed amount paid at the deadline. Tier two follows a hospital record. Statutory compensation is untouched. |
-| Are the money figures real? (Alysa) | Payout and premium are derived from sourced inputs (rider earnings, injury rates, statutory amounts) with a low, central and high range in docs/research/INSURANCE_MODEL.md. Our own fee is a pricing choice and labelled as such. |
+| Are the money figures real? (Alysa) | They are modelled from sourced inputs, with a low, central and high case (docs/research/insurance_model.py). Tier one HK$5,450 is half a month of average rider income (HK$10,900, Labour Department survey). The premium comes from injury rates and statutory amounts: about HK$85 a rider a month. Our fee, 5% of premium in the central case, is a pricing choice because no public comparable exists. |
 | Where are the drop tests? (Hannes) | Protocol written, rig being built, results before the Grand Final. Meanwhile: held-out people, 1,865 hours of public real riding, and the live demo. |
 | Your data is simulated falls. Why believe it? (Karina) | You should not believe it proves road performance, and we say so. It proves the method works on people it never saw. Real rides come from research mode. |
 | What about false alarms? (Simone) | 10.5 an hour of everyday phone handling, 0.2 an hour on real motorbike riding, 30 second cancel, helmet and phone must agree. |
@@ -225,7 +225,7 @@ Not read in the video. One short answer each, owner in brackets.
 
 - [ ] Total under 4:30 (target 3:58)
 - [ ] Every number has a source corner; modelled and target items say so on screen
-- [ ] "Synthetic crash window" and "Placeholder amounts" captioned in Part 4; face circle never covers a number
+- [ ] "Synthetic crash window" and "Modelled amounts" captioned in Part 4; face circle never covers a number
 - [ ] Para 385 quoted exactly on screen
 - [ ] Subtitles on every spoken line
 - [ ] Every member speaks at least twice

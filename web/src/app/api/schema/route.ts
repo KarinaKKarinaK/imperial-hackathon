@@ -24,7 +24,7 @@ const schema = {
     },
     apportionment: {
       type: "array",
-      description: "Liability split across platforms, shares sum to 1. Placeholder rule: equal shares until the regime fixes one",
+      description: "Liability split across platforms, shares sum to 1. Default rule: equal shares until the regime sets one",
       items: { type: "object", required: ["platform", "share"], properties: { platform: { type: "string" }, share: { type: "number", minimum: 0, maximum: 1 } } },
     },
     sources: { type: "array", items: { type: "string", enum: ["phone", "helmet"] }, description: "Sensors that agreed on the impact. helmet plus phone means both felt it within one second" },

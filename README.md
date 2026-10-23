@@ -49,7 +49,7 @@ We are the sensor, the trigger and the data standard. We are not the insurer.
 
 ## For the judges
 
-Five minutes to verify everything yourself: [docs/JUDGES_GUIDE.md](docs/JUDGES_GUIDE.md).
+Five minutes to verify everything yourself: [docs/JUDGES_GUIDE.md](docs/JUDGES_GUIDE.md). How we answered Imperial's feedback on our problem statement: [docs/research/IMPERIAL_FEEDBACK.md](docs/research/IMPERIAL_FEEDBACK.md).
 
 Imperial's suggested workflow is effectively the marking scheme. Here is where each step lives.
 
@@ -346,7 +346,7 @@ What is not done yet, and what is already built so each step plugs straight in.
 | 200 g sensor for the clip | No clipping at 16 g on hard head impacts | Triage bands already read peak g |
 | Rider interviews | The human story, consent design checked by riders | Interview plan in `docs/submission/RIDER_INTERVIEWS.md` |
 | One insurer, union or clinician on record | An outside voice on the trigger and the triage note | Insurer and Labour Department views live |
-| Financial model with a sensitivity range | Premium and fee figures replace the placeholders | Tier one and two, apportionment and basis risk on `/underwriter` |
+| An insurer partner and a sandbox application | Turns the modelled economics into a priced product | Sourced financial model with ranges (`docs/research/INSURANCE_MODEL.md`); tier one and two, apportionment and basis risk on `/underwriter` |
 | Native speaker check of Nepali and Urdu | Consent a rider can actually read | All rider screens translated and marked pending review |
 | Retention limit and an access log per reading party | Two privacy principles that are planned, not built | Rider keys, pseudonymous research data, aggregate-only labour view |
 | The clip signs its own data | Proves a device measured the crash, not only that our server wrote it | Ed25519 signing, hash chain and signed settlements on the server |
@@ -403,7 +403,7 @@ Hong Kong alone is small, and we say so. It is the right place to set the standa
 | General liability premiums, Hong Kong | HK$12.1bn gross (2024, provisional) | Insurance Authority[^ia] |
 | Registered construction workers, Hong Kong | 667,603 (Dec 2024) | Construction Industry Council[^cic] |
 | Mainland new-forms-of-employment workers | 84 million | ACFTU via CGTN[^cgtn] |
-| Mainland platform injury scheme | 12.3m covered by Jul 2025, nationwide across 14 platforms from Jul 2026 | Asia Insurance Review, Insurance Business[^air][^ib] |
+| Mainland platform injury scheme | 37.27m insured and 108.7bn orders by end Sep 2026; 0.07 yuan per delivery order | SCIO briefing via Xinhua Finance, Oct 2026; MOHRSS 人社部发〔2025〕24号 |
 | Meituan contributions to that scheme | Over 3bn yuan, Jul 2022 to Jun 2026, 10m+ riders | China Daily[^cd] |
 | Motorcyclists in Asia | Over 400 million | Insurance Business Asia[^moto] |
 | Platform workers worldwide | 150 to 400 million | ILO[^ilo] |
@@ -435,13 +435,16 @@ flowchart LR
   IN -- "tier two: statutory amounts<br/>after hospital record" --> R
 ```
 
-| | Hong Kong pilot | One large platform |
-|---|---|---|
-| Riders | ~15,000 | ~10 million |
-| What it pays for | A sandbox licence and the pilot | A business |
-| Revenue | Low single-digit HK$ millions a year | Modelled in [INSURANCE_MODEL.md](docs/research/INSURANCE_MODEL.md) |
+Every figure below comes from [`docs/research/insurance_model.py`](docs/research/insurance_model.py), built on sourced inputs with a low, central and high case. Sources, assumptions and the regulatory pathway: [INSURANCE_MODEL.md](docs/research/INSURANCE_MODEL.md). No insurer has signed with us yet.
 
-**Parametric trigger.** A verified event (model above threshold, rider on shift, no cancel in 30 s) pays a fixed tier one amount within 24 hours, placeholder HK$8,000, about two weeks of median rider income. Hospital admission unlocks tier two at the statutory amounts in the proposed regime. The false alarm rate comes straight from the detector's precision, which is why the model matters to the business case.
+| [modelled], central case (low to high) | Hong Kong pilot, 12,900 riders | One mainland platform |
+|---|---|---|
+| Tier one payout | HK$5,450, half a month of average rider income (HK$10,900, Labour Department survey) | |
+| Premium, platform to insurer | HK$85 a rider a month (HK$16 to HK$654) | 0.07 yuan per order, the official mainland rate |
+| Metrics revenue a year | HK$0.66m (HK$0.08m to HK$10.1m) | 14m yuan (3.5m to 63m) |
+| What it pays for | The pilot and a sandbox | A business |
+
+**How it connects to insurance.** Metrics is the trigger and the evidence, not the insurer. A licensed insurer writes fixed-sum accident cover and the platform's liability cover; the platform pays the premium, which the July 2026 proposal makes mandatory. Tier one pays when the model flags a crash, the rider is on shift, nobody cancels within 30 seconds and the signed record verifies. It adds to statutory compensation and never replaces it. Hospital admission unlocks tier two at the statutory amounts. The pilot route is the Insurance Authority's Insurtech Sandbox, with an insurer as lead and Metrics as its technology partner.
 
 ### Risk register
 

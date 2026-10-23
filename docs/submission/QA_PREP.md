@@ -40,7 +40,7 @@ Rule from the briefing: every member must be able to answer. Each of you owns a 
 
 ## Business (Alysa)
 
-**Who pays and how much?** Platforms pay a monthly fee per insured rider, insurers pay per verified event, riders pay nothing. Hong Kong at 15,000 riders is low single-digit HK$ millions a year. It funds a pilot, not a company. The mainland scheme next door covers 84 million workers with flat premiums and manual claims. That is the market.
+**Who pays and how much?** Platforms pay a monthly fee per insured rider, insurers pay per verified event, riders pay nothing. Hong Kong at 12,900 riders is about HK$0.66m a year in the central case of our sourced model (HK$0.08m to HK$10.1m, docs/research/INSURANCE_MODEL.md). It funds a pilot, not a company. The mainland scheme next door has 37.27 million workers insured at a flat 0.07 yuan per delivery order, with manual claims. That is the market.
 
 **Why would a platform pay to prove its riders got hurt?** Because under the new law it is liable either way. A verified record lowers the premium, settles the split with the other platform in a lookup, and ends five-year court cases.
 

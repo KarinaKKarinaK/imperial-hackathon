@@ -67,14 +67,17 @@ export function heatBand(tempC: number, humidityPct: number): HeatBand {
 }
 
 // Premium for one 20-minute delivery window, HK dollars. Base rate times
-// exposure multipliers. Numbers are illustrative until the business model
-// supplies sourced ones.
+// exposure multipliers. The base is the central case of the sourced model in
+// docs/research/insurance_model.py (HK$1,020 a rider a year over 1,232 riding
+// hours). The rain, heat and fatigue multipliers are assumptions, not sourced.
 export function premiumWindowHkd(rain: boolean, heat: HeatBand, fatigue: number): number {
-  const base = 0.6;
+  const base = 0.28;
   const rainM = rain ? 1.4 : 1;
   const heatM = heat === "red" ? 1.5 : heat === "amber" ? 1.2 : 1;
   const fatigueM = 1 + 0.5 * fatigue;
   return Number((base * rainM * heatM * fatigueM).toFixed(2));
 }
 
-export const FIXED_PAYOUT_HKD = 8000;
+// Tier one: half a month of average platform income, HK$10,900 a month (Labour
+// Department rider survey, LegCo CB(1)410/2025(04)). Central case of the model.
+export const FIXED_PAYOUT_HKD = 5450;
