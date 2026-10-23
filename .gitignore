@@ -19,3 +19,6 @@ competitors/
 /*.mp4
 /*.mov
 /*.webm
+
+# macOS
+.DS_Store
