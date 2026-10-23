@@ -2,7 +2,7 @@
 
 Metrics, Team Metrics. Imperial Global Hackathon Hong Kong and Macau 2026, Challenge 6.
 
-Hard limit 4:30. Target 4:18. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
+Hard limit 4:30. Target 4:23. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
 
 ## Structure
 
@@ -13,8 +13,8 @@ Hard limit 4:30. Target 4:18. English. Burned-in subtitles on every spoken line.
 | 3. The market | 1:20 to 1:50 | Who pays, why now, how big | Feasibility, translation, impact |
 | 4. Screen recording | 1:50 to 3:05 | The real app, start to finish, one narrator | Design and build, innovation, validation |
 | 5. Split screen | 3:05 to 3:30 | Same crash, today versus with the record | Impact, social return |
-| 6. Risks and next steps | 3:30 to 4:10 | Team relay: limits, top three risks and fixes, ethics, what comes next | Validation, risk register, ethics, research integrity |
-| 7. End card | 4:10 to 4:18 | Team, quote, live URL | Teamwork |
+| 6. Risks and next steps | 3:30 to 4:15 | Team relay: limits, top three risks and fixes, ethics, what comes next | Validation, risk register, ethics, research integrity |
+| 7. End card | 4:15 to 4:23 | Team, quote, live URL | Teamwork |
 
 Rules for the edit:
 - Every number on screen has a source line in the corner. Anything modelled or targeted says so on screen.
@@ -48,7 +48,7 @@ One speaker per line, into the lens, a different location each time. Lower third
 |---|---|---|---|---|
 | 1 | Maalon | When a rider crashes in Hong Kong today, nothing records it. Not the time, not the impact, not the app. | Road crossing, traffic behind | 6 |
 | 2 | Alysa | The new law makes platforms pay. A third of riders work two apps at once. So who pays? | Food court pick-up counters | 6 |
-| 3 | Karina | Nobody can say without evidence. That gap is occupational health, and no other challenge covers it. | Desk, laptop open on the README | 6 |
+| 3 | Maalon | Nobody can say without evidence. That is an occupational health gap, and no other challenge covers it. | Hospital or clinic entrance | 6 |
 | 4 | Simone | So we built the record. The rider's own phone is the sensor. | Holding a phone on /rider, "On shift" lit | 4 |
 | 5 | Hannes | On a motorbike, a helmet clip adds crash-grade data, for about a hundred and ten Hong Kong dollars. | 3D printer, clip and ESP32 in hand | 6 |
 | 6 | Karina | A model trained on public fall data spots the crash. The rider has thirty seconds to cancel. | Phone countdown on screen | 5 |
@@ -73,20 +73,20 @@ About 80 words, 30 seconds.
 
 ## Part 4. Screen recording (1:50 to 3:05)
 
-One continuous story on the live site, cut tight. Simone narrates over it, voice only. Phone shots are screen recordings from a real phone. Laptop shots at 1440 by 900, cursor visible, no browser chrome.
+One continuous story on the live site, cut tight. Voice over only, each part read by the person who owns it. Phone shots are screen recordings from a real phone. Laptop shots at 1440 by 900, cursor visible, no browser chrome.
 
-| Time | Screen | Narration (Simone) |
+| Time | Screen | Voice over |
 |---|---|---|
-| 1:50 | Phone, metricsfile.vercel.app/rider. Consent screen, tap 中文 to show Cantonese, back to English, tap continue | "This is the rider's app, in English, Cantonese, Nepali and Urdu. Consent comes first." |
-| 1:57 | Allow motion, tap On shift. Live sensor trace moving | "On shift, the phone streams its motion. Off shift, nothing is read." |
-| 2:02 | Drop the phone onto a cushion. The 30 second countdown and the large I'm OK button appear | "A drop like a fall. Thirty seconds to cancel, with a button you can hit wearing gloves." |
-| 2:09 | Laptop, /demo. Second app toggle on. Press Crash under Feed the detector. Sensor panel spikes, probability readout. Caption: "Demo rider, synthetic crash window" | "On the full demo, the rider has orders open on two apps. The model reads the crash." |
-| 2:18 | Dispatcher card slides in. Hover "Copy for 999" | "Dispatch sees what happened, where, the likely injury and how to reach the rider." |
-| 2:25 | Let the 30 s run out. Underwriter panel: Paid, HK$8,000, split 50 and 50 between Platform A and B, "Settlement verified". Caption: "Placeholder amounts" | "No answer, so tier one pays, split across both apps." |
-| 2:35 | /r/EVT-... rider's signed copy: open orders, the split, "Signature verified", claim block with the one-year deadline | "The rider gets a signed copy they own, with a claim reference and the deadline." |
-| 2:43 | Terminal beside the browser: POST the record to /api/verify, "valid": true. Change payoutHkd to 80000, post again, "settlementValid": false | "Change one number and the signature fails. Nobody can quietly edit a claim, including us." |
-| 2:52 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | "The Labour Department sees totals only. No names, no routes. And for the first time, injuries set against delivery deadlines." |
-| 2:59 | Landing page model section: recall and precision bars animate in | "Ninety-three percent of falls caught, at ninety-three percent precision, on people the model never saw." |
+| 1:50 | Phone, metricsfile.vercel.app/rider. Consent screen, tap 中文 to show Cantonese, back to English, tap continue | Simone: "This is the rider's app, in English, Cantonese, Nepali and Urdu. Consent comes first." |
+| 1:57 | Allow motion, tap On shift. Live sensor trace moving | Simone: "On shift, the phone streams its motion. Off shift, nothing is read." |
+| 2:02 | Drop the phone onto a cushion. The 30 second countdown and the large I'm OK button appear | Simone: "A drop like a fall. Thirty seconds to cancel, with a button you can hit wearing gloves." |
+| 2:09 | Laptop, /demo. Second app toggle on. Press Crash under Feed the detector. Sensor panel spikes, probability readout. Caption: "Demo rider, synthetic crash window" | Karina: "On the full demo, the rider has orders open on two apps. The model reads the crash." |
+| 2:18 | Dispatcher card slides in. Hover "Copy for 999" | Maalon: "Dispatch sees what happened, where, the likely injury and how to reach the rider." |
+| 2:25 | Let the 30 s run out. Underwriter panel: Paid, HK$8,000, split 50 and 50 between Platform A and B, "Settlement verified". Caption: "Placeholder amounts" | Alysa: "No answer, so tier one pays, split across both apps." |
+| 2:35 | /r/EVT-... rider's signed copy: open orders, the split, "Signature verified", claim block with the one-year deadline | Simone: "The rider gets a signed copy they own, with a claim reference and the deadline." |
+| 2:43 | Terminal beside the browser: POST the record to /api/verify, "valid": true. Change payoutHkd to 80000, post again, "settlementValid": false | Simone: "Change one number and the signature fails. Nobody can quietly edit a claim, including us." |
+| 2:52 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | Karina: "The Labour Department sees totals only. No names, no routes. And for the first time, injuries set against delivery deadlines." |
+| 2:59 | Landing page model section: recall and precision bars animate in | Karina: "Ninety-three percent of falls caught, at ninety-three percent precision, on people the model never saw." |
 
 About 170 words, 75 seconds. Source corner on the last shot: "UMAFall, leave-subjects-out, 95% CIs, ml/out/results.md".
 
@@ -103,7 +103,7 @@ Vertical split. Left header TODAY, grey and silent. Right header WITH THE RECORD
 
 About 40 words, 25 seconds.
 
-## Part 6. Risks and next steps (3:30 to 4:10)
+## Part 6. Risks and next steps (3:30 to 4:15)
 
 Relay again, one line each, a single card behind each line. This is where we answer the hardest questions before anyone asks.
 
@@ -113,12 +113,13 @@ Relay again, one line each, a single card behind each line. This is where we ans
 | 11 | Simone | Risk one, false alarms. About ten an hour of phone handling, one every five hours on real motorbike rides. All can be cancelled. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset |
 | 12 | Alysa | Risk two, platforms resisting. They are liable either way, and the record settles who pays. | "Liable either way. Apportionment by lookup." |
 | 13 | Maalon | Risk three, surveillance. No route history, no risk score, and research data deleted on request. | Consent screen, then the who-sees-what matrix |
-| 14 | Hannes | Next: helmet drop tests, a stronger sensor, and real rides from riders who opt in. | Drop test protocol page; research mode toggle |
-| 15 | Karina | Then outdoor workers in the heat, and the mainland and Singapore schemes. One record for all of them. | Map card: Hong Kong, Shenzhen, Singapore |
+| 14 | Hannes | Next on the hardware: helmet drop tests on a rig, and a stronger sensor so hard impacts do not clip. | Drop test protocol page; helmet on the bench |
+| 15 | Karina | Next on the model: real rides from riders who opt in, and retraining on their own labels. | Research mode toggle on /rider |
+| 16 | Alysa | Then outdoor workers in the heat, and the mainland and Singapore schemes. One record for all of them. | Map card: Hong Kong, Shenzhen, Singapore |
 
-About 100 words, 40 seconds.
+About 115 words, 45 seconds.
 
-## Part 7. End card (4:10 to 4:18)
+## Part 7. End card (4:15 to 4:23)
 
 Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 - Metrics. Proof for the people who keep this city moving.
@@ -132,7 +133,7 @@ Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 |---|---|
 | Human story first | Part 1 footage, a rider's voice if recorded, Part 5 |
 | Policy anchor, quoted | Part 1 at 0:11, end card |
-| Why this is an open challenge problem | Line 3 |
+| Why this is an open challenge problem | Line 3 (Maalon) |
 | Scale and burden, with sources | Part 1 cards, Part 3 cards |
 | The specific gap and why it persisted | Lines 1 to 3 |
 | Evidence base | Source corners on every number; the full evidence table is one click from the repo on the end card |
@@ -146,17 +147,19 @@ Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 | Ethics and dual use | Line 13: no route history, no risk score, no platform surveillance |
 | Conflicts of interest | Part 3: "We are not the insurer" |
 | STEMB integration and teamwork | Line 9; every member speaks at least twice; end card |
-| Vision | Line 15 |
+| Vision | Lines 14 to 16 |
 
 ## Speaking count
 
-| Speaker | Lines |
-|---|---|
-| Karina | 3, 6, Part 5, 10, 15 |
-| Simone | 4, Part 4 narration, 11 |
-| Hannes | 5, 9, 14 |
-| Maalon | 1, 7, Part 5, 13 |
-| Alysa | 2, 8, Part 3, Part 5, 12 |
+Each person speaks only on their own field.
+
+| Speaker | Field | Lines |
+|---|---|---|
+| Alysa | Business: law, market, money | 2, 8, Part 3, Part 4 payout, Part 5 (twice), 12, 16 |
+| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 4 dispatch, Part 5, 13 |
+| Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 14 |
+| Karina | ML and software: the model, the data | 6, Part 4 detection, labour data and results, Part 5, 10, 15 |
+| Simone | ML and software: the app and the backend | 4, Part 4 app, signed record and verification, 11 |
 
 ## Capture list
 
