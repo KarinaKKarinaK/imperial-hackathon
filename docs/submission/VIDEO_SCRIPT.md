@@ -2,7 +2,7 @@
 
 Metrics, Team Metrics. Imperial Global Hackathon Hong Kong and Macau 2026, Challenge 6.
 
-Hard limit 4:30. Target 4:23. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
+Hard limit 4:30. Target 3:58. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
 
 ## Structure
 
@@ -11,10 +11,10 @@ Hard limit 4:30. Target 4:23. English. Burned-in subtitles on every spoken line.
 | 1. Intro clips | 0:00 to 0:20 | Street footage and big type. The human cost and the policy anchor | Problem identification, potential impact |
 | 2. How it works | 0:20 to 1:20 | Team relay, one line each: the gap, the idea, how it works | Problem identification, creativity, interdisciplinarity |
 | 3. The market | 1:20 to 1:50 | Who pays, why now, how big | Feasibility, translation, impact |
-| 4. Screen recording | 1:50 to 3:05 | The real app, start to finish, one narrator | Design and build, innovation, validation |
-| 5. Split screen | 3:05 to 3:30 | Same crash, today versus with the record | Impact, social return |
-| 6. Risks and next steps | 3:30 to 4:15 | Team relay: limits, top three risks and fixes, ethics, what comes next | Validation, risk register, ethics, research integrity |
-| 7. End card | 4:15 to 4:23 | Team, quote, live URL | Teamwork |
+| 4. Screen recording | 1:50 to 2:40 | Karina walks through the live app, face in the corner | Design and build, innovation, validation, ethics |
+| 5. Split screen | 2:40 to 3:05 | Same crash, today versus with the record | Impact, social return |
+| 6. Risks and next steps | 3:05 to 3:50 | Team relay: limits, top three risks and fixes, ethics, what comes next | Validation, risk register, ethics, research integrity |
+| 7. End card | 3:50 to 3:58 | Team, quote, live URL | Teamwork |
 
 Rules for the edit:
 - Every number on screen has a source line in the corner. Anything modelled or targeted says so on screen.
@@ -71,39 +71,55 @@ Alysa to camera, intercut with full-screen cards. Source corner on every card.
 
 About 80 words, 30 seconds.
 
-## Part 4. Screen recording (1:50 to 3:05)
+## Part 4. Screen recording (1:50 to 2:40)
 
-One continuous story on the live site, cut tight. Voice over only, each part read by the person who owns it. Phone shots are screen recordings from a real phone. Laptop shots at 1440 by 900, cursor visible, no browser chrome.
+50 seconds, technical. Karina narrates, with her face in a floating circle in the bottom right corner (about a fifth of the frame width). It opens full screen on her phone running the app, then moves to the laptop screen. Record three files at the same time: the laptop screen, the face camera, and the phone screen. They are combined in the edit.
 
-| Time | Screen | Voice over |
-|---|---|---|
-| 1:50 | Phone, metricsfile.vercel.app/rider. Consent screen, tap 中文 to show Cantonese, back to English, tap continue | Simone: "This is the rider's app, in English, Cantonese, Nepali and Urdu. Consent comes first." |
-| 1:57 | Allow motion, tap On shift. Live sensor trace moving | Simone: "On shift, the phone streams its motion. Off shift, nothing is read." |
-| 2:02 | Drop the phone onto a cushion. The 30 second countdown and the large I'm OK button appear | Simone: "A drop like a fall. Thirty seconds to cancel, with a button you can hit wearing gloves." |
-| 2:09 | Laptop, /demo. Second app toggle on. Press Crash under Feed the detector. Sensor panel spikes, probability readout. Caption: "Demo rider, synthetic crash window" | Karina: "On the full demo, the rider has orders open on two apps. The model reads the crash." |
-| 2:18 | Dispatcher card slides in. Hover "Copy for 999" | Maalon: "Dispatch sees what happened, where, the likely injury and how to reach the rider." |
-| 2:25 | Let the 30 s run out. Underwriter panel: Paid, HK$8,000, split 50 and 50 between Platform A and B, "Settlement verified". Caption: "Placeholder amounts" | Alysa: "No answer, so tier one pays, split across both apps." |
-| 2:35 | /r/EVT-... rider's signed copy: open orders, the split, "Signature verified", claim block with the one-year deadline | Simone: "The rider gets a signed copy they own, with a claim reference and the deadline." |
-| 2:43 | Terminal beside the browser: POST the record to /api/verify, "valid": true. Change payoutHkd to 80000, post again, "settlementValid": false | Simone: "Change one number and the signature fails. Nobody can quietly edit a claim, including us." |
-| 2:52 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | Karina: "The Labour Department sees totals only. No names, no routes. And for the first time, injuries set against delivery deadlines." |
-| 2:59 | Landing page model section: recall and precision bars animate in | Karina: "Ninety-three percent of falls caught, at ninety-three percent precision, on people the model never saw." |
+| Time | Screen | Karina | Source corner or caption |
+|---|---|---|---|
+| 1:50 | Phone full screen, metricsfile.vercel.app/rider: consent, On shift, live sensor trace. Face circle appears | "This is the live app. My phone is the sensor, streaming motion to our server while I'm on shift." | |
+| 1:57 | Phone dropped onto a cushion: 30 second countdown, large I'm OK button. Cut to the laptop | "Our model catches 93 percent of falls on people it never saw, at 93 percent precision." | UMAFall, leave-subjects-out, 95% CIs, ml/out/results.md |
+| 2:03 | Laptop /demo: Second app on, Crash, dispatcher card slides in | "Thirty seconds without a tap, and dispatch gets the location and likely injury. The record names both apps." | Demo rider, synthetic crash window |
+| 2:11 | Underwriter panel: Paid, split 50 and 50 between Platform A and B, "Settlement verified" | "Tier one pays and splits between platforms. Every record and payout is signed and hash-chained." | Placeholder amounts |
+| 2:18 | Terminal beside the browser: /api/verify returns valid; payoutHkd edited to 80000, returns invalid | "Edit one number and verification fails. Nobody can quietly change a claim." | |
+| 2:24 | /labour: injuries by time left on the delivery clock, hazard cells ranked by rate | "The Labour Department sees aggregates only: no rider ids, no routes." | |
+| 2:30 | README section "Are the numbers real?": results table with intervals, the real riding rows | "Every number is published with confidence intervals. On fifteen hours of real motorbike riding, one false alarm every five hours." | TU Wien motorcyclist IMU dataset, ml/PUBLIC_RIDES.md |
 
-About 170 words, 75 seconds. Source corner on the last shot: "UMAFall, leave-subjects-out, 95% CIs, ml/out/results.md".
+About 115 words, 47 seconds at a natural pace.
 
-## Part 5. Split screen (3:05 to 3:30)
+What each beat shows the judges:
+
+| Beat | Criterion |
+|---|---|
+| Live app, phone as sensor | Design and build: a working prototype, not a mock-up |
+| 93% at 93% on unseen people | Validation: held-out people, confidence intervals |
+| Dispatch and the record naming both apps | Problem fit: triage, and multi-app apportionment from the July 2026 proposal |
+| Tier one, split, signed and chained | Innovation and translation: the parametric trigger and the data standard |
+| Verification fails on one edit | Trust: tamper evidence anyone can check |
+| Aggregates only for the Labour Department | Ethics and governance: no surveillance, a stakeholder view for government |
+| Real riding false alarms | Validation and limits: real-world data, stated honestly |
+
+Recording setup:
+- Laptop: Chrome window at 1440 by 900, zoom 110%, bookmarks bar hidden, notifications off. Record with QuickTime (File, New Screen Recording) or OBS.
+- Face: the laptop camera or a phone on a stand, recorded at the same time. Plain background, face lit from the front.
+- Phone: connect an iPhone by cable and record it in QuickTime (New Movie Recording, choose the iPhone as camera), or use the phone's own screen recorder.
+- Before recording: open /demo?key=... and press Reset, so the demo starts clean. Save the record for the terminal shot from /api/events/EVT-... as record.json.
+- Do each beat as its own take if easier. Name files part4_01_phone.mov, part4_02_demo.mov and so on.
+
+## Part 5. Split screen (2:40 to 3:05)
 
 Vertical split. Left header TODAY, grey and silent. Right header WITH THE RECORD, colour, system sounds. Same rider, same wet road. One narrator per row.
 
 | Time | Left: today | Right: with the record | Narration |
 |---|---|---|---|
-| 3:05 | Rider down on a wet road. Text: NO RECORD. | Countdown on the phone, dispatcher card arriving | Maalon: "Same crash. On the right, help knows where and how hard." |
-| 3:11 | Rider at home, leg in a cast. Text: NO INCOME. | Phone shows the Paid card. Caption: "Next-day payout [target]" | Alysa: "On the right, a fixed payout the next day." |
-| 3:17 | Email from a platform: "You were not on a job." | Signed record: two orders, the split, signature verified | Alysa: "On the left, an argument. On the right, a lookup." |
-| 3:23 | Calendar pages flipping. Text: 5 YEARS. HK$1.35M. | Text: DAYS [target] | Karina: "That is the difference a record makes." |
+| 2:40 | Rider down on a wet road. Text: NO RECORD. | Countdown on the phone, dispatcher card arriving | Maalon: "Same crash. On the right, help knows where and how hard." |
+| 2:46 | Rider at home, leg in a cast. Text: NO INCOME. | Phone shows the Paid card. Caption: "Next-day payout [target]" | Alysa: "On the right, a fixed payout the next day." |
+| 2:52 | Email from a platform: "You were not on a job." | Signed record: two orders, the split, signature verified | Alysa: "On the left, an argument. On the right, a lookup." |
+| 2:58 | Calendar pages flipping. Text: 5 YEARS. HK$1.35M. | Text: DAYS [target] | Karina: "That is the difference a record makes." |
 
 About 40 words, 25 seconds.
 
-## Part 6. Risks and next steps (3:30 to 4:15)
+## Part 6. Risks and next steps (3:05 to 3:50)
 
 Relay again, one line each, a single card behind each line. This is where we answer the hardest questions before anyone asks.
 
@@ -119,7 +135,7 @@ Relay again, one line each, a single card behind each line. This is where we ans
 
 About 115 words, 45 seconds.
 
-## Part 7. End card (4:15 to 4:23)
+## Part 7. End card (3:50 to 3:58)
 
 Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 - Metrics. Proof for the people who keep this city moving.
@@ -137,14 +153,14 @@ Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 | Scale and burden, with sources | Part 1 cards, Part 3 cards |
 | The specific gap and why it persisted | Lines 1 to 3 |
 | Evidence base | Source corners on every number; the full evidence table is one click from the repo on the end card |
-| Research-grade prototype others can replicate | Part 4 on the live site; open repo on the end card |
+| Research-grade prototype others can replicate | Part 4, the live app on a real phone and laptop; open repo on the end card |
 | Failure modes and limits | Lines 10 and 11 |
-| Validation with uncertainty | Part 4 last shot (held-out people, 95% CIs); line 11 (real riding hours) |
+| Validation with uncertainty | Part 4 (held-out people, 95% CIs, real riding hours); line 11 |
 | Regulatory pathway | Part 3 (Labour and Welfare Bureau regime) and line 12; Insurance Authority sandbox and PDPO mapping in the Q&A notes |
 | Financial model | Part 3 revenue card, labelled modelled |
 | Stakeholders: government, industry, civil society | Parts 3 and 4: platforms, insurers, dispatch, Labour Department; riders and unions in lines 1 and 13 |
 | Risk register, top three barriers | Lines 11, 12, 13 |
-| Ethics and dual use | Line 13: no route history, no risk score, no platform surveillance |
+| Ethics and dual use | Line 13 and Part 4 labour view: no route history, no risk score, no platform surveillance |
 | Conflicts of interest | Part 3: "We are not the insurer" |
 | STEMB integration and teamwork | Line 9; every member speaks at least twice; end card |
 | Vision | Lines 14 to 16 |
@@ -155,33 +171,30 @@ Each person speaks only on their own field.
 
 | Speaker | Field | Lines |
 |---|---|---|
-| Alysa | Business: law, market, money | 2, 8, Part 3, Part 4 payout, Part 5 (twice), 12, 16 |
-| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 4 dispatch, Part 5, 13 |
+| Alysa | Business: law, market, money | 2, 8, Part 3, Part 5 (twice), 12, 16 |
+| Maalon | Medicine and health: injury, triage, ethics | 1, 3, 7, Part 5, 13 |
 | Hannes | Engineering: sensors, helmet clip, drop tests | 5, 9, 14 |
-| Karina | ML and software: the model, the data | 6, Part 4 detection, labour data and results, Part 5, 10, 15 |
-| Simone | ML and software: the app and the backend | 4, Part 4 app, signed record and verification, 11 |
+| Karina | ML and software: the model, the data | 6, Part 4 (all of it, on camera in the corner), Part 5, 10, 15 |
+| Simone | ML and software: the app and the backend | 4, 11 |
 
 ## Capture list
 
 | Clip | Where | What | Part |
 |---|---|---|---|
-| C1 | Street | Riders in rain, phone mounts, helmets. Faces only with consent | 1 |
-| C2 | Phone, /rider | Consent, language switch, Allow motion, On shift, drop onto a cushion, countdown | 4 |
-| C3 | Laptop, /demo?key=... | Reset, start shift, Second app on, Crash, dispatcher card, wait 30 s for Paid | 4 |
-| C4 | Laptop, /r/EVT-... | Open the signed copy from the paid card | 4 |
-| C5 | Terminal | `curl -s -X POST https://metricsfile.vercel.app/api/verify -H 'content-type: application/json' -d @record.json`, then again with payoutHkd edited | 4 |
-| C6 | Laptop, /labour | Slow scroll | 4 |
-| C7 | Landing page | Model section bars animating in | 4 |
-| C8 | Relay locations | Lines 1 to 15, each shot twice | 2, 6 |
-| C9 | Split screen | Rider and road footage for the left side | 5 |
+| C1 | Street or Creative Commons stock | Riders in rain, phone mounts, helmets, hospital corridor, government buildings. Faces only with consent | 1 |
+| C2 | Karina's phone, /rider | Consent, On shift, drop onto a cushion, countdown | 4 |
+| C3 | Laptop screen | /demo, the terminal verify shot, /labour, the README results section, recorded with the face camera running | 4 |
+| C4 | Face camera | Karina narrating Part 4, recorded at the same time as C2 and C3 | 4 |
+| C5 | Relay locations | Lines 1 to 16, each shot twice | 2, 6 |
+| C6 | Split screen | Rider and road footage for the left side | 5 |
 
-For C5, open /api/events/EVT-... and save the "record" field as record.json.
+Put files in footage/clips/part1 to part7, named in order. footage/ is never committed.
 
 ## Before export
 
-- [ ] Total under 4:30
+- [ ] Total under 4:30 (target 3:58)
 - [ ] Every number has a source corner; modelled and target items say so on screen
-- [ ] "Synthetic crash window" and "Placeholder amounts" captioned in Part 4
+- [ ] "Synthetic crash window" and "Placeholder amounts" captioned in Part 4; face circle never covers a number
 - [ ] Para 385 quoted exactly on screen
 - [ ] Subtitles on every spoken line
 - [ ] Every member speaks at least twice
