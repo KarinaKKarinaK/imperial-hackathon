@@ -22,3 +22,6 @@ competitors/
 
 # macOS
 .DS_Store
+
+# Video footage and renders, never committed
+footage/
