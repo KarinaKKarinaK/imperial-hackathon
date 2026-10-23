@@ -131,13 +131,13 @@ Relay, one line each, each person on their own field. A single card behind each 
 
 | # | Speaker | Line | Card behind | Answers |
 |---|---|---|---|---|
-| 10 | Karina | Our biggest limit: we trained on volunteers falling onto mats, not road crashes. So riders who opt in can now donate real rides for us to retrain on. | "Simulated falls. Real rides next." Research mode toggle on /rider | Limits of the evidence, further research |
-| 11 | Simone | Will it cry wolf? About ten false alarms an hour of phone handling, one every five hours of real riding. Every alarm cancels in thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
-| 12 | Hannes | Imperial asked us for drop test evidence. The protocol is written; we run it before the final and demo it live. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
-| 13 | Maalon | It never diagnoses, and it can't be turned against riders: they opt in each shift and own their record. No routes, no risk score. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
-| 14 | Alysa | We are not an insurer, and no insurer has signed with us yet. A licensed insurer writes the cover; we supply the trigger: a verified crash that nobody cancelled. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
-| 15 | Alysa | It adds to statutory compensation, never replaces it. Next, a licensed insurer takes us into the Insurance Authority's sandbox as its technology partner. | "Tier one on top of statutory rights. Next: Insurtech Sandbox pilot." | Feedback: Hong Kong regulatory framework |
-| 16 | Maalon | Then outdoor workers in the heat, and the mainland and Singapore schemes. One record for all of them. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
+| 10 | Karina | Our main limit: we trained on volunteers falling onto mats, not on road crashes. Riders who opt in can now share real rides, so we can retrain on real data. | "Simulated falls. Real rides next." Research mode toggle on /rider | Limits of the evidence, further research |
+| 11 | Simone | False alarms: about ten an hour of everyday phone use, and one every five hours on real motorbike rides. Every alarm can be cancelled within thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
+| 12 | Hannes | Imperial asked us for drop tests. The protocol is written. We will run it on the helmet before the final and show it live. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
+| 13 | Maalon | It does not diagnose, and it cannot be used against riders. They opt in each shift and own their record. There is no route history and no risk score. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
+| 14 | Alysa | We are not an insurer, and no insurer has signed with us yet. A licensed insurer provides the cover. We provide the trigger: a verified crash that nobody cancelled. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
+| 15 | Alysa | This adds to statutory compensation and never replaces it. Our next step is to enter the Insurance Authority's sandbox with an insurer. | "Tier one on top of statutory rights. Next: Insurtech Sandbox pilot." | Feedback: Hong Kong regulatory framework |
+| 16 | Maalon | After that: outdoor workers in the heat, and the schemes in mainland China and Singapore. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
 
 About 170 words, 67 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
 
