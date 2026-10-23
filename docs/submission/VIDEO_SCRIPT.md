@@ -2,7 +2,7 @@
 
 Metrics, Team Metrics. Imperial Global Hackathon Hong Kong and Macau 2026, Challenge 6.
 
-Hard limit 4:30. Target 4:20. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
+Hard limit 4:30. Target 4:27. If the cut runs long, shorten line 10 or 13 first. English. Burned-in subtitles on every spoken line. Every member speaks at least twice.
 
 ## Structure
 
@@ -13,8 +13,8 @@ Hard limit 4:30. Target 4:20. English. Burned-in subtitles on every spoken line.
 | 3. The market | 1:20 to 1:50 | Who pays, why now, how big | Feasibility, translation, impact |
 | 4. Screen recording | 1:50 to 2:40 | Karina walks through the live app, face in the corner | Design and build, innovation, validation, ethics |
 | 5. Split screen | 2:40 to 3:05 | Same crash, today versus with the record | Impact, social return |
-| 6. Limits, risks and next steps | 3:05 to 4:12 | Team relay: limits, top three barriers, ethics, insurer pathway, answers to Imperial feedback | Validation, risk register, ethics, translation, research integrity |
-| 7. End card | 4:12 to 4:20 | Team, quote, live URL | Teamwork |
+| 6. Limits, risks and next steps | 3:05 to 4:19 | Team relay: limits, top three barriers, ethics, insurer pathway, answers to Imperial feedback | Validation, risk register, ethics, translation, research integrity |
+| 7. End card | 4:19 to 4:27 | Team, quote, live URL | Teamwork |
 
 Rules for the edit:
 - Every number on screen has a source line in the corner. Anything modelled or targeted says so on screen.
@@ -125,7 +125,7 @@ Vertical split. Left header TODAY, grey and silent. Right header WITH THE RECORD
 
 About 40 words, 25 seconds.
 
-## Part 6. Limits, risks and what comes next (3:05 to 4:12)
+## Part 6. Limits, risks and what comes next (3:05 to 4:19)
 
 Relay, one line each, each person on their own field. A single card behind each line. This part answers, before anyone asks: what the evidence does not prove, the top three barriers (accuracy, rider trust, insurer and regulator), the dual use risk, and each point in Imperial's feedback on our problem statement.
 
@@ -139,9 +139,9 @@ Relay, one line each, each person on their own field. A single card behind each 
 | 15 | Alysa | It sits on top of statutory compensation, and our route to market is the Insurance Authority's sandbox, which is built for insurers and technology partners like us. | "On top of statutory rights. Route to market: IA Insurtech Sandbox." | Feedback: Hong Kong regulatory framework |
 | 16 | Maalon | And the same record extends to outdoor workers in the heat, and to the schemes in mainland China and Singapore. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
 
-About 170 words, 67 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
+About 190 words, 74 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
 
-## Part 7. End card (4:12 to 4:20)
+## Part 7. End card (4:19 to 4:27)
 
 Whole team, one shot, rooftop, 3 seconds. Then the card for 5 seconds:
 - Metrics. Proof for the people who keep this city moving.
