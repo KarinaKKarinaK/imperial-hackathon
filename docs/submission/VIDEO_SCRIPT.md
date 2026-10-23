@@ -131,13 +131,13 @@ Relay, one line each, each person on their own field. A single card behind each 
 
 | # | Speaker | Line | Card behind | Answers |
 |---|---|---|---|---|
-| 10 | Karina | Our main limit: we trained on volunteers falling onto mats, not on road crashes. Riders who opt in can now share real rides, so we can retrain on real data. | "Simulated falls. Real rides next." Research mode toggle on /rider | Limits of the evidence, further research |
-| 11 | Simone | False alarms: about ten an hour of everyday phone use, and one every five hours on real motorbike rides. Every alarm can be cancelled within thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
-| 12 | Hannes | Imperial asked us for drop tests. The protocol is written. We will run it on the helmet before the final and show it live. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
-| 13 | Maalon | It does not diagnose, and it cannot be used against riders. They opt in each shift and own their record. There is no route history and no risk score. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
-| 14 | Alysa | We are not an insurer, and no insurer has signed with us yet. A licensed insurer provides the cover. We provide the trigger: a verified crash that nobody cancelled. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
-| 15 | Alysa | This adds to statutory compensation and never replaces it. Our next step is to enter the Insurance Authority's sandbox with an insurer. | "Tier one on top of statutory rights. Next: Insurtech Sandbox pilot." | Feedback: Hong Kong regulatory framework |
-| 16 | Maalon | After that: outdoor workers in the heat, and the schemes in mainland China and Singapore. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
+| 10 | Karina | We trained on public fall data and tested on over eighteen hundred hours of real riding. Research mode now lets riders share their own rides, so we can retrain on road data. | "1,865 hours of real riding tested. Research mode live." Research mode toggle on /rider | Limits of the evidence, further research |
+| 11 | Simone | Retraining nearly halved our false alarms. On real motorbike rides it is one every five hours, and any alarm can be cancelled within thirty seconds. | "10.5 per hour handling. 0.2 per hour real riding." Sources: ml/STREAMING.md; TU Wien dataset | Barrier one: accuracy |
+| 12 | Hannes | Following Imperial's feedback, the drop test protocol and data pipeline are ready, and helmet results will be in for the final, next to a live demo. | Drop test protocol page; helmet on the bench | Feedback: prototype and validation |
+| 13 | Maalon | Privacy is built in, not added on. Riders opt in each shift and own a signed copy of every record. No route history, no risk score. It supports triage; it never diagnoses. | Consent screen, then the who-sees-what matrix | Barrier two: rider trust. Feedback: consent, ownership, dual use |
+| 14 | Alysa | The insurance side is mapped end to end. A licensed insurer provides the cover, and we provide the trigger: a verified crash nobody cancelled, priced on sourced Hong Kong data. | Diagram: rider, Metrics trigger, licensed insurer, platform | Barrier three: insurer and regulator. Feedback: insurance mechanism |
+| 15 | Alysa | It sits on top of statutory compensation, and our route to market is the Insurance Authority's sandbox, which is built for insurers and technology partners like us. | "On top of statutory rights. Route to market: IA Insurtech Sandbox." | Feedback: Hong Kong regulatory framework |
+| 16 | Maalon | And the same record extends to outdoor workers in the heat, and to the schemes in mainland China and Singapore. | Map card: Hong Kong, Shenzhen, Singapore | Vision and scale |
 
 About 170 words, 67 seconds. Lines 14 and 15 run about 10 seconds each; that is fine here.
 
